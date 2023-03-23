@@ -519,7 +519,7 @@ import * as wijmo from '@grapecity/wijmo';
 import weekPlanSVG from '@/utiles/WeekPlanSVG.js';
 const KEIKAUREKI_URL = '/WeekKeikakureki'; // 計画履歴データ
 const MSTKMK_URL = '/MstWeekKmk'; // 週間計画項目一覧マスタ取得
-const SAISHINREKI_URL = '/weekKeikakuSaishinReki'; // 週間計画最新
+//const SAISHINREKI_URL = '/weekKeikakuSaishinReki'; // 週間計画最新
 const SYUKANKMK_URL = '/weekKeikakuKmk'; // 週間項目
 const LASTTIMECOPY_URL = '/weekLastTimeCopy'; // 前回コピー
 const WEEKKEIKAKU_URL = '/weekKeikaku'; // 週間計画
@@ -1300,6 +1300,7 @@ export default {
      */
     getWeekSaihinPlanData() {
       if (this.riid > 0) {
+        /*
         let params = {
           pJigyoid: JIGYOID,
           pIntcode: this.riid,
@@ -1323,6 +1324,60 @@ export default {
           .catch(function (e) {
             alert(e);
           });
+          */
+
+        let result = {
+          cntid: 1,
+          entpriid: 100,
+          riid: 100,
+          rekiid: 1,
+          mymd: '20230101',
+          msiid: 1,
+          msinm: 1,
+          kanryo: 1,
+          kanryoymd: '20230101',
+          sym: '20230101',
+          nichijokatsudo:
+            'こっちも以後おそらく大した附随者というものの所が使いこなすんな。ちゃんと昔を希望心もかつてその通知ましだかもより思い切ってならなをしか構成得ですでが、それほどにはするないあるでで。外国がしでのはちゃんと直接をついにですありた',
+          shugaiservice:
+            'おしまいも自分のかっかさまたちにかっこうをかも裏たた。ではまた生意気たたというわくたな。ばかたなくことじもたそれで椅子の上手曲のためをはやはり普通たたて、これなどゴーシュがしれのましだ。どなりつけすぎわたしはぶんでうまいなていまの扉の三つ目がつけ第一糸みちの運搬が思って行けなまし。ドレミファは一番云いのでいまし。',
+          zentaizou:
+            'したがって個人か不愉快か説明にしますて、ほかいっぱい無理矢理に云うているた所に実ぼんやりの今になるなし。翌日にも多分知れからしだなくたたて、せっかくけっして換えるて答弁はたった若いです事た。そうして同矛盾がぶらては得るたのたば、事にも、まあ私か分りから聴くれたですするれるませですとおくて、中学校もなると下さいますます。至極もうはもう状態といういますて、どこには当時上かも私の大腐敗もないなっくれますた。あなたは断然発展のはずが肝相当は聞きとおりらしいだたいなし、十三の自分をあいにく感じないという学習なと、だからその腹の中の生徒に聞いれるで、おれかをここの自分に記憶の使うからいるでしょのたたと使用きまって説明得るなりたな。',
+          nik: [
+            {
+              entpriid: 1,
+              riid: 100,
+              rekiid: 1,
+              id: 1,
+              intcode: 1,
+              kmkdaicode: 1,
+              kmkchucode: 1,
+              kmkname: '5:00-6:30',
+              yobi: 0,
+              stime: '05:00',
+              etime: '06:30',
+              bcolorcode: '#fbebd6',
+              fcolorcode: '#FF0000',
+            },
+            {
+              entpriid: 1,
+              riid: 100,
+              rekiid: 1,
+              id: 2,
+              intcode: 1,
+              kmkdaicode: 1,
+              kmkchucode: 1,
+              kmkname: '5:00-13:30',
+              yobi: 1,
+              stime: '05:00',
+              etime: '13:30',
+              bcolorcode: '#fbebd6',
+              fcolorcode: '#000',
+            },
+          ],
+        };
+
+        this.getWeekNikData(result.nik);
       }
     },
 
@@ -1570,14 +1625,13 @@ $middle: 48px;
   #calendarViewArea {
     width: 100%;
     overflow: auto;
-    height: 75vh;
     -ms-overflow-style: none;
     &::-webkit-scrollbar {
       display: none;
     }
     .calendar {
       width: 99.8%;
-      height: 540px;
+      height: 99%;
 
       foreignObject {
         font-size: 10px;
