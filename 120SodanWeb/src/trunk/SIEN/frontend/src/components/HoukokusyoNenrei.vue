@@ -494,11 +494,11 @@ export default {
       }
       deleteConnect('/MstNenreikoseiPtn', params, 'SIENT')
         .then((result) => {
-          if (result.okflg == true) {
+          if (result.status == sysConst.STATUS_OK) {
             this.setViewData();
             this.clrClicked();
           } else {
-            alert(result.msg);
+            alert(result.data.response.msg);
           }
         })
         .catch(function (error) {
@@ -534,11 +534,12 @@ export default {
         }
         postConnect('/MstNenreikoseiPtn', params, 'SIENT', body)
           .then((result) => {
-            if (result.okflg == true) {
+            console.log(result);
+            if (result.status == sysConst.STATUS_OK) {
               this.setViewData();
               this.clrClicked();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -558,11 +559,11 @@ export default {
         }
         putConnect('/MstNenreikoseiPtn', params, 'SIENT', body)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               this.setViewData();
               this.clrClicked();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -588,11 +589,11 @@ export default {
       }
       putConnect('/MstNenreikosei', params, 'SIENT', body)
         .then((result) => {
-          if (result.okflg == true) {
+          if (result.status == sysConst.STATUS_OK) {
             this.setViewData();
             this.clrClicked();
           } else {
-            alert(result.msg);
+            alert(result.data.response.msg);
           }
         })
         .catch(function (error) {

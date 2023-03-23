@@ -517,7 +517,6 @@ import sysConst from '@/utiles/const';
 import * as wjGrid from '@grapecity/wijmo.grid';
 import * as wijmo from '@grapecity/wijmo';
 import weekPlanSVG from '@/utiles/WeekPlanSVG.js';
-
 const KEIKAUREKI_URL = '/WeekKeikakureki'; // 計画履歴データ
 const MSTKMK_URL = '/MstWeekKmk'; // 週間計画項目一覧マスタ取得
 const SAISHINREKI_URL = '/weekKeikakuSaishinReki'; // 週間計画最新
@@ -757,10 +756,8 @@ export default {
       };
       putConnect(WEEKKEIKAKU_URL, params, FOLDER, body)
         .then((result) => {
-          if (result.okflg) {
-            alert('put okflg=>' + result.okflg);
-          } else {
-            alert(result.msg);
+          if (result.request.status == sysConst.STATUS_OK) {
+            alert(result.data.response.msg);
           }
         })
         .catch(function (e) {
@@ -837,12 +834,10 @@ export default {
           // データの更新
           putConnect(SYUKANKMK_URL, params2, FOLDER, body)
             .then((result) => {
-              if (result.okflg) {
-                alert('put okflg=>' + result.okflg);
+              if (result.request.status == sysConst.STATUS_OK) {
+                // console.log('put okflg=>' + result.request.status);
                 // データの再表示
                 _self.getWeekSaihinPlanData();
-              } else {
-                alert(result.msg);
               }
             })
             .catch(function (e) {
@@ -852,8 +847,9 @@ export default {
           // データの登録
           postConnect(SYUKANKMK_URL, params2, FOLDER, body)
             .then((result) => {
-              if (result.okflg) {
-                alert('post okflg=>' + result.okflg);
+              if (result.request.status == sysConst.STATUS_OK) {
+                console.log('post status=>' + result.request.status);
+                console.log(result.data.response.msg);
                 // データの再表示
                 _self.getWeekSaihinPlanData();
               }

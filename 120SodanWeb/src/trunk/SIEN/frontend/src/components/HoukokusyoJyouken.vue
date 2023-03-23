@@ -1121,10 +1121,10 @@ export default {
         }
         postConnect('/MstChohyo', params, 'SIENT', body)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               this.getChohyoData();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -1145,10 +1145,10 @@ export default {
         }
         putConnect('/MstChohyo', params, 'SIENT', body)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               this.getChohyoData();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -1174,11 +1174,11 @@ export default {
       }
       deleteConnect('/MstChohyo', params, 'SIENT')
         .then((result) => {
-          if (result.okflg == true) {
+          if (result.status == sysConst.STATUS_OK) {
             this.getChohyoData();
             this.clrClicked(0);
           } else {
-            alert(result.msg);
+            alert(result.data.response.msg);
           }
         })
         .catch(function (error) {

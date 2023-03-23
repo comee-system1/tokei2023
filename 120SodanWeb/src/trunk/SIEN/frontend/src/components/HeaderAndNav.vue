@@ -20,7 +20,7 @@
           <!-- 下に階層を持たないメニューの場合はクリックで遷移 -->
           <v-list-item
             v-if="!nav_list.lists"
-            :to="nav_list.link + queryParam"
+            :to="nav_list.link"
             :key="nav_list.name"
             class="nav-list-name"
           >
@@ -47,32 +47,34 @@
                 <v-img v-else :src="nav_list.src" />
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="text-subtitle-2 pl-2">{{
-                  nav_list.name
-                }}</v-list-item-title>
+                <v-list-item-title class="text-subtitle-2 pl-2">
+                  <u>{{ nav_list.name }}</u>
+                </v-list-item-title>
               </v-list-item-content>
             </template>
             <!-- 下の階層のメニュー -->
             <v-list-item
               v-for="(list, index) in nav_list.lists"
               :key="index"
-              :to="list.link + queryParam"
+              :to="list.link"
               class="pa-0 ma-0"
             >
               <v-list-item-content class="pa-2">
                 <v-list-item-title v-if="list.link">
-                  ・ {{ list.name }}
+                  ・ <u>{{ list.name }}</u>
                 </v-list-item-title>
-                <v-subheader disabled v-else>{{ list.name }}</v-subheader>
+                <v-subheader disabled v-else>({{ list.name }})</v-subheader>
 
                 <v-list-item
                   v-for="(sublist, subindex) in list.sublists"
                   :key="subindex"
-                  :to="sublist.link + queryParam"
+                  :to="sublist.link"
                   class="sublists pa-0 ma-0"
                 >
                   <v-list-item-content class="pa-2 pl-4">
-                    <v-list-item-title>・ {{ sublist.name }}</v-list-item-title>
+                    <v-list-item-title>
+                      ・<u> {{ sublist.name }}</u></v-list-item-title
+                    >
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-content>
@@ -160,7 +162,6 @@ import sysConst from '@/utiles/const';
 export default {
   data() {
     return {
-      queryParam: this.createQueryParam(), //'/?mngid=1234',
       drawer: true,
       isMaximize: false,
       jigyoName: '社会福祉法人東経会',
@@ -198,18 +199,22 @@ export default {
           mdi: true,
           src: 'mdi-chat-outline',
           lists: [
-            { name: '掲示板', link: '/TemporaryPage' },
-            { name: 'スケジュール', link: '/TemporaryPage' },
-            { name: '施設管理', link: '/TemporaryPage' },
-            { name: '利用者情報', link: '/TemporaryPage' },
-            { name: '固定情報', link: '/KoteiinfList' },
-            // {
-            //   name: '受付・対応登録',
-            //   link: '/UketukeTourokuParent',
-            // },
+            // { name: '掲示板', link: '/TemporaryPage' },
+            // { name: 'スケジュール', link: '/TemporaryPage' },
+            // { name: '施設管理', link: '/TemporaryPage' },
+            // { name: '利用者情報', link: '/TemporaryPage' },
+            { name: '利用者固定情報', link: '/KoteiinfList' },
             {
-              name: '相談対応日報・月報',
-              link: '/UketukeSanshoParent',
+              name: '受付・対応登録',
+              link: '/UketukeSanshoParent/0',
+            },
+            {
+              name: '日報参照',
+              link: '/UketukeSanshoParent/1',
+            },
+            {
+              name: '個人履歴参照',
+              link: '/KojinRireki/' + sysConst.JIGYO_KBN_NAME.KIHON,
             },
             {
               name: '集計表',
@@ -219,7 +224,11 @@ export default {
                   link: '/UketukeCheckList',
                 },
                 {
-                  name: '報告書',
+                  name: '月報参照',
+                  link: '/UketukeSanshoParent/2',
+                },
+                {
+                  name: '報告書参照',
                   link: '/SoudanHoukokusyo',
                 },
                 {
@@ -228,15 +237,6 @@ export default {
                 },
               ],
             },
-            {
-              name: '個人履歴参照',
-              link: '/KojinRireki/' + sysConst.JIGYO_KBN_NAME.KIHON,
-            },
-            {
-              name: '支援計画',
-              link: '/TemporaryPage',
-            },
-
             { name: 'マスタ', link: '/MstMenu' },
           ],
         },
@@ -246,7 +246,7 @@ export default {
           src: 'mdi-text-box-edit-outline',
           lists: [
             {
-              name: '相談受付',
+              name: '受付・対応登録',
               link: '/KeikakuUketukeIcrn/' + sysConst.JIGYO_KBN_NAME.KEIKAKU,
             },
             {
@@ -270,17 +270,17 @@ export default {
               link: '/TantoKaigi/' + sysConst.TANTOKAIGI_KBN_NAME.KEIKAKU,
             },
             {
-              name: '個人履歴',
+              name: '個人履歴参照',
               link: '/KeikakuKojinRireki/' + sysConst.JIGYO_KBN_NAME.KEIKAKU,
             },
             {
               name: '担当者別実績表',
               link: '/TantousyaBetuJisseki',
             },
-            {
-              name: '加算用記録表',
-              link: '/TemporaryPage',
-            },
+            // {
+            //   name: '加算用記録表',
+            //   link: '/TemporaryPage',
+            // },
             { name: 'マスタ', link: '/MstMenu' },
           ],
         },
@@ -290,19 +290,19 @@ export default {
           src: 'mdi-home-edit-outline',
           lists: [
             {
-              name: '相談受付',
+              name: '受付・対応登録',
               link: '/ChiikiUketukeIcrn/' + sysConst.JIGYO_KBN_NAME.CHIIKI,
             },
-            {
-              name: '地域移行予定・実績一覧',
-              link: '/TemporaryPage',
-            },
+            // {
+            //   name: '地域移行予定・実績一覧',
+            //   link: '/TemporaryPage',
+            // },
             {
               name: 'アセスメント',
               link: '/TemporaryPage',
             },
             {
-              name: '地域移行支援計画',
+              name: '地域移行支援計画作成',
               link: '/ChiikiIkoSienKeikaku',
             },
             {
@@ -310,16 +310,36 @@ export default {
               link: '/TantoKaigi/' + sysConst.TANTOKAIGI_KBN_NAME.CHIIKI,
             },
             {
-              name: '地域定着台帳',
+              name: '地域定着支援台帳',
               link: '/ChiikiteityakuDaicho',
             },
             {
-              name: '個人履歴',
+              name: '個人履歴参照',
               link: '/ChiikiKojinRireki/' + sysConst.JIGYO_KBN_NAME.CHIIKI,
             },
             {
               name: 'マスタ',
               sublists: [
+                {
+                  name: '支援項目マスタ',
+                  link: '/TemporaryPage',
+                },
+                {
+                  name: '相談方法マスタ',
+                  link: '/TemporaryPage',
+                },
+                {
+                  name: '関係マスタ',
+                  link: '/TemporaryPage',
+                },
+                {
+                  name: '委託先マスタ',
+                  link: '/TemporaryPage',
+                },
+                {
+                  name: 'アセスメント関連マスタ',
+                  link: '/TemporaryPage',
+                },
                 {
                   name: '地域定着台帳様式設定',
                   link: '/ChiikiteityakuDaichoMst',
@@ -389,14 +409,6 @@ export default {
         document.body.style.zoom = 1.5;
       }
     },
-    createQueryParam() {
-      let uniqid = '/3';
-      if (this.$route.query.mngid) {
-        return uniqid + '/?mngid=' + this.$route.query.mngid;
-      } else {
-        return uniqid + '/?mngid=1234';
-      }
-    },
     printExec() {
       // イベントバスを this.$router.app として、イベントをスロー
       this.$router.app.$emit('print_event_global');
@@ -444,7 +456,6 @@ div#headerAndNav {
     color: $font_color;
     font-size: 14px;
     font-family: 'メイリオ';
-    font-weight: bold;
     height: 20px;
   }
   // .v-list .v-list-item--active .v-list-item__title {
