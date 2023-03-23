@@ -1,0 +1,1845 @@
+<template>
+  <div id="keikakuWeek">
+    <v-container class="ml-1 pa-0" style="max-width: 100%">
+      <v-row no-gutters>
+        <!-- <v-col :style="{ 'max-width': leftWidth }">
+          <user-list
+            ref="user_list"
+            :dispHideBar="false"
+            @child-select="setUserSelectPoint"
+          >
+          </user-list>
+        </v-col> -->
+        <v-col :style="{ 'max-width': rightWidth }" class="pr-1">
+          <v-row no-gutters class="mt-1">
+            <v-card class="d-flex justify-start" flat tile>
+              <v-card
+                outlined
+                tile
+                width="60"
+                class="text-center label text-caption"
+              >
+                利用者名
+              </v-card>
+              <v-card
+                width="200"
+                class="ml-1 text-caption lightYellow"
+                elevation="0"
+                outlined
+                tile
+              >
+                {{ userName }}
+              </v-card>
+              <v-card
+                outlined
+                tile
+                width="60"
+                class="ml-1 text-center label text-caption"
+              >
+                作成日
+              </v-card>
+              <v-card
+                width="100"
+                class="ml-1 text-center text-caption lightYellow"
+                elevation="0"
+                outlined
+                tile
+              >
+                2022年4月22日
+              </v-card>
+
+              <v-card
+                outlined
+                tile
+                width="120"
+                class="ml-1 text-center label text-caption"
+              >
+                週間計画開始年月
+              </v-card>
+              <v-btn
+                x-small
+                @click="inputCalendarClick(0)"
+                tile
+                outlined
+                width="140px"
+                height="24px"
+                class="text-caption ml-1"
+                >{{ getYm }}
+                <div class="float-right">
+                  <v-icon small>mdi-calendar-month</v-icon>
+                </div>
+              </v-btn>
+            </v-card>
+          </v-row>
+          <v-row no-gutters>
+            <v-col cols="6">
+              <v-tabs
+                height="25"
+                v-model="inputTypemodel"
+                class="mt-2"
+                @change="inputTypeChange"
+              >
+                <v-tab
+                  class="text-caption"
+                  v-for="value in inputType"
+                  :key="value.key"
+                  style="height: 25px"
+                >
+                  {{ value.value }}</v-tab
+                >
+              </v-tabs>
+            </v-col>
+            <v-col cols="6" class="text-end pr-1">
+              <v-btn-toggle tile>
+                <v-btn small>前回コピー</v-btn>
+                <v-btn small>履歴参照</v-btn>
+              </v-btn-toggle>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col :cols="gridMain">
+              <wj-flex-grid
+                id="keikakuWeekGrid"
+                :selectionMode="'4'"
+                :headersVisibility="'Column'"
+                :alternatingRowStep="0"
+                :autoGenerateColumns="false"
+                :allowDragging="false"
+                :allowResizing="false"
+                :allowSorting="false"
+                :allowMerging="'None'"
+                :isReadOnly="true"
+                :showBandedRows="false"
+                :initialized="onInitialize"
+                :itemsSourceChanged="onInitializeItemChanged"
+                :itemsSource="viewdata"
+                :style="styles"
+              >
+                <wj-flex-grid-column
+                  :header="' '"
+                  binding="times"
+                  align="center"
+                  valign="middle"
+                  :width="80"
+                  :isReadOnly="true"
+                ></wj-flex-grid-column>
+                <wj-flex-grid-column
+                  v-for="val in weekarray"
+                  :key="val.header"
+                  :header="val.header"
+                  :binding="val.binding"
+                  align="center"
+                  valign="middle"
+                  format="g"
+                  width="2*"
+                  :wordWrap="true"
+                  :isReadOnly="true"
+                  :multiLine="true"
+                ></wj-flex-grid-column>
+              </wj-flex-grid>
+            </v-col>
+            <v-col :cols="gridSub" class="pl-1">
+              <div v-if="inputTypemodel == 1">
+                <v-card
+                  outlined
+                  tile
+                  :style="{ height: textareaHeight }"
+                  class="ohidden"
+                >
+                  <v-toolbar
+                    flat
+                    color="primary"
+                    dark
+                    elevation="0"
+                    height="20"
+                    tile
+                  >
+                    <v-toolbar-title class="text-caption">{{
+                      mainActiveTitle
+                    }}</v-toolbar-title>
+                  </v-toolbar>
+                  <div class="pa-1 textarea" @click="onEditTextDialog(1)">
+                    {{ mainActiveText }}
+                  </div>
+                </v-card>
+                <v-card
+                  outlined
+                  tile
+                  class="mt-1 ohidden"
+                  :style="{ height: textareaHeight }"
+                >
+                  <v-toolbar
+                    flat
+                    color="primary"
+                    dark
+                    elevation="0"
+                    height="20"
+                    tile
+                  >
+                    <v-toolbar-title class="text-center text-caption">
+                      {{ weekActiveTitle }}
+                    </v-toolbar-title>
+                  </v-toolbar>
+                  <div class="pa-1 textarea" @click="onEditTextDialog(2)">
+                    {{ weekActiveText }}
+                  </div>
+                </v-card>
+              </div>
+              <div v-if="inputTypemodel == 0">
+                <wj-flex-grid
+                  id="keikakuItemGrid"
+                  :selectionMode="3"
+                  :headersVisibility="1"
+                  :alternatingRowStep="0"
+                  :autoGenerateColumns="false"
+                  :allowResizing="false"
+                  :allowDragging="false"
+                  :allowSorting="false"
+                  :showBandedRows="false"
+                  :initialized="onInitializeItem"
+                  :itemsSourceChanged="onInitializeItemChanged"
+                  :itemsSource="itemdata"
+                >
+                  <wj-flex-grid-column
+                    :header="'日常生活'"
+                    binding="every"
+                    align="center"
+                    :isReadOnly="true"
+                    width="*"
+                  ></wj-flex-grid-column>
+                </wj-flex-grid>
+                <wj-flex-grid
+                  id="keikakuServiceGrid"
+                  :selectionMode="3"
+                  :headersVisibility="1"
+                  :alternatingRowStep="0"
+                  :autoGenerateColumns="false"
+                  :allowResizing="false"
+                  :allowDragging="false"
+                  :allowSorting="false"
+                  :showBandedRows="false"
+                  :initialized="onInitializeServiceItem"
+                  :itemsSourceChanged="onInitializeItemChanged"
+                  :itemsSource="servicedata"
+                >
+                  <wj-flex-grid-column
+                    :header="'福祉サービス'"
+                    binding="service"
+                    align="center"
+                    :isReadOnly="true"
+                    width="*"
+                  ></wj-flex-grid-column>
+                </wj-flex-grid>
+              </div>
+            </v-col>
+            <div v-if="inputTypemodel == 1" style="width: 100%">
+              <v-card class="d-flex justify-start" flat tile>
+                <v-card
+                  outlined
+                  tile
+                  width="100"
+                  height="80"
+                  class="text-center label text-caption textarea"
+                  color="primary"
+                  dark
+                >
+                  {{ weekActiveServiceTitle }}
+                </v-card>
+                <v-card
+                  width="100%"
+                  height="80"
+                  class="ml-1 text-caption textarea"
+                  elevation="0"
+                  outlined
+                  tile
+                  @click="onEditTextDialog(3)"
+                >
+                  {{ weekActiveServiceText }}
+                </v-card>
+              </v-card>
+            </div>
+
+            <v-row dense class="ma-2" justify="space-between">
+              <v-col cols="4">
+                <v-btn small>削除</v-btn>
+              </v-col>
+              <v-col cols="7">
+                <v-card class="d-flex justify-end" flat tile>
+                  <v-card
+                    outlined
+                    tile
+                    width="60"
+                    class="text-center text-caption label pt-1"
+                    >完了
+                  </v-card>
+                  <v-card elevation="0" width="30" class="text-center mt-1">
+                    <input type="checkbox" />
+                  </v-card>
+                  <v-card
+                    class="lightYellow pl-1 pt-1 ml-1"
+                    width="140"
+                    outlined
+                    tile
+                  >
+                    竹下道子
+                  </v-card>
+                  <v-btn small class="ml-3" @click="ideaIkouKadaiRegist"
+                    >登録</v-btn
+                  >
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!-- ダイアログエリア -->
+
+    <v-dialog
+      v-model="datepicker_dialog"
+      width="200"
+      class="datepicker_dialogs"
+    >
+      <v-date-picker
+        id="keikakuWeekDatepicker"
+        v-model="picker"
+        locale="jp-ja"
+        :day-format="(date) => new Date(date).getDate()"
+        @change="monthSelectWeek"
+      >
+      </v-date-picker>
+    </v-dialog>
+
+    <v-dialog
+      v-model="editTextDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="editTextDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="editTextSave"> 仮設定 </v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-textarea
+          outlined
+          v-model="dialogText"
+          :style="textstyles"
+          class="editTextarea"
+          hide-details="false"
+        >
+        </v-textarea>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+
+<script>
+import moment from 'moment';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ja';
+import * as wjGrid from '@grapecity/wijmo.grid';
+// import UserList from './UserList.vue';
+//import * as wjcCore from '@grapecity/wijmo';
+export default {
+  props: {
+    dispHideBar: Boolean,
+  },
+  // components: {
+  //   UserList,
+  // },
+  data() {
+    return {
+      dialogTitle: '',
+      dialogText: '',
+      notekey: 0,
+      editTextDialog: false,
+      onflexGrid: '',
+      onItemGrid: '',
+      onServiceGrid: '',
+      rowCount: 0,
+      leftWidth: '280px',
+      rightWidth: '80%',
+      gridMain: 10,
+      gridSub: 2,
+      moveLeft: true,
+      datepicker_dialog: false,
+      picker: '',
+      getYm:
+        moment().format('YYYY') +
+        '年' +
+        moment().format('MM') +
+        '月' +
+        moment().format('DD') +
+        '日',
+      keikakuKubun: [
+        { id: 0, name: 'サービス等利用計画' },
+        { id: 1, name: 'サービス等利用計画2' },
+      ],
+      inputType: [
+        {
+          key: 1,
+          value: '週間予定',
+        },
+        {
+          key: 2,
+          value: '主な日常生活等',
+        },
+      ],
+      inputTypemodel: 0, // 0: 週間予定 1: 主な日常生活
+      keikakuKubunModel: '',
+      viewdata: [],
+      viewdataAll: [],
+      settingData: [],
+
+      weekarray: [
+        {
+          key: 1,
+          header: '月',
+          binding: 'monday1',
+          groupKey: 0,
+        },
+        {
+          key: 2,
+          binding: 'monday2',
+          groupKey: 0,
+        },
+        {
+          key: 3,
+          header: '火',
+          binding: 'thuseday1',
+          groupKey: 1,
+        },
+        {
+          key: 4,
+          binding: 'thuseday2',
+          groupKey: 1,
+        },
+        {
+          key: 5,
+          header: '水',
+          binding: 'wednesday1',
+          groupKey: 2,
+        },
+        {
+          key: 6,
+          binding: 'wednesday2',
+          groupKey: 2,
+        },
+        {
+          key: 7,
+          header: '木',
+          binding: 'thursday1',
+          groupKey: 3,
+        },
+        {
+          key: 8,
+          binding: 'thursday2',
+          groupKey: 3,
+        },
+        {
+          key: 9,
+          header: '金',
+          binding: 'friday1',
+          groupKey: 4,
+        },
+        {
+          key: 10,
+          binding: 'friday2',
+          groupKey: 4,
+        },
+        {
+          key: 11,
+          header: '土',
+          binding: 'saturday1',
+          groupKey: 5,
+        },
+        {
+          key: 12,
+          binding: 'saturday2',
+          groupKey: 5,
+        },
+        {
+          key: 13,
+          header: '日・祝',
+          binding: 'sunday1',
+          groupKey: 6,
+        },
+        {
+          key: 14,
+          binding: 'sunday2',
+          groupKey: 6,
+        },
+      ],
+      rowTime: [],
+      timeline: [],
+      everySelected: 0,
+      itemdata: [],
+      servicedata: [],
+      ranges: [],
+      headerheight: 240,
+      textareaHeight: '',
+      draggedFlag: false, // gridをクリックしてdragしている情報を保持する
+      position: [],
+      mainActiveTitle: '',
+      mainActiveText: '', // 主な日常生活の活動データ
+      weekActiveTitle: '',
+      weekActiveText: '', // 週単位以外のサービス
+      weekActiveServiceTitle: '',
+      weekActiveServiceText: '',
+      userName: '',
+      wpos: [
+        // 月曜日
+        {
+          key: 0,
+          left: 1,
+          right: 2,
+        },
+        // 火曜日
+        {
+          key: 1,
+          left: 3,
+          right: 4,
+        },
+        // 水曜日
+        {
+          key: 2,
+          left: 5,
+          right: 6,
+        },
+        // 木曜日
+        {
+          key: 3,
+          left: 7,
+          right: 8,
+        },
+        // 金曜日
+        {
+          key: 4,
+          left: 9,
+          right: 10,
+        },
+        // 土曜日
+        {
+          key: 5,
+          left: 11,
+          right: 12,
+        },
+        // 日曜日
+        {
+          key: 6,
+          left: 13,
+          right: 14,
+        },
+      ],
+      newIntcode: 1,
+      headerRanges: [
+        new wjGrid.CellRange(0, 1, 0, 2),
+        new wjGrid.CellRange(0, 3, 0, 4),
+        new wjGrid.CellRange(0, 5, 0, 6),
+        new wjGrid.CellRange(0, 7, 0, 8),
+        new wjGrid.CellRange(0, 9, 0, 10),
+        new wjGrid.CellRange(0, 11, 0, 12),
+        new wjGrid.CellRange(0, 13, 0, 14),
+      ],
+      columnYoubiMap: [-1, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6],
+    };
+  },
+  created() {},
+  mounted() {
+    // this._makeDragSource(this.onflexGrid);
+    window.addEventListener('resize', this.calculateWindowHeight);
+
+    this.mainActiveTitle = '主な日常生活の活動';
+    // 主な日常生活の活動データ
+    this.mainActiveText =
+      '私はじっと話のものがお発表もするといるですんななけれて、一一の衣食にさっそく這入っうとして使用ますが、実はこの人心の他人が立つれると、ここかをあなたの時代の話からするでいです事なけれんと話云って安心なる来ませた。自分とまた大森さんをそうしてまだ挙げないんんなけれた。ネルソンさんはなぜ人々にやりているなものならますなく。（それでも人を濁しためたでますばたいは間違っですうて、）こう怠けだろ周囲で、文部省の警視総監くらいしゃべっとなさるという、お茶の尊重も結果のうちだってし見るので弱らでて記憶方あって行くありという小自力ないのない。';
+    this.weekActiveTitle = '週単位以外のサービス';
+    this.weekActiveText = '相談支援事業所とサークルや教室を見学予定';
+
+    this.weekActiveServiceTitle = 'サービス提供によって実現する生活の全体像';
+    this.weekActiveServiceText =
+      '・本人の描いている「テレビドラマの主人公のような強くて明るい生活」をそのまま支援目標としたことで、本人の生活意欲や本人の望む生活の具体的内容を共有していく\n・本人の生活(行動範囲)の広がりがみられてきており、編み物等の趣味への意欲につながってきている。半面、加齢による体力的な低下も現れているため、定期的なモニタリングが必要';
+  },
+  computed: {
+    styles() {
+      // ブラウザの高さ
+      return {
+        '--height': window.innerHeight - this.headerheight + 'px',
+      };
+    },
+    textstyles() {
+      return {
+        minHeight: '100vh',
+      };
+    },
+  },
+  methods: {
+    calculateWindowHeight() {
+      if (document.getElementById('keikakuWeekGrid') != null) {
+        document.getElementById('keikakuWeekGrid').style.height =
+          window.innerHeight - this.headerheight + 'px';
+
+        let ht = document.getElementById('keikakuWeekGrid').style.height;
+        this.textareaHeight = parseInt(ht.replace(/[^0-9]/g, '') / 2) + 'px';
+      }
+    },
+    editTextSave() {
+      if (this.notekey == 1) {
+        this.mainActiveText = this.dialogText;
+      }
+      if (this.notekey == 2) {
+        this.weekActiveText = this.dialogText;
+      }
+      if (this.notekey == 3) {
+        this.weekActiveServiceText = this.dialogText;
+      }
+      this.editTextDialog = false;
+    },
+    onEditTextDialog(type) {
+      this.notekey = type;
+      if (type == 1) {
+        this.dialogTitle = this.mainActiveTitle;
+        this.dialogText = this.mainActiveText;
+      }
+      if (type == 2) {
+        this.dialogTitle = this.weekActiveTitle;
+        this.dialogText = this.weekActiveText;
+      }
+      if (type == 3) {
+        this.dialogTitle = this.weekActiveServiceTitle;
+        this.dialogText = this.weekActiveServiceText;
+      }
+
+      this.editTextDialog = true;
+    },
+    /*********************************
+     * 登録ボタン
+     */
+    ideaIkouKadaiRegist() {
+      alert('regist');
+    },
+    /*************************
+     * 週間予定・主な日常生活等切替タブ
+     */
+    inputTypeChange() {
+      if (this.inputTypemodel == 0) {
+        this.gridMain = 10;
+        this.gridSub = 2;
+        this.headerheight = 180;
+        this.textareaHeight = '';
+      }
+      if (this.inputTypemodel == 1) {
+        this.gridMain = 9;
+        this.gridSub = 3;
+        this.headerheight = 300;
+      }
+      this.calculateWindowHeight();
+    },
+    /******************************
+     * グリッドのドラックドロップ
+     */
+    _makeDragSource(s) {
+      s.addEventListener(
+        s.hostElement,
+        'mousedown',
+        (e) => {
+          // 右側の日常生活を押下時のみ有効
+          if (this.everySelected != 0) {
+            let ht = this.onflexGrid.hitTest(e);
+            this.draggedFlag = true;
+            this.position.down = { col: ht.col, row: ht.row };
+          }
+        },
+        true
+      );
+      s.addEventListener(
+        s.hostElement,
+        'mouseup',
+        (e) => {
+          if (this.everySelected != 0) {
+            let ht = this.onflexGrid.hitTest(e);
+            this.position.up = { col: ht.col, row: ht.row };
+            let downcol = this.position.down.col;
+            let downrow = this.position.down.row;
+            let upcol = this.position.up.col;
+            let uprow = this.position.up.row;
+            if (upcol < downcol) {
+              downcol = this.position.up.col;
+              upcol = this.position.down.col;
+            }
+            if (uprow < downrow) {
+              downrow = this.position.up.row;
+              uprow = this.position.down.row;
+            }
+
+            let setting = [];
+            // データを全部登録
+            setting = this.settingData.slice();
+            let stime = '';
+            let etime = '';
+            // ドラッグが無しのとき
+            let target = '';
+            if (uprow == downrow && upcol == downcol) {
+              // クリックしたweek
+              target = this.wpos.find(
+                (v) => v.left === upcol || v.right === upcol
+              );
+              stime = this.rowTime[uprow].time;
+              // 30分のときは次の時刻
+              etime =
+                stime.toString().slice(-2) == '30'
+                  ? stime - 30 + 100
+                  : stime + 30;
+              setting.push({
+                uniq: setting.length + 1,
+                stime: stime,
+                etime: etime,
+                week: target.key,
+                data: this.everySelected,
+              });
+            }
+
+            if (uprow != downrow || upcol != downcol) {
+              //alert(downrow);
+              //alert(uprow);
+              for (let r = downrow; r <= uprow; r++) {
+                for (let c = downcol; c <= upcol; c++) {
+                  target = this.wpos.find((v) => v.left === c || v.right === c);
+                  //console.log(i);
+                  stime = this.rowTime[r].time;
+                  // 30分のときは次の時刻
+                  etime =
+                    stime.toString().slice(-2) == '30'
+                      ? stime - 30 + 100
+                      : stime + 30;
+                  setting.push({
+                    uniq: setting.length + r,
+                    stime: stime,
+                    etime: etime,
+                    week: target.key,
+                    data: this.everySelected,
+                  });
+                }
+              }
+            }
+
+            this.settingData = this.sameDataAbbr(setting);
+
+            this.createData();
+            this.createRanges();
+            this.createMerge(this.onflexGrid);
+
+            this.draggedFlag = false;
+          }
+        },
+        true
+      );
+    },
+
+    /****************
+     * ユーザー一覧を押下
+     */
+    setUserSelectPoint(row) {
+      this.userName = row.names;
+    },
+    dataSetted() {
+      let item = [];
+      item.push(
+        {
+          id: 1,
+          every: '起床',
+        },
+        {
+          id: 2,
+          every: '就寝',
+        },
+        {
+          id: 3,
+          every: '洗顔・歯磨き',
+        },
+        {
+          id: 4,
+          every: '朝食',
+        },
+        {
+          id: 5,
+          every: '昼食',
+        },
+        {
+          id: 6,
+          every: '夕食',
+        },
+        {
+          id: 7,
+          every: 'おやつ',
+        },
+        {
+          id: 8,
+          every: '入浴',
+        },
+        {
+          id: 9,
+          every: 'テレビを観る',
+        }
+      );
+      this.itemdata = item;
+
+      let servicedata = [];
+      servicedata.push(
+        {
+          id: 1,
+          service: 'ヘルパー',
+        },
+        {
+          id: 2,
+          service: '生活サポート',
+        },
+        {
+          id: 3,
+          service: '地域活動支援センター',
+        },
+        {
+          id: 4,
+          service: '生活介護',
+        },
+        {
+          id: 5,
+          service: '就労移行支援',
+        }
+      );
+      this.servicedata = servicedata;
+    },
+    /******************
+     * 同じデータを省略
+     * 重複データを削除、削除データの重複をまとめて、表示用配列に加える
+     *******************/
+    sameDataAbbr(data) {
+      let same = [];
+      let deletekey = [];
+      let checkData = data.slice();
+      // 同じデータの確認
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < checkData.length; j++) {
+          if (
+            data[i].uniq != checkData[j].uniq &&
+            data[i].stime == checkData[j].stime &&
+            data[i].etime == checkData[j].etime &&
+            data[i].week == checkData[j].week &&
+            data[i].data == checkData[j].data
+          ) {
+            // 共通のデータ
+            same.push(data[i]);
+            // データ削除用のキー
+            deletekey.push(i);
+          }
+        }
+      }
+      for (let d = 0; d < deletekey.length; d++) {
+        data[deletekey[d]] = '';
+      }
+      data = data.filter(Boolean);
+
+      // 重複データを一つにまとめる
+      let dataFiltered = same.filter(
+        (element, index, self) =>
+          self.findIndex(
+            (dataElement) =>
+              dataElement.stime === element.stime &&
+              dataElement.etime === element.etime &&
+              dataElement.week === element.week &&
+              dataElement.data === element.data
+          ) === index
+      );
+      let concat = dataFiltered.concat(data);
+
+      return concat;
+    },
+    createData() {
+      let setting = this.settingData;
+      let timeline = [];
+      let minute = [0, 30];
+      for (let t = 4; t <= 22; t++) {
+        for (let m = 0; m <= 1; m++) {
+          let time =
+            this.getdoubleDigestNumer(t).toString() +
+            this.getdoubleDigestNumer(minute[m]).toString();
+          timeline.push(time);
+        }
+      }
+      this.timeline = timeline;
+
+      // 指定の時間内の件数をカウント
+      // cnt:1→left
+      // cnt:2→right
+      // cnt:0→both
+      let cnt = 0;
+      for (let i = 0; i < setting.length; i++) {
+        let stime = setting[i].stime;
+        let etime = setting[i].etime;
+        let week = setting[i].week;
+        let uniq = setting[i].uniq;
+
+        for (let j = 0; j < setting.length; j++) {
+          if (uniq != setting[j].uniq && week == setting[j].week) {
+            if (!(stime >= setting[j].etime || etime <= setting[j].stime)) {
+              cnt++;
+            }
+          }
+        }
+        setting[i].cnt = cnt;
+        if (cnt == 2) {
+          cnt = 0;
+        }
+      }
+
+      // 時間別のrow表示位置
+      let rowTime = [];
+      for (let r = 0; r < this.timeline.length; r++) {
+        rowTime.push({
+          time: parseInt(this.timeline[r]),
+          r: r,
+        });
+      }
+      this.rowTime = rowTime;
+
+      // データにマージ用の値を登録
+      setting = this.settingMargePoint(setting);
+      this.settingData = setting;
+    },
+    // 数値2桁
+    getdoubleDigestNumer(number) {
+      return ('0' + number).slice(-2);
+    },
+    settingMargePoint(data) {
+      let array = [];
+      let rowTime = this.rowTime;
+      for (let i = 0; i < data.length; i++) {
+        let sr = 0;
+        let er = 0;
+        // 時間ごとに表示行の調整
+        for (let t = 0; t < rowTime.length; t++) {
+          if (data[i] && data[i].stime == rowTime[t].time) {
+            sr = rowTime[t].r;
+          }
+          if (data[i] && data[i].etime == rowTime[t].time) {
+            er = rowTime[t].r - 1;
+          }
+        }
+        array[i] = data[i];
+        array[i]['strow'] = sr;
+        array[i]['edrow'] = er;
+        if (data[i].cnt == 1) {
+          // 左側
+          array[i]['stcol'] = this.wpos[data[i].week].left;
+          array[i]['edcol'] = this.wpos[data[i].week].left;
+        } else if (data[i].cnt == 2) {
+          // 右側
+          array[i]['stcol'] = this.wpos[data[i].week].right;
+          array[i]['edcol'] = this.wpos[data[i].week].right;
+        } else {
+          // 両方
+          array[i]['stcol'] = this.wpos[data[i].week].left;
+          array[i]['edcol'] = this.wpos[data[i].week].right;
+        }
+      }
+      return array;
+    },
+    /********************
+     * 日常生活
+     *************/
+    onInitializeItem(flexGrid) {
+      let _self = this;
+      this.onItemGrid = flexGrid;
+      flexGrid.hostElement.addEventListener('click', function (e) {
+        let ht = flexGrid.hitTest(e);
+        if (ht.cellType == wjGrid.CellType.Cell) {
+          _self.everySelected = _self.itemdata[ht.row];
+          _self.onServiceGrid.select(-1, -1);
+        }
+      });
+    },
+    /********************
+     * 福祉サービス
+     *************/
+    onInitializeServiceItem(flexGrid) {
+      let _self = this;
+      this.onServiceGrid = flexGrid;
+      flexGrid.hostElement.addEventListener('click', function (e) {
+        let ht = flexGrid.hitTest(e);
+        if (ht.cellType == wjGrid.CellType.Cell) {
+          _self.everySelected = _self.servicedata[ht.row];
+          _self.onItemGrid.select(-1, -1);
+        }
+      });
+    },
+    onInitializeItemChanged(flexGrid) {
+      flexGrid.selection = new wjGrid.CellRange(-1, -1, -1, -1);
+      /*
+      let tooltip = new wjcCore.Tooltip();
+      let _self = this;
+      let bind = '';
+
+      flexGrid.formatItem.addHandler(function (s, e) {
+        if (e.panel == flexGrid.cells) {
+          if (_self.weekarray[e.col - 1]) {
+            bind =
+              e.panel.rows[e.row].dataItem[_self.weekarray[e.col - 1].binding];
+          }
+          tooltip.setTooltip(e.cell, bind);
+        }
+      });
+      */
+      if (flexGrid.hostElement.id == 'keikakuWeekGrid') {
+        //
+        // マージ処理
+        //
+        let mm = new wjGrid.MergeManager();
+        let ranges = [
+          new wjGrid.CellRange(0, 0, 1, 0),
+          new wjGrid.CellRange(2, 0, 5, 0),
+          new wjGrid.CellRange(6, 0, 9, 0),
+          new wjGrid.CellRange(10, 0, 13, 0),
+          new wjGrid.CellRange(14, 0, 17, 0),
+          new wjGrid.CellRange(18, 0, 21, 0),
+          new wjGrid.CellRange(22, 0, 25, 0),
+          new wjGrid.CellRange(26, 0, 29, 0),
+          new wjGrid.CellRange(30, 0, 33, 0),
+          new wjGrid.CellRange(34, 0, 37, 0),
+        ];
+        let rowitem;
+
+        for (let col = 1; col < flexGrid.cells.columns.length; col = col + 2) {
+          let startrow = -1;
+          let tmpIntcode = 0;
+          for (let row = 0; row < flexGrid.cells.rows.length; row++) {
+            rowitem = flexGrid.itemsSource[row];
+            //マージのパターン
+            //１：左右どちらも空白
+            //２：左右のintcodeが同じ
+            //３：２＋下の行の左右のintcodeが同じ
+            if (startrow >= 0) {
+              // パターン３
+              if (
+                (col == 1 &&
+                  rowitem.mondayObj1 == null &&
+                  rowitem.mondayObj2 == null) ||
+                (col == 3 &&
+                  rowitem.thusedayObj1 == null &&
+                  rowitem.thusedayObj2 == null) ||
+                (col == 5 &&
+                  rowitem.wednesdayObj1 == null &&
+                  rowitem.wednesdayObj2 == null) ||
+                (col == 7 &&
+                  rowitem.thursdayObj1 == null &&
+                  rowitem.thursdayObj2 == null) ||
+                (col == 9 &&
+                  rowitem.fridayObj1 == null &&
+                  rowitem.fridayObj2 == null) ||
+                (col == 11 &&
+                  rowitem.saturdayObj1 == null &&
+                  rowitem.saturdayObj2 == null) ||
+                (col == 13 &&
+                  rowitem.sundayObj1 == null &&
+                  rowitem.sundayObj2 == null) ||
+                (col == 1 &&
+                  rowitem.mondayObj1 != null &&
+                  (rowitem.mondayObj1.Intcode != rowitem.mondayObj2.Intcode ||
+                    rowitem.mondayObj1.Intcode != tmpIntcode)) ||
+                (col == 3 &&
+                  rowitem.thusedayObj1 != null &&
+                  (rowitem.thusedayObj1.Intcode !=
+                    rowitem.thusedayObj1.Intcode ||
+                    rowitem.thusedayObj1.Intcode != tmpIntcode)) ||
+                (col == 5 &&
+                  rowitem.wednesdayObj1 != null &&
+                  (rowitem.wednesdayObj1.Intcode !=
+                    rowitem.wednesdayObj2.Intcode ||
+                    rowitem.wednesdayObj1.Intcode != tmpIntcode)) ||
+                (col == 7 &&
+                  rowitem.thursdayObj1 != null &&
+                  (rowitem.thursdayObj1.Intcode !=
+                    rowitem.thursdayObj2.Intcode ||
+                    rowitem.thursdayObj1.Intcode != tmpIntcode)) ||
+                (col == 9 &&
+                  rowitem.fridayObj1 != null &&
+                  (rowitem.fridayObj1.Intcode != rowitem.fridayObj2.Intcode ||
+                    rowitem.fridayObj1.Intcode != tmpIntcode)) ||
+                (col == 11 &&
+                  rowitem.saturdayObj1 != null &&
+                  (rowitem.saturdayObj1.Intcode !=
+                    rowitem.saturdayObj2.Intcode ||
+                    rowitem.saturdayObj1.Intcode != tmpIntcode)) ||
+                (col == 13 &&
+                  rowitem.sundayObj1 != null &&
+                  (rowitem.sundayObj1.Intcode != rowitem.sundayObj2.Intcode ||
+                    rowitem.sundayObj1.Intcode != tmpIntcode))
+              ) {
+                ranges.push(
+                  new wjGrid.CellRange(startrow, col, row - 1, col + 1)
+                );
+                startrow = -1;
+              }
+            }
+
+            // 空の場合は曜日の２列目とマージ（パターン１）
+            if (
+              (col == 1 && rowitem.monday1 == '' && rowitem.monday2 == '') ||
+              (col == 3 &&
+                rowitem.thuseday1 == '' &&
+                rowitem.thuseday2 == '') ||
+              (col == 5 &&
+                rowitem.wednesday1 == '' &&
+                rowitem.wednesday2 == '') ||
+              (col == 7 &&
+                rowitem.thursday1 == '' &&
+                rowitem.thursday2 == '') ||
+              (col == 9 && rowitem.friday1 == '' && rowitem.friday2 == '') ||
+              (col == 11 &&
+                rowitem.saturday1 == '' &&
+                rowitem.saturday2 == '') ||
+              (col == 13 && rowitem.sunday1 == '' && rowitem.sunday2 == '')
+            ) {
+              ranges.push(new wjGrid.CellRange(row, col, row, col + 1));
+              continue;
+            } else if (
+              // ↓パターン２
+              col == 1 &&
+              rowitem.mondayObj1.Intcode != tmpIntcode &&
+              rowitem.mondayObj2 != null &&
+              rowitem.mondayObj1.Intcode == rowitem.mondayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.mondayObj1.Intcode;
+            } else if (
+              col == 3 &&
+              rowitem.thusedayObj1.Intcode != tmpIntcode &&
+              rowitem.thusedayObj2 != null &&
+              rowitem.thusedayObj1.Intcode == rowitem.thusedayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.thusedayObj1.Intcode;
+            } else if (
+              col == 5 &&
+              rowitem.wednesdayObj1.Intcode != tmpIntcode &&
+              rowitem.wednesdayObj2 != null &&
+              rowitem.wednesdayObj1.Intcode == rowitem.wednesdayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.wednesdayObj1.Intcode;
+            } else if (
+              col == 7 &&
+              rowitem.thursdayObj1.Intcode != tmpIntcode &&
+              rowitem.thursdayObj2 != null &&
+              rowitem.thursdayObj1.Intcode == rowitem.thursdayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.thursdayObj1.Intcode;
+            } else if (
+              col == 9 &&
+              rowitem.fridayObj1.Intcode != tmpIntcode &&
+              rowitem.fridayObj2 != null &&
+              rowitem.fridayObj1.Intcode == rowitem.fridayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.fridayObj1.Intcode;
+            } else if (
+              col == 11 &&
+              rowitem.saturdayObj1.Intcode != tmpIntcode &&
+              rowitem.saturdayObj2 != null &&
+              rowitem.saturdayObj1.Intcode == rowitem.saturdayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.saturdayObj1.Intcode;
+            } else if (
+              col == 13 &&
+              rowitem.sundayObj1.Intcode != tmpIntcode &&
+              rowitem.sundayObj2 != null &&
+              rowitem.sundayObj1.Intcode == rowitem.sundayObj2.Intcode
+            ) {
+              startrow = row;
+              tmpIntcode = rowitem.sundayObj1.Intcode;
+            }
+          }
+          // if (startrow >= 0) {
+          //   ranges.push(
+          //     new wjGrid.CellRange(
+          //       startrow,
+          //       col,
+          //       flexGrid.cells.rows.length - 1,
+          //       col + 1
+          //     )
+          //   );
+          // }
+        }
+        // ranges.push(new wjGrid.CellRange(0, startc, 0, endc - 1));
+        // getMergedRangeメソッドをオーバーライドする;
+        let hr = this.headerRanges.slice();
+        mm.getMergedRange = function (panel, r, c) {
+          if (panel.cellType == wjGrid.CellType.ColumnHeader) {
+            for (let h = 0; h < hr.length; h++) {
+              if (hr[h].contains(r, c)) {
+                return hr[h];
+              }
+            }
+          }
+          if (panel.cellType == wjGrid.CellType.Cell) {
+            for (let h = 0; h < ranges.length; h++) {
+              if (ranges[h].contains(r, c)) {
+                return ranges[h];
+              }
+            }
+          }
+        };
+        // flexGrid.mergeManager = mm;
+      }
+    },
+    onInitialize(flexGrid) {
+      this.onflexGrid = flexGrid;
+      // クリックイベント
+      flexGrid.addEventListener(flexGrid.hostElement, 'click', (e) => {
+        let ht = flexGrid.hitTest(e);
+        if (ht.panel == flexGrid.cells) {
+          let cr = flexGrid.selectedRanges[0];
+          if (cr.col == 0 && cr.col2 == 0) {
+            // 行ヘッダのみの場合は何もしない
+            return;
+          }
+
+          // 選択範囲の整理
+          let col1 = cr.col == 0 ? 1 : cr.col;
+          let col2 = cr.col2 == 0 ? 1 : cr.col2;
+          let row1 = cr.row;
+          let row2 = cr.row2;
+          if (col1 > col2) {
+            col1 = cr.col2;
+            col2 = cr.col;
+          }
+          if (col1 % 2 == 0) {
+            col1 = col1 - 1;
+          }
+          if (col2 % 2 == 1) {
+            col2 = col2 + 1;
+          }
+          if (row1 > row2) {
+            row1 = cr.row2;
+            row2 = cr.row;
+          }
+
+          let viewitem;
+          let inputitem = this.everySelected;
+          let tmpViewddata = this.viewdata.slice();
+          let stime = flexGrid.itemsSource[row1].realtimesStartFmt;
+          let etime = flexGrid.itemsSource[row2].realtimesEndFmt;
+          let stimeNum = Number(flexGrid.itemsSource[row1].realtimesStart);
+          let etimeNum = Number(flexGrid.itemsSource[row2].realtimesEnd);
+
+          for (let col = col1; col <= col2; col = col + 2) {
+            if (this.cntSameJikantai(col, stimeNum, etimeNum) <= 1) {
+              this.viewdataAll.push(
+                this.createDayObj(
+                  inputitem,
+                  this.columnYoubiMap[col],
+                  stime,
+                  etime
+                )
+              );
+              this.newIntcode++;
+            }
+          }
+          this.viewdataAll.sort((a, b) => {
+            if (a.Yobi < b.Yobi) {
+              return -1;
+            }
+            if (a.Yobi > b.Yobi) {
+              return 1;
+            }
+            // ２次キーは開始時間
+            if (a.StimeNum !== b.StimeNum) {
+              return a.StimeNum - b.StimeNum;
+            }
+            // ３次キーは終了時間
+            if (a.EtimeNum !== b.EtimeNum) {
+              return a.EtimeNum - b.EtimeNum;
+            }
+            // ４次キーは登録順
+            if (a.Intcode !== b.Intcode) {
+              return a.Intcode - b.Intcode;
+            }
+          });
+          console.log(122222222);
+          console.log(this.viewdataAll);
+          let self = this;
+          for (let i = 0; i < tmpViewddata.length; i++) {
+            let stime = Number(tmpViewddata[i].realtimesStart);
+            let etime = Number(tmpViewddata[i].realtimesEnd);
+            viewitem = tmpViewddata[i];
+            // 対象の時間帯のデータを
+            let tmpitems = this.viewdataAll.filter(
+              (x) =>
+                (x.StimeNum <= stime && stime < x.EtimeNum) ||
+                (x.StimeNum < etime && etime <= x.EtimeNum)
+            );
+            this.resetDayObj(viewitem);
+            tmpitems.forEach((dayobj) => {
+              let sametimeList = self.viewdataAll.filter(
+                (x) =>
+                  x.Yobi == dayobj.Yobi &&
+                  x.Intcode != dayobj.Intcode &&
+                  ((dayobj.StimeNum <= x.StimeNum &&
+                    x.StimeNum < dayobj.EtimeNum) ||
+                    (dayobj.StimeNum < x.EtimeNum &&
+                      x.EtimeNum <= dayobj.EtimeNum) ||
+                    (x.StimeNum <= dayobj.StimeNum &&
+                      dayobj.StimeNum < x.EtimeNum) ||
+                    (x.StimeNum < dayobj.EtimeNum &&
+                      dayobj.EtimeNum <= x.EtimeNum))
+              );
+              let preDataCnt = sametimeList.filter(
+                (x) => x.StimeNum <= dayobj.StimeNum
+              ).length;
+              this.setViewData(
+                viewitem,
+                dayobj,
+                sametimeList.length > 0,
+                preDataCnt > 0
+              );
+            });
+          }
+          console.log(11111);
+          console.log(tmpViewddata);
+          // for (let rowindex = row1; rowindex <= row2; rowindex++) {
+          //   viewitem = tmpViewddata[rowindex];
+          //   for (
+          //     let colindex = col1;
+          //     colindex <= col2;
+          //     colindex = colindex + 2
+          //   ) {
+          //     this.setViewData(
+          //       viewitem,
+          //       colindex,
+          //       inputitem,
+          //       stime,
+          //       etime,
+          //       stimeNum,
+          //       etimeNum
+          //     );
+          //   }
+          // }
+          // flexGrid.refreshRange(
+          //   new wjGrid.CellRange(row1, col1 - 1, row2, col2 + 1)
+          // );
+          // console.log(tmpViewddata);
+          this.viewdata = tmpViewddata;
+          flexGrid.refresh();
+        }
+      });
+      flexGrid.frozenColumns = 1;
+
+      this.dataSetted();
+      this.createViewData();
+      // this.createData();
+      // this.createRanges(true);
+      // this.createMerge(flexGrid);
+
+      flexGrid.cells.rows.defaultSize = 18;
+      flexGrid.formatItem.addHandler(function (s, e) {
+        e.cell.style.textAlign = 'center';
+        e.cell.style.justifyContent = 'center';
+        e.cell.style.alignItems = 'center';
+      });
+    },
+    resetDayObj(viewitem) {
+      viewitem.monday1 = '';
+      viewitem.monday2 = '';
+      viewitem.thuseday1 = '';
+      viewitem.thuseday2 = '';
+      viewitem.wednesday1 = '';
+      viewitem.wednesday2 = '';
+      viewitem.thursday1 = '';
+      viewitem.thursday2 = '';
+      viewitem.friday1 = '';
+      viewitem.friday2 = '';
+      viewitem.saturday1 = '';
+      viewitem.saturday2 = '';
+      viewitem.sunday1 = '';
+      viewitem.sunday2 = '';
+
+      viewitem.mondayObj1 = null;
+      viewitem.mondayObj2 = null;
+      viewitem.thusedayObj1 = null;
+      viewitem.thusedayObj2 = null;
+      viewitem.wednesdayObj1 = null;
+      viewitem.wednesdayObj2 = null;
+      viewitem.thursdayObj1 = null;
+      viewitem.thursdayObj2 = null;
+      viewitem.fridayObj1 = null;
+      viewitem.fridayObj2 = null;
+      viewitem.saturdayObj1 = null;
+      viewitem.saturdayObj2 = null;
+      viewitem.sundayObj1 = null;
+      viewitem.sundayObj2 = null;
+    },
+    cntSameJikantai(c, stimeNum, etimeNum) {
+      return this.viewdataAll.filter(
+        (x) =>
+          x.Yobi == this.columnYoubiMap[c] &&
+          ((x.StimeNum <= stimeNum && stimeNum < x.EtimeNum) ||
+            (x.StimeNum < etimeNum && etimeNum <= x.EtimeNum))
+      ).length;
+    },
+    setViewData(viewitem, dayObj, hasTwoDatas, hasPreData) {
+      switch (dayObj.Yobi) {
+        case 0:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.monday1 = dayObj.Kmkname;
+              viewitem.mondayObj1 = Object.assign({}, dayObj);
+            } else {
+              viewitem.monday2 = dayObj.Kmkname;
+              viewitem.mondayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.monday1 = dayObj.Kmkname;
+            viewitem.mondayObj1 = Object.assign({}, dayObj);
+            viewitem.monday2 = dayObj.Kmkname;
+            viewitem.mondayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        case 1:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.thuseday1 = dayObj.Kmkname;
+              viewitem.thusedayObj2 = Object.assign({}, dayObj);
+            } else {
+              viewitem.thuseday2 = dayObj.Kmkname;
+              viewitem.thusedayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.thuseday1 = dayObj.Kmkname;
+            viewitem.thusedayObj1 = Object.assign({}, dayObj);
+            viewitem.thuseday2 = dayObj.Kmkname;
+            viewitem.thusedayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        case 2:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.wednesday1 = dayObj.Kmkname;
+              viewitem.wednesdayObj1 = Object.assign({}, dayObj);
+            } else {
+              viewitem.wednesday2 = dayObj.Kmkname;
+              viewitem.wednesdayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.wednesday1 = dayObj.Kmkname;
+            viewitem.wednesdayObj1 = Object.assign({}, dayObj);
+            viewitem.wednesday2 = dayObj.Kmkname;
+            viewitem.wednesdayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        case 3:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.thursday1 = dayObj.Kmkname;
+              viewitem.thursdayObj1 = Object.assign({}, dayObj);
+            } else {
+              viewitem.thursday2 = dayObj.Kmkname;
+              viewitem.thursdayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.thursday1 = dayObj.Kmkname;
+            viewitem.thursdayObj1 = Object.assign({}, dayObj);
+            viewitem.thursday2 = dayObj.Kmkname;
+            viewitem.thursdayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        case 4:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.friday1 = dayObj.Kmkname;
+              viewitem.fridayObj1 = Object.assign({}, dayObj);
+            } else {
+              viewitem.friday2 = dayObj.Kmkname;
+              viewitem.fridayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.friday1 = dayObj.Kmkname;
+            viewitem.fridayObj1 = Object.assign({}, dayObj);
+            viewitem.friday2 = dayObj.Kmkname;
+            viewitem.fridayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        case 5:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.saturday1 = dayObj.Kmkname;
+              viewitem.saturdayObj1 = Object.assign({}, dayObj);
+            } else {
+              viewitem.saturday2 = dayObj.Kmkname;
+              viewitem.saturdayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.saturday1 = dayObj.Kmkname;
+            viewitem.saturdayObj1 = Object.assign({}, dayObj);
+            viewitem.saturday2 = dayObj.Kmkname;
+            viewitem.saturdayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        case 6:
+          if (hasTwoDatas) {
+            if (!hasPreData) {
+              viewitem.sunday1 = dayObj.Kmkname;
+              viewitem.sundayObj1 = Object.assign({}, dayObj);
+            } else {
+              viewitem.sunday2 = dayObj.Kmkname;
+              viewitem.sundayObj2 = Object.assign({}, dayObj);
+            }
+          } else {
+            viewitem.sunday1 = dayObj.Kmkname;
+            viewitem.sundayObj1 = Object.assign({}, dayObj);
+            viewitem.sunday2 = dayObj.Kmkname;
+            viewitem.sundayObj2 = Object.assign({}, dayObj);
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    setViewDataOLD(viewitem, c, inputitem, stime, etime, stimeNum, etimeNum) {
+      console.log(stimeNum + ':' + etimeNum);
+      let cnt = this.cntSameJikantai(c, stimeNum, etimeNum);
+      switch (c) {
+        case 1:
+          if (cnt == 1) {
+            viewitem.monday1 = inputitem.every;
+            viewitem.mondayObj1 = this.createDayObj(inputitem, 0, stime, etime);
+            viewitem.monday2 = inputitem.every;
+            viewitem.mondayObj2 = viewitem.mondayObj1;
+          } else if (cnt == 2) {
+            viewitem.monday2 = inputitem.every;
+            viewitem.mondayObj2 = this.createDayObj(inputitem, 0, stime, etime);
+          }
+          console.log(1212121212);
+          console.log(viewitem);
+          break;
+        case 3:
+          if (cnt == 1) {
+            viewitem.thuseday1 = inputitem.every;
+            viewitem.thusedayObj1 = this.createDayObj(
+              inputitem,
+              1,
+              stime,
+              etime
+            );
+            viewitem.thuseday1 = inputitem.every;
+            viewitem.thusedayObj1 = viewitem.thusedayObj2;
+          } else if (cnt == 2) {
+            viewitem.thuseday2 = inputitem.every;
+            viewitem.thusedayObj2 = this.createDayObj(
+              inputitem,
+              1,
+              stime,
+              etime
+            );
+          }
+          break;
+        case 5:
+          if (cnt == 1) {
+            viewitem.wednesday1 = inputitem.every;
+            viewitem.wednesdayObj1 = this.createDayObj(
+              inputitem,
+              2,
+              stime,
+              etime
+            );
+            viewitem.wednesday2 = inputitem.every;
+            viewitem.wednesdayObj2 = viewitem.wednesdayObj1;
+          } else if (cnt == 2) {
+            viewitem.wednesday2 = inputitem.every;
+            viewitem.wednesdayObj2 = this.createDayObj(
+              inputitem,
+              2,
+              stime,
+              etime
+            );
+          }
+          break;
+        case 7:
+          if (cnt == 1) {
+            viewitem.thursday1 = inputitem.every;
+            viewitem.thursdayObj1 = this.createDayObj(
+              inputitem,
+              3,
+              stime,
+              etime
+            );
+            viewitem.thursday2 = inputitem.every;
+            viewitem.thursdayObj2 = viewitem.thursdayObj1;
+          } else if (cnt == 2) {
+            viewitem.thursday2 = inputitem.every;
+            viewitem.thursdayObj2 = this.createDayObj(
+              inputitem,
+              3,
+              stime,
+              etime
+            );
+          }
+          break;
+        case 9:
+          if (cnt == 1) {
+            viewitem.friday1 = inputitem.every;
+            viewitem.fridayObj1 = this.createDayObj(inputitem, 4, stime, etime);
+            viewitem.friday2 = inputitem.every;
+            viewitem.fridayObj2 = viewitem.fridayObj1;
+          } else if (cnt == 2) {
+            viewitem.friday2 = inputitem.every;
+            viewitem.fridayObj2 = this.createDayObj(inputitem, 4, stime, etime);
+          }
+          break;
+        case 11:
+          if (cnt == 1) {
+            viewitem.saturday1 = inputitem.every;
+            viewitem.saturdayObj1 = this.createDayObj(
+              inputitem,
+              5,
+              stime,
+              etime
+            );
+            viewitem.saturday2 = inputitem.every;
+            viewitem.saturdayObj2 = viewitem.saturdayObj1;
+          } else if (cnt == 2) {
+            viewitem.saturday2 = inputitem.every;
+            viewitem.saturdayObj2 = this.createDayObj(
+              inputitem,
+              5,
+              stime,
+              etime
+            );
+          }
+          break;
+        case 13:
+          if (cnt == 1) {
+            viewitem.sunday1 = inputitem.every;
+            viewitem.sundayObj1 = this.createDayObj(inputitem, 6, stime, etime);
+            viewitem.sunday2 = inputitem.every;
+            viewitem.sundayObj2 = viewitem.sundayObj1;
+          } else if (cnt == 2) {
+            viewitem.sunday2 = inputitem.every;
+            viewitem.sundayObj2 = this.createDayObj(inputitem, 6, stime, etime);
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    createDayObj(mst, yobi, stime, etime) {
+      return {
+        Intcode: this.newIntcode,
+        Kmkdaicode: 0,
+        Kmkchucode: 0,
+        Kmkname: mst.every,
+        Yobi: yobi,
+        Stime: stime,
+        Etime: etime,
+        StimeNum: Number(stime.replace(':', '')),
+        EtimeNum: Number(etime.replace(':', '')),
+      };
+    },
+    createViewData() {
+      let basetime = 6;
+      let kugirirow = 2;
+      let result = [];
+      let startrealtime = dayjs().hour(3).minute(30);
+      for (let index = 0; index < 38; index++) {
+        let hourrow = {};
+        // ヘッダ列の時間設定
+        if (index > 5 && index == kugirirow + 4) {
+          basetime = basetime + 2;
+          kugirirow = kugirirow + 4;
+        }
+        if (index > 1) {
+          hourrow.times = String(basetime).padStart(2, '0') + ':00';
+        }
+        startrealtime = startrealtime.add(30, 'm');
+        hourrow.realtimesStart = startrealtime.format('HHmm');
+        hourrow.realtimesStartFmt = startrealtime.format('HH:mm');
+        let endrealtime = startrealtime.add(30, 'm');
+        hourrow.realtimesEnd = endrealtime.format('HHmm');
+        hourrow.realtimesEndFmt = endrealtime.format('HH:mm');
+
+        this.resetDayObj(hourrow);
+
+        result.push(hourrow);
+      }
+      this.viewdata = result;
+    },
+    createRanges(defaultFlag) {
+      let headerRanges = [];
+      // 曜日軸のグループ化
+      for (let i = 1; i <= 7; i++) {
+        headerRanges.push(new wjGrid.CellRange(0, i * 2 - 1, 0, i * 2));
+      }
+      this.headerRanges = headerRanges;
+      if (defaultFlag) {
+        for (let r = 0; r < this.timeline.length; r++) {
+          this.onflexGrid.cells.rows.insert(r, new wjGrid.Row());
+          // this.onflexGrid.cells.setCellData(r, 0, this.timeline[r]);
+        }
+      }
+
+      let ranges = [];
+
+      for (let i = 0; i < this.settingData.length; i++) {
+        this.onflexGrid.cells.setCellData(
+          this.settingData[i].strow,
+          this.settingData[i].stcol,
+          this.settingData[i].data
+        );
+
+        ranges.push(
+          new wjGrid.CellRange(
+            this.settingData[i].strow,
+            this.settingData[i].stcol,
+            this.settingData[i].edrow,
+            this.settingData[i].edcol
+          )
+        );
+      }
+
+      // 空欄部分をマージ
+      for (let r = 0; r < this.timeline.length; r++) {
+        for (let w = 0; w < this.weekarray.length; w++) {
+          let dataLeft = this.onflexGrid.cells.getCellData(r, w);
+          let dataRight = this.onflexGrid.cells.getCellData(r, w + 1);
+          if (!dataLeft && !dataRight && w % 2 == 1) {
+            ranges.push(new wjGrid.CellRange(r, w, r, w));
+          }
+        }
+      }
+
+      // 時間軸をマージ
+      ranges.push(new wjGrid.CellRange(0, 0, 1, 0));
+      this.onflexGrid.cells.setCellData(0, 0, ' ');
+      ranges.push(new wjGrid.CellRange(2, 0, 5, 0));
+      this.onflexGrid.cells.setCellData(2, 0, '06:00');
+      ranges.push(new wjGrid.CellRange(6, 0, 9, 0));
+      this.onflexGrid.cells.setCellData(6, 0, '08:00');
+      ranges.push(new wjGrid.CellRange(10, 0, 13, 0));
+      this.onflexGrid.cells.setCellData(10, 0, '10:00');
+      ranges.push(new wjGrid.CellRange(14, 0, 17, 0));
+      this.onflexGrid.cells.setCellData(14, 0, '12:00');
+      ranges.push(new wjGrid.CellRange(18, 0, 21, 0));
+      this.onflexGrid.cells.setCellData(18, 0, '14:00');
+      ranges.push(new wjGrid.CellRange(22, 0, 25, 0));
+      this.onflexGrid.cells.setCellData(22, 0, '16:00');
+      ranges.push(new wjGrid.CellRange(26, 0, 29, 0));
+      this.onflexGrid.cells.setCellData(26, 0, '18:00');
+      ranges.push(new wjGrid.CellRange(30, 0, 33, 0));
+      this.onflexGrid.cells.setCellData(30, 0, '20:00');
+      ranges.push(new wjGrid.CellRange(34, 0, 37, 0));
+      this.onflexGrid.cells.setCellData(34, 0, '22:00');
+
+      this.ranges = ranges;
+    },
+    createMerge(flexGrid) {
+      let ranges = this.ranges;
+      let headerRanges = this.headerRanges;
+      let mm = new wjGrid.MergeManager();
+      mm.getMergedRange = function (panel, r, c) {
+        if (panel.cellType == wjGrid.CellType.Cell) {
+          for (let h = 0; h < ranges.length; h++) {
+            if (ranges[h].contains(r, c)) {
+              return ranges[h];
+            }
+          }
+        }
+        if (panel.cellType == wjGrid.CellType.ColumnHeader) {
+          for (let h = 0; h < headerRanges.length; h++) {
+            if (headerRanges[h].contains(r, c)) {
+              return headerRanges[h];
+            }
+          }
+        }
+      };
+      flexGrid.mergeManager = mm;
+    },
+    inputCalendarClick() {
+      this.picker =
+        moment().format('YYYY') +
+        '-' +
+        moment().format('MM') +
+        '-' +
+        moment().format('DD');
+      this.datepicker_dialog = true;
+    },
+    monthSelectWeek() {
+      this.getYm = moment(this.picker).format('YYYY年MM月DD日');
+      this.viewdatakeikaku = [];
+      this.datepicker_dialog = false;
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+@import '@/assets/scss/common.scss';
+
+div#keikakuWeek {
+  color: $font_color;
+  font-size: 12px;
+  font-family: 'メイリオ';
+  min-width: 1350px !important;
+  max-width: 1920px;
+  width: auto;
+  height: var(--height);
+
+  div.label {
+    background-color: $light-gray;
+  }
+  .wj-align-center {
+    display: flex;
+  }
+  .borderBottom {
+    border-bottom: 1px solid $deepgreen;
+  }
+  .lightYellow {
+    background-color: $view_Data_Read_background;
+  }
+  .mw160 {
+    max-width: 160px;
+  }
+  .mw200 {
+    max-width: 200px;
+  }
+  .wj-frozen {
+    background-color: $selected_color;
+  }
+  .ohidden {
+    overflow: hidden;
+  }
+  .textarea {
+    height: 100%;
+    &:hover {
+      background-color: $light-white;
+      cursor: pointer;
+    }
+  }
+}
+
+#keikakuWeekDatepicker {
+  position: absolute;
+  margin-top: 20px;
+  position: fixed !important;
+  top: 100px;
+  left: 280px;
+  width: 300px;
+  max-width: 300px;
+}
+</style>

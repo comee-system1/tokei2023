@@ -1,0 +1,66 @@
+{
+    "express": {
+        "port": "8000"
+    },
+    "axios": {
+        "timeout": "5000"
+    },
+    "api_sogo": {
+        "base_url": "http://192.168.10.32:80",
+        "x_api_account": "toukei-sogo-api",
+        "x_api_key": "urxLpRzn0ilqcWoS"
+    },
+    "api_common": {
+        "base_url": "http://192.168.10.32:80",
+        "x_api_account": "toukei-common-api",
+        "x_api_key": "jKGbd4PqxN5yzyxn"
+    },
+    "log4js": {
+        "appenders": {
+            "logger": {
+                "type": "dateFile",
+                "filename": "log/app.log",
+                "backups": 14,
+                "compress": true,
+                "pattern": "-yyyy-MM-dd",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "[%d{yyyy-MM-dd hh:mm:ss.SSS}][%5p][%X{requestId}] %m"
+                }
+            },
+            "error_logger_appender": {
+                "type": "dateFile",
+                "filename": "log/error.log",
+                "backups": 14,
+                "compress": true,
+                "pattern": "-yyyy-MM-dd",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "[%d{yyyy-MM-dd hh:mm:ss.SSS}][%5p][%X{requestId}] %m"
+                }
+            },
+            "error_logger": {
+                "type": "logLevelFilter",
+                "appender": "error_logger_appender",
+                "level": "error"
+            },
+            "out": {
+                "type": "stdout",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "[%d{yyyy-MM-dd hh:mm:ss.SSS}][%5p][%X{requestId}] %m"
+                }
+            }
+        },
+        "categories": {
+            "default": {
+                "appenders": [
+                    "logger",
+                    "error_logger"
+                ],
+                "level": "debug",
+                "enableCallStack": true
+            }
+        }
+    }
+}
