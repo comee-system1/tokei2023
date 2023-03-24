@@ -2507,9 +2507,13 @@ export default {
           rcnt: this.selectDataObj.rcnt,
         };
         deleteConnect('/Uktk', params, 'SIENT', body)
-          .then(() => {
-            this.clrClicked(0);
-            this.editFlg = true;
+          .then((result) => {
+            if (result.status == sysConst.STATUS_OK) {
+              this.clrClicked(0);
+              this.editFlg = true;
+            } else {
+              alert(result.data.response.msg);
+            }
           })
           .catch(function (error) {
             alert(
@@ -2524,7 +2528,6 @@ export default {
      * @param {number} kbn 処理区分
      */
     addSoudansya(kbn) {
-      alert(this.userInfo.riid);
       if (!this.userInfo.riid || this.userInfo.riid == 0) {
         alert('利用者' + messageConst.INPUT_ERROR.NO_SELECT);
         return;
@@ -2621,9 +2624,13 @@ export default {
             pIntcode: this.userInfo.riid,
           };
           postConnect('/Uktk', params, 'SIENT', this.createPostData())
-            .then(() => {
-              this.clrClicked(1);
-              this.editFlg = true;
+            .then((result) => {
+              if (result.status == sysConst.STATUS_OK) {
+                this.clrClicked(1);
+                this.editFlg = true;
+              } else {
+                alert(result.data.response.msg);
+              }
             })
             .catch(function (error) {
               alert(

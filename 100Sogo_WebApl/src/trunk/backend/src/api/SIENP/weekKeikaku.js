@@ -11,9 +11,9 @@ exports.connected = async function (param, kbn) {
     apiRun.setQuery(param);
     var url = apiRun.getDomain() + '/sodan/v1/week-keikaku/' + kbn + '?' + apiRun.getQuery();
     console.log(url);
-    config.setURL(url);
-    config.setUniqID(param.uniqid);
-    return await service.getData().then(result => {
+    apiRun.setURL(url);
+    apiRun.setUniqID(param.uniqid);
+    return await service.getData(apiRun).then(result => {
         console.log(result);
         // テスト用データ
         returnData = result;

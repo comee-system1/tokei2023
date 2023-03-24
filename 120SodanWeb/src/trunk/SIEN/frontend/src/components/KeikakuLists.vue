@@ -157,8 +157,9 @@
           :allowResizing="true"
           :allowSorting="false"
           :allowDragging="false"
-          :selectionMode="'None'"
+          :selectionMode="'Row'"
           :isReadOnly="true"
+          :showMarquee="true"
           :initialized="onInitialize"
           :itemsSourceChanged="onItemsSourceChanged"
           :itemsSource="viewdata"
@@ -1263,11 +1264,11 @@ export default {
       if (confirm('同意' + messageConst.CONFIRM.DELETE)) {
         deleteConnect('/KeikakuAnDoui', params, 'SIENP')
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               this.doui_dialog = false;
               this.search();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -1455,6 +1456,7 @@ div#keikakuLists {
 div#keikakuListGrid {
   font-family: 'メイリオ';
   font-size: 12px;
+  color: $font_color;
   width: 100%;
   height: var(--height);
   z-index: 2;
@@ -1464,6 +1466,14 @@ div#keikakuListGrid {
   .wj-header {
     font-weight: normal;
     line-height: 110%;
+  }
+  .wj-cells .wj-cell.wj-state-multi-selected {
+    background: $grid_selected_background;
+    color: $grid_selected_color;
+  }
+  .wj-cells .wj-cell.wj-state-selected {
+    background: $grid_selected_background;
+    color: $grid_selected_color;
   }
 }
 

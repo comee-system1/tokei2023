@@ -1445,7 +1445,7 @@ export default {
                 return 1;
               }
             });
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               // alert('登録が完了しました。');
               // 完了チェック時はtantokaigi/rekiを通さない
               if (btnofType != 'kanryoRegist' && btnofType != 'registBtn') {
@@ -1461,7 +1461,7 @@ export default {
               }
               this.kanryoCheckOpenFlg = false;
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
               this.kanryoCheckOpenFlg = true;
             }
             // 並べ替えの反映
@@ -2374,12 +2374,12 @@ export default {
         };
         deleteConnect(apiTantoKaigiReki, params, 'COMMON')
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               // alert('削除が完了しました。');
               this.dataClear();
               this.getTantoReki();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -2484,12 +2484,12 @@ export default {
         };
         postConnect(apiTantoKaigiReki, params, 'COMMON', inputParams)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               // alert('新規登録が完了しました。');
               this.getTantoSaishinReki();
               this.getTantoReki();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -2546,7 +2546,7 @@ export default {
           };
           deleteConnect(apiTantoKaigiKanryo, params, 'COMMON')
             .then((result) => {
-              if (result.okflg == true) {
+              if (result.status == sysConst.STATUS_OK) {
                 // alert('削除が完了しました。');
                 let tmp = this.rirekiView.slice();
                 tmp[this.targetRow].kanryoChk = '未完了';
@@ -2556,7 +2556,7 @@ export default {
                 this.kanryoCheckOpenFlg = false;
                 this.remCheckBtn();
               } else {
-                alert(result.msg);
+                alert(result.data.response.msg);
                 this.remCheckBtn();
                 this.kanryoCheckOpenFlg = true;
               }
@@ -2693,7 +2693,9 @@ div#selectedAttendGrid {
   }
   .wj-cells
     .wj-row:hover
-    .wj-cell:not(.wj-state-selected):not(.wj-state-multi-selected):not(.wj-state-active) {
+    .wj-cell:not(.wj-state-selected):not(.wj-state-multi-selected):not(
+      .wj-state-active
+    ) {
     transition: all 0s;
     background: $grid_hover_background;
   }
@@ -2766,7 +2768,9 @@ div#selectedAttendGrid {
   }
   .wj-cells
     .wj-row:hover
-    .wj-cell:not(.wj-state-selected):not(.wj-state-multi-selected):not(.wj-state-active):not(.wj-grid-editor) {
+    .wj-cell:not(.wj-state-selected):not(.wj-state-multi-selected):not(
+      .wj-state-active
+    ):not(.wj-grid-editor) {
     transition: all 0s;
     background: $grid_hover_background;
   }

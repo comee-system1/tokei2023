@@ -1032,13 +1032,13 @@ export default {
         if (this.noDataFlg == 1) {
           postConnect('/KeiyakuHoukoku', params, 'SIENP', inputParams)
             .then((result) => {
-              if (result.okflg == true) {
+              if (result.status == sysConst.STATUS_OK) {
                 // gridへ反映
                 this.viewData = [];
                 this.keiyakuHoukokuView();
                 this.contactDialog = false;
               } else {
-                alert(result.msg);
+                alert(result.data.response.msg);
               }
             })
             .catch(function (error) {
@@ -1071,12 +1071,12 @@ export default {
           };
           putConnect('/KeiyakuHoukoku', params, 'SIENP', inputParams)
             .then((result) => {
-              if (result.okflg == true) {
+              if (result.status == sysConst.STATUS_OK) {
                 this.viewData = [];
                 this.keiyakuHoukokuView();
                 this.contactDialog = false;
               } else {
-                alert(result.msg);
+                alert(result.data.response.msg);
               }
             })
             .catch(function (error) {
@@ -1105,14 +1105,14 @@ export default {
         };
         deleteConnect('/KeiyakuHoukoku', params, 'SIENP')
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               // gridへ反映
               this.viewData = [];
               this.keiyakuHoukokuView();
               // ダイアログ閉じる
               this.contactDialog = false;
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {

@@ -26,7 +26,7 @@
             </div>
           </v-btn>
 
-          <v-btn class="ml-1 pa-1" height="18" @click="searchClicked()">
+          <v-btn class="pa-1" height="18" @click="searchClicked()">
             <v-icon dense>mdi-magnify</v-icon>
             検索
           </v-btn>

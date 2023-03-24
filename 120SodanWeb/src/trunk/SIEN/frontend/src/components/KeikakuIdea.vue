@@ -595,6 +595,7 @@ import { getConnect } from '@connect/getConnect';
 import { postConnect } from '@connect/postConnect';
 import { putConnect } from '@connect/putConnect';
 import { deleteConnect } from '@connect/deleteConnect';
+import sysConst from '@/utiles/const';
 import printUtil from '@/utiles/printUtil';
 import messageConst from '@/utiles/MessageConst';
 const TRACEID = 123;
@@ -737,8 +738,9 @@ export default {
      */
     setUserdata(item) {
       if (item != null && item.riid != undefined) {
+        console.log(item);
         this.userIntcode = item.riid;
-        this.userName = item.names;
+        this.userName = item.riyocode + ' ' + item.names;
         this.setSaisin();
         this.setRireki();
       }
@@ -823,10 +825,10 @@ export default {
       if (confirm(messageConst.CONFIRM.PUT)) {
         putConnect('/Keikakuan', params, 'SIENP', inputParams)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               //this.setUserdata(this.selectedUserObj);
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -851,11 +853,11 @@ export default {
         };
         deleteConnect('/Keikakuan', params, 'SIENP')
           .then((result) => {
-            if (result.okflg) {
+            if (result.status == sysConst.STATUS_OK) {
               this.setSaisin();
               this.setRireki();
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -885,8 +887,9 @@ export default {
       // this.mainGrid.autoSizeRows();
     },
     setDataFromKeikauList(anItem) {
+      console.log(anItem);
       this.userIntcode = anItem.intcode;
-      this.userName = anItem.rname;
+      this.userName = anItem.riyocodeD + ' ' + anItem.rname;
       this.setSaisin();
       this.setRireki();
     },

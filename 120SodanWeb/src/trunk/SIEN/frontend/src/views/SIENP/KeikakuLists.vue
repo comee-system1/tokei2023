@@ -283,7 +283,8 @@ export default {
     },
     anSelect(anItem) {
       this.tabsChange(this.menuItem[2].hrefval);
-      this.$refs.create.setDataFromKeikauList(anItem);
+      this.$refs.user_list.userSelect(anItem.intcode);
+      // this.$refs.create.setDataFromKeikauList(anItem);
     },
   },
 };

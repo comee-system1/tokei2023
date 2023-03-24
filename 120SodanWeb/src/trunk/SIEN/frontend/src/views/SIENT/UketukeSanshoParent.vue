@@ -4,12 +4,12 @@
       <v-container no-gutters fluid class="pa-0">
         <v-tabs hide-slider v-model="tab">
           <v-tab
-            v-for="item in menuItem"
+            v-for="item in getMenuItem()"
             :key="item.val"
             :href="item.href"
             @change="tabsChange(item.hrefval)"
           >
-            {{ item.name }}
+            {{ getMenuTxt(item.hrefval) }}
           </v-tab>
         </v-tabs>
       </v-container>
@@ -27,9 +27,9 @@
           <v-tab-item value="SoudanCountMonthly" transition="none">
             <SoudanCountMonthly ref="soudanCountMonthly"></SoudanCountMonthly>
           </v-tab-item>
-          <v-tab-item value="RiyouCheck" transition="none">
+          <!-- <v-tab-item value="RiyouCheck" transition="none">
             Tab 5 Content
-          </v-tab-item>
+          </v-tab-item> -->
         </v-tabs-items>
       </v-container>
     </div>
@@ -64,13 +64,20 @@ export default {
           hrefval: 'SoudanCountUtiwake',
         },
         {
-          name: '１ヶ月実績',
+          name: '業務実績表',
           href: '#SoudanCountMonthly',
           hrefval: 'SoudanCountMonthly',
         },
-        { name: '利用チェック', href: '#RiyouCheck', hrefval: 'RiyouCheck' },
+        // { name: '利用チェック', href: '#RiyouCheck', hrefval: 'RiyouCheck' },
       ],
     };
+  },
+  mounted() {
+    if (this.$route.params.kind == 0) {
+      this.tab = this.menuItem[0].hrefval;
+    } else {
+      this.tab = this.menuItem[1].hrefval;
+    }
   },
   beforeDestroy() {
     this.$router.app.$off('print_event_global');
@@ -81,6 +88,41 @@ export default {
     },
   },
   methods: {
+    getMenuItem() {
+      let menuList = [];
+      for (let i = 0; i < this.menuItem.length; i++) {
+        if (this.$route.params.kind == 0) {
+          if (this.menuItem[i].hrefval == 'Sansyo') {
+            menuList.push(this.menuItem[i]);
+          }
+        } else {
+          if (
+            this.menuItem[i].hrefval != 'Sansyo' &&
+            !(
+              this.$route.params.kind == 1 &&
+              this.menuItem[i].hrefval == 'SoudanCountMonthly'
+            )
+          ) {
+            menuList.push(this.menuItem[i]);
+          }
+        }
+      }
+      return menuList;
+    },
+    getMenuTxt(hrefval) {
+      for (let i = 0; i < this.menuItem.length; i++) {
+        if (this.menuItem[i].hrefval == hrefval) {
+          if (
+            this.menuItem[i].hrefval == 'SoudanCount' &&
+            this.$route.params.kind == 2
+          ) {
+            return '相談月年報';
+          }
+          return this.menuItem[i].name;
+        }
+      }
+      return '';
+    },
     tabsChange(hrefval) {
       this.$router.app.$off('print_event_global');
       ls.setlocalStorageEncript(ls.KEY.SansyoTab, hrefval);

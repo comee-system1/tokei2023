@@ -28,7 +28,7 @@
         </v-card>
         <MdSelect class="ma-1" ref="mdselect" @dateSelect="setMd"></MdSelect>
       </v-navigation-drawer>
-      <v-row no-gutters class="rowStyle mb-1">
+      <!-- <v-row no-gutters class="rowStyle mb-1">
         <v-card class="koumokuTitle titleMain pa-1 mr-1" outlined tile>
           表示単位
         </v-card>
@@ -121,6 +121,101 @@
             </v-btn>
           </span>
           <v-btn class="ml-1 pa-1" height="18" @click="searchClicked()">
+            <v-icon dense>mdi-magnify</v-icon>
+            検索
+          </v-btn>
+        </v-card>
+      </v-row> -->
+      <v-row no-gutters class="rowStyle mb-1">
+        <v-card class="koumokuTitle titleMain pa-1 mr-1" outlined tile>
+          集計期間
+        </v-card>
+
+        <v-card
+          class="mr-1"
+          color="transparent"
+          height="100%"
+          style="border: none"
+          outlined
+          tile
+        >
+          <v-btn
+            @click="inputCalendarClick(0)"
+            class="btnymd mr-1"
+            tile
+            outlined
+            width="150px"
+            height="100%"
+            >{{ getYmd(0) }}
+            <div class="float-right">
+              <v-icon small>mdi-calendar-month</v-icon>
+            </div>
+          </v-btn>
+
+          <v-btn
+            elevation="0"
+            class="btnymd pa-0 mr-1"
+            height="100%"
+            x-small
+            tile
+            @click="inputCalendarClick(1)"
+          >
+            <v-icon>mdi-arrow-left-bold</v-icon>
+          </v-btn>
+          <v-btn
+            elevation="0"
+            class="btnymd pa-0 mr-1"
+            height="100%"
+            x-small
+            tile
+            @click="inputCalendarClick(2)"
+          >
+            <v-icon>mdi-arrow-right-bold</v-icon>
+          </v-btn>
+          <span v-show="isDispDay == false">
+            <label class="mr-1">～</label>
+            <v-btn
+              @click="inputCalendarClick(10)"
+              class="btnymd mr-1"
+              tile
+              outlined
+              width="150px"
+              height="100%"
+              >{{ getYmd(1) }}
+              <div class="float-right">
+                <v-icon small>mdi-calendar-month</v-icon>
+              </div>
+            </v-btn>
+
+            <v-btn
+              elevation="0"
+              class="btnymd pa-0 mr-1"
+              height="100%"
+              x-small
+              tile
+              @click="inputCalendarClick(11)"
+            >
+              <v-icon>mdi-arrow-left-bold</v-icon>
+            </v-btn>
+            <v-btn
+              elevation="0"
+              class="btnymd pa-0 mr-1"
+              height="100%"
+              x-small
+              tile
+              @click="inputCalendarClick(12)"
+            >
+              <v-icon>mdi-arrow-right-bold</v-icon>
+            </v-btn>
+            <v-btn
+              class="pa-1 mr-1"
+              height="18"
+              @click="datepickerMonth_dialog = !datepickerMonth_dialog"
+            >
+              月指定
+            </v-btn>
+          </span>
+          <v-btn class="pa-1" height="18" @click="searchClicked()">
             <v-icon dense>mdi-magnify</v-icon>
             検索
           </v-btn>
@@ -243,16 +338,29 @@
       </v-row>
     </v-container>
     <!-- ダイアログエリア -->
-    <v-dialog v-model="datepickerYmd_dialog" class="datepickerYmd_dialogs">
+    <v-dialog v-model="datepickerSYmd_dialog" class="datepickerYmd_dialogs">
       <v-date-picker
         id="soudanCountUtiwakeDatepicker"
         scrollable
         no-title
         mode="single"
-        v-model="pickerYmd"
+        v-model="pickerSYmd"
         locale="jp-ja"
         :day-format="(date) => new Date(date).getDate()"
         @change="dateSelect"
+      >
+      </v-date-picker>
+    </v-dialog>
+    <v-dialog v-model="datepickerEYmd_dialog" class="datepickerEYmd_dialogs">
+      <v-date-picker
+        id="soudanCountDatepicker"
+        scrollable
+        no-title
+        mode="single"
+        v-model="pickerEYmd"
+        locale="jp-ja"
+        :day-format="(date) => new Date(date).getDate()"
+        @change="dateSelect(1)"
       >
       </v-date-picker>
     </v-dialog>
@@ -283,6 +391,21 @@
         locale="jp-ja"
         :day-format="(date) => new Date(date).getDate()"
         @change="monthSelect(1)"
+      >
+      </v-date-picker>
+    </v-dialog>
+    <v-dialog
+      v-model="datepickerMonth_dialog"
+      width="200"
+      class="datepickerSym_dialogMonth"
+    >
+      <v-date-picker
+        id="soudanCountDatepickerMonth"
+        type="month"
+        v-model="pickerMonth"
+        locale="jp-ja"
+        :day-format="(date) => new Date(date).getDate()"
+        @change="monthSelect(99)"
       >
       </v-date-picker>
     </v-dialog>
@@ -413,16 +536,21 @@ export default {
       viewNinzuList: [],
       viewJyoukyouList: [],
       viewNaiyouList: [],
-      kikanYmd: '',
+      kikanSYmd: '',
+      kikanEYmd: '',
       kikanSYm: '',
       kikanEYm: '',
-      pickerYmd: '',
+      pickerSYmd: '',
+      pickerEYmd: '',
       pickerSym: '',
       pickerEym: '',
-      datepickerYmd_dialog: false,
+      datepickerSYmd_dialog: false,
+      datepickerEYmd_dialog: false,
       datepickerSym_dialog: false,
       datepickerEym_dialog: false,
-      targetYmd: dayjs().format('YYYYMMDD'),
+      datepickerMonth_dialog: false,
+      targetSYmd: dayjs().format('YYYYMMDD'),
+      targetEYmd: dayjs().format('YYYYMMDD'),
       targetSYm: '',
       targetEYm: '',
       drawer: false,
@@ -431,6 +559,7 @@ export default {
         { val: 0, name: '日指定' },
         { val: 1, name: '月指定' },
       ],
+      isDispDay: false, // 日報or月報
     };
   },
   computed: {
@@ -473,6 +602,11 @@ export default {
     this.setPrintEvent();
     // 初期データ読込
     this.setViewData(true);
+    if (this.$route.params.kind == 1) {
+      this.isDispDay = true;
+    } else if (this.$route.params.kind == 2) {
+      this.isDispDay = false;
+    }
   },
   beforeDestroy() {
     document.removeEventListener('resize', this.calculateWindowHeight);
@@ -505,7 +639,10 @@ export default {
       flexGrid.columnFooters.rows[0].height = sysConst.GRDROWHEIGHT.Header + 4;
       flexGrid.endUpdate();
       let tmp =
-        this.kikanYmd.format('YYYY') + '-' + this.kikanYmd.format('MM') + '-01';
+        this.kikanSYmd.format('YYYY') +
+        '-' +
+        this.kikanSYmd.format('MM') +
+        '-01';
       this.$refs.mdselect.setYm(tmp);
     },
     onInitializesienNaiyouGridUtiwake(flexGrid) {
@@ -776,22 +913,25 @@ export default {
           traceid: 123,
           pJigyoid: 62,
           pTaisyo: this.selDispGridIndex == 0 ? 1 : 2,
-          pSymd: this.targetYmd,
-          pEymd: this.targetYmd,
+          pSymd: this.targetSYmd,
+          pEymd: this.targetSYmd,
           pSiid: 0,
           pChiku: 0,
           pHostName: 'tokei3',
         };
-        if (this.dispIndex == 1) {
-          let split = this.pickerSym.split('-');
-          this.targetSYm = split[0] + split[1].padStart(2, '0') + '01';
-          let splitE = this.pickerEym.split('-');
-          this.targetEYm =
-            splitE[0] +
-            splitE[1].padStart(2, '0') +
-            this.kikanEYm.endOf('month').format('DD');
-          params.pSymd = this.targetSYm;
-          params.pEymd = this.targetEYm;
+        // if (this.dispIndex == 1) {
+        //   let split = this.pickerSym.split('-');
+        //   this.targetSYm = split[0] + split[1].padStart(2, '0') + '01';
+        //   let splitE = this.pickerEym.split('-');
+        //   this.targetEYm =
+        //     splitE[0] +
+        //     splitE[1].padStart(2, '0') +
+        //     this.kikanEYm.endOf('month').format('DD');
+        //   params.pSymd = this.targetSYm;
+        //   params.pEymd = this.targetEYm;
+        // }
+        if (!this.isDispDay) {
+          params.pEymd = this.targetEYmd;
         }
         this.screenFlag = true;
         getConnect('/SyukeiMeisai', params, 'SIENT')
@@ -896,24 +1036,45 @@ export default {
 
       this.sienNaiyouViewData = tmpSienNaiyouViewData;
     },
-    getYmd() {
-      if (!this.kikanYmd) {
-        this.kikanYmd = dayjs();
-        this.pickerYmd =
-          this.kikanYmd.year() +
-          '-' +
-          this.kikanYmd.format('MM') +
-          '-' +
-          this.kikanYmd.format('DD');
+    getYmd(kbn) {
+      if (kbn == 0) {
+        if (!this.kikanSYmd) {
+          this.kikanSYmd = dayjs().date(1);
+          this.pickerSYmd =
+            this.kikanSYmd.year() +
+            '-' +
+            this.kikanSYmd.format('MM') +
+            '-' +
+            this.kikanSYmd.format('DD');
+        }
+        return (
+          this.kikanSYmd.format('YYYY') +
+          '年' +
+          this.kikanSYmd.format('MM') +
+          '月' +
+          this.kikanSYmd.format('DD') +
+          '日'
+        );
+      } else {
+        if (!this.kikanEYmd) {
+          this.kikanEYmd = dayjs().add(1, 'month').date(0);
+          this.pickerEYmd =
+            this.kikanEYmd.year() +
+            '-' +
+            this.kikanEYmd.format('MM') +
+            '-' +
+            this.kikanEYmd.format('DD');
+          this.targetEYmd = this.kikanEYmd.format('YYYYMMDD');
+        }
+        return (
+          this.kikanEYmd.format('YYYY') +
+          '年' +
+          this.kikanEYmd.format('MM') +
+          '月' +
+          this.kikanEYmd.format('DD') +
+          '日'
+        );
       }
-      return (
-        this.kikanYmd.format('YYYY') +
-        '年' +
-        this.kikanYmd.format('MM') +
-        '月' +
-        this.kikanYmd.format('DD') +
-        '日'
-      );
     },
     getYm(kbn) {
       if (kbn == 0) {
@@ -968,41 +1129,63 @@ export default {
         } else {
           this.viewdata = [];
         }
-      } else {
+      } else if (kbn == 0 || kbn == 1 || kbn == 2) {
         if (kbn == 1) {
-          this.kikanYmd = this.kikanYmd.subtract(1, 'day');
+          this.kikanSYmd = this.kikanSYmd.subtract(1, 'day');
         } else if (kbn == 2) {
-          this.kikanYmd = this.kikanYmd.add(1, 'day');
+          this.kikanSYmd = this.kikanSYmd.add(1, 'day');
         }
-        this.pickerYmd =
-          this.kikanYmd.format('YYYY') +
+        this.pickerSYmd =
+          this.kikanSYmd.format('YYYY') +
           '-' +
-          this.kikanYmd.format('MM') +
+          this.kikanSYmd.format('MM') +
           '-' +
-          this.kikanYmd.format('DD');
+          this.kikanSYmd.format('DD');
         if (kbn == 0) {
-          this.datepickerYmd_dialog = true;
+          this.datepickerSYmd_dialog = true;
         } else {
           this.viewdata = [];
         }
         let tmp =
-          this.kikanYmd.format('YYYY') +
+          this.kikanSYmd.format('YYYY') +
           '-' +
-          this.kikanYmd.format('MM') +
+          this.kikanSYmd.format('MM') +
           '-01';
         this.$refs.mdselect.setYm(tmp);
+      } else if (kbn == 10 || kbn == 11 || kbn == 12) {
+        if (kbn == 11) {
+          this.kikanEYmd = this.kikanEYmd.subtract(1, 'day');
+        } else if (kbn == 12) {
+          this.kikanEYmd = this.kikanEYmd.add(1, 'day');
+        }
+        this.pickerEYmd =
+          this.kikanEYmd.format('YYYY') +
+          '-' +
+          this.kikanEYmd.format('MM') +
+          '-' +
+          this.kikanEYmd.format('DD');
+        if (kbn == 10) {
+          this.datepickerEYmd_dialog = true;
+        } else {
+          this.viewdata = [];
+        }
       }
     },
-    dateSelect() {
-      this.kikanYmd = dayjs(this.pickerYmd);
-      let tmp =
-        this.kikanYmd.format('YYYY') +
-        '-' +
-        this.kikanYmd.format('MM') +
-        '-' +
-        this.kikanYmd.format('DD');
-      this.$refs.mdselect.setYm(tmp);
-      this.datepickerYmd_dialog = false;
+    dateSelect(kbn) {
+      if (kbn == 0) {
+        this.kikanSYmd = dayjs(this.pickerSYmd);
+        let tmp =
+          this.kikanSYmd.format('YYYY') +
+          '-' +
+          this.kikanSYmd.format('MM') +
+          '-' +
+          this.kikanSYmd.format('DD');
+        this.$refs.mdselect.setYm(tmp);
+        this.datepickerSYmd_dialog = false;
+      } else {
+        this.kikanEYmd = dayjs(this.pickerEYmd);
+        this.datepickerEYmd_dialog = false;
+      }
     },
     monthSelect(kbn) {
       if (kbn == 0) {
@@ -1010,20 +1193,25 @@ export default {
         this.$refs.mdselect.setYm(this.pickerSym);
         this.viewdata = [];
         this.datepickerSym_dialog = false;
-      } else {
+      } else if (kbn == 1) {
         this.kikanEYm = dayjs(this.pickerEym);
         this.viewdata = [];
         this.datepickerEym_dialog = false;
+      } else {
+        this.kikanSYmd = dayjs(this.pickerMonth).date(1);
+        this.kikanEYmd = dayjs(this.pickerMonth).add(1, 'month').date(0);
+        this.viewdata = [];
+        this.datepickerMonth_dialog = false;
       }
     },
     setMd(param1) {
       //paramには日付と曜日(３と"金")が入る
-      let split = this.pickerYmd.split('-');
-      this.targetYmd =
+      let split = this.pickerSYmd.split('-');
+      this.targetSYmd =
         split[0] +
         split[1].padStart(2, '0') +
         String(param1.day).padStart(2, '0');
-      this.kikanYmd = dayjs(this.targetYmd);
+      this.kikanSYmd = dayjs(this.targetSYmd);
       this.setViewData(true);
     },
     dispclick(val) {
@@ -1189,6 +1377,15 @@ div#soudanCountUtiwake {
   position: fixed !important;
   top: 70px;
   left: 350px;
+  width: 300px;
+  max-width: 300px;
+}
+#soudanCountDatepickerMonth {
+  position: absolute;
+  margin-top: 20px;
+  position: fixed !important;
+  top: 70px;
+  left: 580px;
   width: 300px;
   max-width: 300px;
 }

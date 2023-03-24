@@ -364,6 +364,7 @@ export default {
       pickerYoteiYm: '',
       yoteiYm: '',
       datepickerYoteiYm_dialog: false,
+      dispUserRowIndex: -1,
     };
   },
   mounted() {
@@ -422,6 +423,7 @@ export default {
     },
     onTantouClicked() {
       this.selTantou = this.tantouList[this.selTantou].id;
+      // this.userGrid.selection = new wjGrid.CellRange(10, -1, 10, -1);
     },
     siborikomiUser(siborikomiType) {
       this.selDispKbn = siborikomiType;
@@ -555,9 +557,10 @@ export default {
       params = {
         getkbn: 0,
         jkbn: 0,
-        sdnflg: 0,
+        sdnflg: 2,
         symd: '20220801',
         eymd: '20220901',
+        Entpriid: 36,
       };
 
       return getConnect('/userListPrint', params)
@@ -578,6 +581,10 @@ export default {
           this.hdrTips.setTooltip(e.cell, flexGrid.rows[e.row].dataItem.kana);
         } else {
           e.cell.style.textAlign = 'center';
+        }
+        if (this.dispUserRowIndex >= 0) {
+          flexGrid.scrollIntoView(this.dispUserRowIndex, -1);
+          this.dispUserRowIndex = -1;
         }
       }
     },
@@ -620,6 +627,19 @@ export default {
       // });
       this.yoteiYm = dayjs(split[0] + '-' + split[1] + '-01');
       this.datepickerYoteiYm_dialog = false;
+    },
+    userSelect(intcode) {
+      let item = null;
+      for (let i = 0; i < this.userGrid.cells.rows.length; i++) {
+        item = this.userGrid.cells.rows[i].dataItem;
+        if (intcode == item.riid) {
+          //選択した要素の取得
+          this.$emit('child-select', item); //親要素の処理を実行
+          this.userGrid.selection = new wjGrid.CellRange(i, -1, i, -1);
+          this.dispUserRowIndex = i;
+          return;
+        }
+      }
     },
   },
 };

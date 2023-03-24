@@ -169,9 +169,11 @@
                     <v-list-item-content class="pa-0 pl-2 ma-0">
                       <table>
                         <tr>
-                          <td width="10%" align="center">{{ item.no }}</td>
-                          <td width="40%" align="center">{{ item.day }}</td>
-                          <td width="10%" align="left">{{ item.kanryou }}</td>
+                          <td width="10%" align="center">{{ item.cntcd }}</td>
+                          <td width="40%" align="center">{{ item.dspmymd }}</td>
+                          <td width="10%" align="left">
+                            {{ item.kanryoflgD }}
+                          </td>
                           <td width="40%" align="left">{{ item.tantou }}</td>
                         </tr>
                       </table>
@@ -356,11 +358,10 @@ import '@grapecity/wijmo.cultures/wijmo.culture.ja';
 import * as wjGrid from '@grapecity/wijmo.grid';
 // import * as wjCore from '@grapecity/wijmo';
 import sysConst from '@/utiles/const';
+import messageConst from '@/utiles/MessageConst';
 import { getConnect } from '../../connect/getConnect';
-// const STR_MARU = '○';
-// const STYLE_DEFAULT = '';
-// const STYLE_BORDER_SOLID = '1px solid black';
-// const GRD_FROZEN_ROW = 1;
+
+const jigyoid = 62;
 export default {
   props: {
     selectedData: Object, // 検索条件等
@@ -391,29 +392,7 @@ export default {
         { val: 1, name: '障害児' },
         { val: 2, name: 'バーセルインデックス' },
       ],
-      rirekiList: [
-        {
-          index: 0,
-          no: 3,
-          day: '2020/01/01',
-          kanryou: '☐',
-          tantou: '担当小',
-        },
-        {
-          index: 1,
-          no: 2,
-          day: '2019/01/01',
-          kanryou: '☑',
-          tantou: '担当次',
-        },
-        {
-          index: 2,
-          no: 1,
-          day: '2018/01/01',
-          kanryou: '☑',
-          tantou: '担当三',
-        },
-      ],
+      rirekiList: [],
       viewDataAll: [],
       viewData: [],
       drawer: false,
@@ -422,7 +401,17 @@ export default {
       createflg: false,
     };
   },
+  mounted() {
+    window.addEventListener('resize', this.calculateWindowHeight);
+    this.calculateWindowHeight();
+  },
   methods: {
+    calculateWindowHeight() {
+      if (document.getElementById('assessmentInputIcrnGrid') != null) {
+        document.getElementById('assessmentInputIcrnGrid').style.height =
+          window.innerHeight - 140 + 'px';
+      }
+    },
     onInitializeIcrnGrid(flexGrid) {
       this.maingrid = flexGrid;
       flexGrid.beginningEdit.addHandler((s, e) => {
@@ -529,7 +518,7 @@ export default {
     },
     inputChangeclick(kbn) {
       console.log(kbn);
-      this.setViewData(false);
+      // this.setViewData(false);
     },
     // 左メニューで作成されたユーザ一覧の取得を行う
     getSelectUserChildComponent(data) {
@@ -538,58 +527,111 @@ export default {
     setUserSelectPoint(row) {
       // ユーザ選択処理はここで行う
       this.userInfo = row;
-      this.setViewData(true);
+      this.setSaishinReki();
+      this.setRireki();
+      // this.setViewData(true);
     },
-    setViewData(isAll) {
-      if (isAll) {
-        let params = {
-          uniqid: 1,
-          traceid: 123,
-          pJigyoid: 43,
-          pIntcode: this.userInfo.riid,
-          pSrhym: this.startymd.format('YYYYMMDD'),
-        };
-        getConnect('/AssessmentInput', params, 'SIENT').then((result) => {
-          console.log(12345);
-          console.log(result);
-          // this.viewDataAll = result;
-          // this.viewData = this.viewDataAll.concat();
-          // this.screenFlag = false;
+    setSaishinReki() {
+      // let params = {
+      //   uniqid: 3,
+      //   traceid: 123,
+      //   keitype: 1,
+      //   pJigyoid: 62,
+      //   pIntcode: this.userData.riid,
+      // };
+      // console.log(params);
+      // getConnect('/moniSaishinReki', params)
+      //   .then((result) => {
+      //     console.log(999);
+      //     console.log(result);
+      //     if (result.length == 0) {
+      //       this.viewdataAll = {};
+      //     } else {
+      //       this.createViewData(result);
+      //     }
+      //   })
+      //   .catch(function (error) {
+      //     alert(
+      //       messageConst.ERROR.ERROR + '[' + error.response.data.message + ']'
+      //     );
+      //   });
+    },
+    setRireki() {
+      let params = {
+        pJigyoid: jigyoid,
+        pIntcode: this.userInfo.riid,
+      };
+      console.log(params);
+      this.rirekiList = [];
+      this.viewdataAll = {};
+      getConnect('/asesReki', params, 'COMMON')
+        .then((result) => {
+          console.log('%o', result);
+          if (result.data.length == 0) {
+            this.modeless_dialogOpen();
+          } else {
+            this.modeless_dialogClose();
+          }
+          this.rirekiList = result.data;
+        })
+        .catch(function (error) {
+          alert(
+            messageConst.ERROR.ERROR + '[' + error.response.data.message + ']'
+          );
         });
-        this.headerList = [];
-        this.headerList.push({
-          title: '項目',
-          align: 'left',
-          width: '*',
-          dataname: 'title1',
-        });
-        this.headerList.push({
-          title: '数値',
-          align: 'right',
-          width: 50,
-          dataname: 'title2',
-        });
-        this.headerList.push({
-          title: '点数',
-          align: 'right',
-          width: 50,
-          dataname: 'title3',
-        });
-        this.headerList.push({
-          title: '援助等の有無',
-          align: 'left',
-          width: '*',
-          dataname: 'title4',
-        });
-        this.headerList.push({
-          title: '実態',
-          align: 'left',
-          width: '*',
-          dataname: 'title5',
-        });
-        this.createGrdHeader();
-        this.viewData = this.createData();
-      }
+    },
+    setViewData(item) {
+      let params = {
+        pJigyoid: jigyoid,
+        pmstfstid: item.mstfstid,
+        pIntcode: this.userInfo.riid,
+        pcntid: item.cntid,
+        pmymd: this.startymd.format('YYYYMMDD'),
+        pviewflg: 0,
+      };
+      getConnect('/ases', params, 'COMMON').then((result) => {
+        console.log(12345);
+        console.log(result);
+        // this.viewDataAll = result;
+        // this.viewData = this.viewDataAll.concat();
+        // this.screenFlag = false;
+      });
+      // this.headerList = [];
+      // this.headerList.push({
+      //   title: '項目',
+      //   align: 'left',
+      //   width: '*',
+      //   dataname: 'title1',
+      // });
+      // this.headerList.push({
+      //   title: '数値',
+      //   align: 'right',
+      //   width: 50,
+      //   dataname: 'title2',
+      // });
+      // this.headerList.push({
+      //   title: '点数',
+      //   align: 'right',
+      //   width: 50,
+      //   dataname: 'title3',
+      // });
+      // this.headerList.push({
+      //   title: '援助等の有無',
+      //   align: 'left',
+      //   width: '*',
+      //   dataname: 'title4',
+      // });
+      // this.headerList.push({
+      //   title: '実態',
+      //   align: 'left',
+      //   width: '*',
+      //   dataname: 'title5',
+      // });
+      // this.createGrdHeader();
+      // this.viewData = this.createData();
+    },
+    rirekiClicked(item) {
+      this.setViewData(item);
     },
     createGrdHeader() {
       this.maingrid.columns.clear();
@@ -750,7 +792,7 @@ div#assessmentInput {
   }
 
   #assessmentInputIcrnGrid {
-    min-height: 520px;
+    min-height: 450px;
     height: 80vh;
     width: 100%;
     min-width: 1000px;

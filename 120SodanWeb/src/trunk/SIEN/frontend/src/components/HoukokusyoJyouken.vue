@@ -1447,11 +1447,11 @@ export default {
         }
         postConnect('/MstSyukeikmk', params, 'SIENT', body)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               this.getSyukeiViewData(this.selectedViewDataChohyo.ptnid);
               this.clrClicked(1);
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -1466,11 +1466,11 @@ export default {
         }
         putConnect('/MstSyukeikmk', params, 'SIENT', body)
           .then((result) => {
-            if (result.okflg == true) {
+            if (result.status == sysConst.STATUS_OK) {
               this.getSyukeiViewData(this.selectedViewDataChohyo.ptnid);
               this.clrClicked(1);
             } else {
-              alert(result.msg);
+              alert(result.data.response.msg);
             }
           })
           .catch(function (error) {
@@ -1848,10 +1848,10 @@ export default {
 
       putConnect('/MstSyukeikmkSort', params, 'SIENT', body)
         .then((result) => {
-          if (result.okflg == true) {
+          if (result.status == sysConst.STATUS_OK) {
             this.getSyukeiViewData(this.selectedViewDataChohyo.ptnid);
           } else {
-            alert(result.msg);
+            alert(result.data.response.msg);
           }
         })
         .catch(function (error) {

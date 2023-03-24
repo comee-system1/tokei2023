@@ -359,7 +359,7 @@ export default {
         },
         {
           dispkbn: 1,
-          dataname: 'sdntiork',
+          dataname: 'sykkbnkigo',
           title: '事\n区',
           chutitle: '',
           kbntitle: '',
@@ -368,7 +368,7 @@ export default {
         },
         {
           dispkbn: 1,
-          dataname: 'sinki',
+          dataname: 'shinkimark',
           title: '新\n規',
           chutitle: '',
           kbntitle: '',
@@ -395,7 +395,7 @@ export default {
         },
         {
           dispkbn: 1,
-          dataname: 'sinki',
+          dataname: 'sdnhouchurk',
           title: '支援項目',
           chutitle: '',
           kbntitle: '',
@@ -1015,9 +1015,11 @@ export default {
             pSymd: this.startymd.format('YYYYMMDD'),
             pEymd: this.endymd.format('YYYYMMDD'),
             pHostName: 1,
+            Dspkbn: 1,
           };
           getConnect('/Uktk', params, 'SIENT')
             .then((result) => {
+              console.log('%o', result);
               this.viewDataAll = result;
               this.userFilter();
               this.screenFlag = false;

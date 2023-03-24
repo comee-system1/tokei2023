@@ -16,10 +16,10 @@ exports.connected = async function (param) {
       let obj = {}
       Object.keys(el).forEach(function (key) {
         obj[key] = el[key];
-        if (key == "sdnkancd") {
+        if (key == "sdnkandaicd") {
           obj["codeD"] = String(el[key]).padStart(3, '0');
         }
-        if (key == "sdnkannm") {
+        if (key == "sdnkandainm") {
           obj["name"] = el[key];
         }
       });

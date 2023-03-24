@@ -191,6 +191,56 @@
         </div>
         <div>
           <wj-flex-grid
+            id="listGridFix"
+            :initialized="onInitializedListFix"
+            :itemsSource="viewData"
+            :alternatingRowStep="0"
+            :selectionMode="0"
+            :autoGenerateColumns="false"
+            :headersVisibility="'Column'"
+            :allowResizing="false"
+            :allowDragging="false"
+            :allowSorting="false"
+            :showMarquee="true"
+            :formatItem="onFormatItemListFix"
+            :itemsSourceChanged="itemsSourceChanged"
+            v-show="displayType == 54"
+          >
+            <wj-flex-grid-filter
+              :initialized="filterInitializedList"
+              :showFilterIcons="false"
+            ></wj-flex-grid-filter>
+            <wj-flex-grid-column
+              v-for="value in listArrayFix.base"
+              :key="value.id"
+              :binding="value.binding"
+              :allowMerging="true"
+              :width="value.width"
+              :wordWrap="true"
+              :multiLine="true"
+            ></wj-flex-grid-column>
+            <wj-flex-grid-column
+              v-for="value in listArrayFix.shisetsu"
+              :key="value.id"
+              :binding="value.binding"
+              :allowMerging="true"
+              :width="value.width"
+              :wordWrap="true"
+              :multiLine="true"
+            ></wj-flex-grid-column>
+            <wj-flex-grid-column
+              v-for="value in listArrayFix.kobetsu"
+              :key="value.id"
+              :binding="value.binding"
+              :allowMerging="true"
+              :width="value.width"
+              :wordWrap="true"
+              :multiLine="true"
+            ></wj-flex-grid-column>
+          </wj-flex-grid>
+        </div>
+        <div>
+          <wj-flex-grid
             id="totalGrid"
             :initialized="onInitializedTotal"
             :itemsSource="viewData"
@@ -273,6 +323,22 @@ export default {
       total: '',
       bill: '',
       print: '',
+      seconds: 1,
+      piasaport: 1,
+      jyukyosienrenkei: 1,
+      tiikiseikatusien: 1,
+      syutyusien: '',
+      taiintaisyo: '',
+      tiikijyukyo: '',
+      riyo1: '',
+      riyo2: '2',
+      syuku1: '3',
+      syuku2: '',
+      taiseikakuho: 1,
+      first: 2,
+      second: 1,
+      nitijyoseikatu: 1,
+      tiikikyojyushien: 2,
     });
     tmp.push({
       receptKakutei: '',
@@ -301,6 +367,22 @@ export default {
       total: 2262,
       bill: 24791,
       print: '',
+      seconds: 3062,
+      piasaport: 100,
+      jyukyosienrenkei: 35,
+      tiikiseikatusien: '',
+      syutyusien: '',
+      taiintaisyo: '',
+      tiikijyukyo: '',
+      riyo1: '',
+      riyo2: '600',
+      syuku1: '900',
+      syuku2: '',
+      taiseikakuho: 306,
+      first: 1424,
+      second: 95,
+      nitijyoseikatu: 1,
+      tiikikyojyushien: 2,
     });
 
     for (let i = 2; i < 4; i++) {
@@ -331,6 +413,22 @@ export default {
         total: '',
         bill: '',
         print: '',
+        seconds: 1,
+        piasaport: 1,
+        jyukyosienrenkei: 1,
+        tiikiseikatusien: 1,
+        syutyusien: 1,
+        taiintaisyo: 1,
+        tiikijyukyo: 1,
+        riyo1: '',
+        riyo2: '2',
+        syuku1: '3',
+        syuku2: '',
+        taiseikakuho: 1,
+        first: 2,
+        second: 1,
+        nitijyoseikatu: 1,
+        tiikikyojyushien: 2,
       });
       tmp.push({
         receptKakutei: '',
@@ -359,6 +457,22 @@ export default {
         total: 1711,
         bill: 18762,
         print: '',
+        seconds: 3062,
+        piasaport: 100,
+        jyukyosienrenkei: 35,
+        tiikiseikatusien: 450,
+        syutyusien: 500,
+        taiintaisyo: 500,
+        tiikijyukyo: 2700,
+        riyo1: '',
+        riyo2: '2100',
+        syuku1: '1400',
+        syuku2: '',
+        taiseikakuho: 306,
+        first: '',
+        second: '',
+        nitijyoseikatu: 500,
+        tiikikyojyushien: 150,
       });
     }
     // 並び順をjyukyusyaBango順に変更
@@ -425,6 +539,7 @@ export default {
         'Ⅰ',
         'Ⅱ',
       ],
+      listHeaderTitleFix: ['基本報酬', '体制確保費', '緊急時支援費', 'Ⅰ', 'Ⅱ'],
       listHeaderTitlePlan: ['基本報酬', 'Ⅱ'],
       shisetuHeaderTitle: [
         '施設体制加算',
@@ -449,6 +564,20 @@ export default {
         '入院時情報連携加算',
         '居宅開度支援事業(訪)',
         '居宅開度支援事業(情)',
+      ],
+      kobetsuHeaderTitleFix: ['日常生活支援情報提供', '地域居住支援体制強化'],
+      kobetsuHeaderTitlePlan: [
+        '個別加算',
+        '初回加算',
+        '集中支援加算',
+        '退院・退所加算',
+        '地域居住支援体制強化',
+        '体験利用加算',
+        'Ⅰ',
+        'Ⅱ',
+        '体験宿泊加算',
+        'Ⅰ',
+        'Ⅱ',
       ],
       totalHeaderTitle: ['合計\n単位数', '請求額', '印刷'],
       basicArray: [
@@ -476,7 +605,7 @@ export default {
           {
             id: 1,
             binding: 'plandate',
-            width: 100,
+            width: 80,
           },
           {
             id: 2,
@@ -574,76 +703,120 @@ export default {
           {
             id: 1,
             binding: 'seconds',
-            width: 100,
+            width: 80,
           },
         ],
         shisetsu: [
           {
             id: 7,
             binding: 'piasaport',
-            width: 50,
+            width: 80,
           },
           {
             id: 8,
             binding: 'jyukyosienrenkei',
-            width: 50,
+            width: 80,
           },
           {
             id: 9,
             binding: 'tiikiseikatusien',
-            width: 50,
+            width: 80,
           },
         ],
         kobetsu: [
           {
             id: 12,
             binding: 'syokaikasan',
-            width: 50,
+            width: 80,
           },
           {
             id: 13,
             binding: 'syutyusien',
-            width: 50,
+            width: 80,
           },
           {
             id: 14,
             binding: 'taiintaisyo',
-            width: 50,
+            width: 80,
           },
           {
             id: 15,
-            binding: 'serviceTantoKaigi',
-            width: 50,
+            binding: 'tiikijyukyo',
+            width: 80,
           },
           {
             id: 16,
-            binding: 'tiikijyukyo',
-            width: 50,
+            binding: 'riyo1',
+            width: 80,
           },
           {
             id: 17,
-            binding: 'riyo1',
-            width: 50,
+            binding: 'riyo2',
+            width: 80,
           },
           {
             id: 18,
-            binding: 'riyo2',
-            width: 50,
+            binding: 'syuku1',
+            width: 80,
           },
           {
             id: 19,
-            binding: 'syuku1',
-            width: 50,
+            binding: 'syuku2',
+            width: 80,
+          },
+        ],
+      },
+      listArrayFix: {
+        base: [
+          {
+            id: 1,
+            binding: 'taiseikakuho',
+            width: 80,
           },
           {
-            id: 20,
-            binding: 'syuku2',
-            width: 50,
+            id: 2,
+            binding: 'first',
+            width: 80,
+          },
+          {
+            id: 3,
+            binding: 'second',
+            width: 80,
+          },
+        ],
+        shisetsu: [
+          {
+            id: 7,
+            binding: 'piasaport',
+            width: 80,
+          },
+          {
+            id: 8,
+            binding: 'jyukyosienrenkei',
+            width: 80,
+          },
+          {
+            id: 9,
+            binding: 'tiikiseikatusien',
+            width: 80,
+          },
+        ],
+        kobetsu: [
+          {
+            id: 12,
+            binding: 'nitijyoseikatu',
+            width: 80,
+          },
+          {
+            id: 13,
+            binding: 'tiikikyojyushien',
+            width: 80,
           },
         ],
       },
       listGrid: [],
       listGridPlan: [],
+      listGridFix: [],
 
       totalArray: [
         {
@@ -781,6 +954,15 @@ export default {
     /*************************
      * 基本報酬
      */
+    onInitializedListFix(listGridFix) {
+      this.listGridFix = listGridFix;
+      this.listHeaderFix();
+      listGridFix.columnHeaders.rows[2].height = headerHeightList;
+      // 合計値の計算
+      this.calcTotalPoint('base', 0, this.listArrayFix);
+      this.calcTotalPoint('shisetsu', 3, this.listArrayFix);
+      this.calcTotalPoint('kobetsu', 6, this.listArrayFix);
+    },
     onInitializedList(listGrid) {
       this.listGrid = listGrid;
       this.listHeader();
@@ -795,30 +977,31 @@ export default {
       this.listHeaderPlan();
       listGridPlan.columnHeaders.rows[2].height = headerHeightList;
       // // 合計値の計算
-      // this.calcTotalPoint('base', 2);
-      // this.calcTotalPoint('shisetsu', 6);
-      // this.calcTotalPoint('kobetsu', 11);
+      this.calcTotalPoint('base', 0, this.listArrayPlan);
+      this.calcTotalPoint('shisetsu', 1, this.listArrayPlan);
+      this.calcTotalPoint('kobetsu', 4, this.listArrayPlan);
     },
+
     /********************
      * 合計値の計算
      * type:配列のキー
      * 記述開始位置
      */
-    calcTotalPoint(type, st) {
+    calcTotalPoint(type, st, data = this.listArray) {
       let upper = [];
       let bottom = [];
       let _self = this;
-      this.listArray[type].map(function (val, k) {
+      data[type].map(function (val, k) {
         // 基本情報の時のみ1より大きい値から取得
         if (k > 1 || st != 2) {
           let up = 0;
           let bm = 0;
           _self.viewData.map(function (value, key) {
             if (key % 2 == 0) {
-              up += value[val.binding];
+              up += Number(value[val.binding]);
             }
             if (key % 2 == 1) {
-              bm += value[val.binding];
+              bm += Number(value[val.binding]);
             }
           });
           upper.push(up);
@@ -849,6 +1032,51 @@ export default {
         st++;
       });
     },
+    listHeaderFix() {
+      var panel = this.listGridFix.columnHeaders;
+      if (panel.rows.length < 2) {
+        panel.rows.insert(0, new wjGrid.Row());
+        panel.rows.insert(1, new wjGrid.Row());
+      }
+      panel.setCellData(0, 0, this.listHeaderTitleFix[0]);
+      panel.setCellData(1, 0, this.listHeaderTitleFix[1]);
+      panel.setCellData(1, 1, this.listHeaderTitleFix[2]);
+      panel.setCellData(2, 1, this.listHeaderTitleFix[3]);
+      panel.setCellData(2, 2, this.listHeaderTitleFix[4]);
+      panel.setCellData(0, 3, this.shisetuHeaderTitlePlan[0]);
+      panel.setCellData(1, 3, this.shisetuHeaderTitlePlan[1]);
+      panel.setCellData(1, 4, this.shisetuHeaderTitlePlan[2]);
+      panel.setCellData(1, 5, this.shisetuHeaderTitlePlan[3]);
+      panel.setCellData(0, 6, this.kobetsuHeaderTitlePlan[0]);
+      panel.setCellData(1, 6, this.kobetsuHeaderTitleFix[0]);
+      panel.setCellData(1, 7, this.kobetsuHeaderTitleFix[1]);
+
+      // 上部ヘッダの結合
+      let headerRanges = [];
+      let bodyRanges = [];
+
+      headerRanges.push(
+        new wjGrid.CellRange(0, 0, 0, 2),
+        new wjGrid.CellRange(1, 0, 2, 0),
+        new wjGrid.CellRange(1, 1, 1, 2),
+        new wjGrid.CellRange(0, 3, 0, 5),
+        new wjGrid.CellRange(0, 6, 0, 7),
+        new wjGrid.CellRange(1, 3, 2, 3),
+        new wjGrid.CellRange(1, 4, 2, 4),
+        new wjGrid.CellRange(1, 5, 2, 5),
+        new wjGrid.CellRange(1, 6, 2, 6),
+        new wjGrid.CellRange(1, 7, 2, 7)
+      );
+
+      // フッタ
+      panel = this.listGridFix.columnFooters;
+      if (panel.rows.length < 2) {
+        panel.rows.insert(0, new wjGrid.Row());
+        panel.rows.insert(1, new wjGrid.Row());
+      }
+
+      this.createMerge(headerRanges, bodyRanges);
+    },
     listHeaderPlan() {
       var panel = this.listGridPlan.columnHeaders;
       if (panel.rows.length < 2) {
@@ -861,12 +1089,42 @@ export default {
       panel.setCellData(1, 1, this.shisetuHeaderTitlePlan[1]);
       panel.setCellData(1, 2, this.shisetuHeaderTitlePlan[2]);
       panel.setCellData(1, 3, this.shisetuHeaderTitlePlan[3]);
-
+      panel.setCellData(0, 4, this.kobetsuHeaderTitlePlan[0]);
+      panel.setCellData(1, 4, this.kobetsuHeaderTitlePlan[1]);
+      panel.setCellData(1, 5, this.kobetsuHeaderTitlePlan[2]);
+      panel.setCellData(1, 6, this.kobetsuHeaderTitlePlan[3]);
+      panel.setCellData(1, 7, this.kobetsuHeaderTitlePlan[4]);
+      panel.setCellData(1, 8, this.kobetsuHeaderTitlePlan[5]);
+      panel.setCellData(2, 8, this.kobetsuHeaderTitlePlan[6]);
+      panel.setCellData(2, 9, this.kobetsuHeaderTitlePlan[7]);
+      panel.setCellData(1, 10, this.kobetsuHeaderTitlePlan[8]);
+      panel.setCellData(2, 10, this.kobetsuHeaderTitlePlan[9]);
+      panel.setCellData(2, 11, this.kobetsuHeaderTitlePlan[10]);
       // 上部ヘッダの結合
       let headerRanges = [];
       let bodyRanges = [];
 
-      headerRanges.push(new wjGrid.CellRange(1, 0, 2, 0));
+      headerRanges.push(
+        new wjGrid.CellRange(1, 0, 2, 0),
+        new wjGrid.CellRange(0, 1, 0, 3),
+        new wjGrid.CellRange(1, 1, 2, 1),
+        new wjGrid.CellRange(1, 2, 2, 2),
+        new wjGrid.CellRange(1, 3, 2, 3),
+        new wjGrid.CellRange(0, 4, 0, 11),
+        new wjGrid.CellRange(1, 4, 2, 4),
+        new wjGrid.CellRange(1, 5, 2, 5),
+        new wjGrid.CellRange(1, 6, 2, 6),
+        new wjGrid.CellRange(1, 7, 2, 7),
+        new wjGrid.CellRange(1, 8, 1, 9),
+        new wjGrid.CellRange(1, 10, 1, 11)
+      );
+
+      // フッタ
+      panel = this.listGridPlan.columnFooters;
+      if (panel.rows.length < 2) {
+        panel.rows.insert(0, new wjGrid.Row());
+        panel.rows.insert(1, new wjGrid.Row());
+      }
 
       this.createMerge(headerRanges, bodyRanges);
     },
@@ -1054,8 +1312,85 @@ export default {
       this.basicGrid.mergeManager = mm;
     },
 
+    onFormatItemListFix(flexGrid, e) {
+      if (e.panel.cellType == wjGrid.CellType.ColumnHeader) {
+        if (e.row == 0) {
+          e.cell.style.textAlign = 'center';
+          e.cell.style.alignItems = 'center';
+        }
+
+        if (e.row == 1) {
+          if (e.col != 1) {
+            e.cell.style.writingMode = 'vertical-rl';
+          }
+
+          this.onJustifyCenterMiddle(e);
+          if (e.col >= 3) {
+            e.cell.style.justifyContent = 'left';
+            e.cell.style.textAlign = 'left';
+          }
+        }
+        if (e.row == 2) {
+          this.onJustifyCenterMiddle(e);
+        }
+
+        if (e.col < 3) {
+          e.cell.style.backgroundColor =
+            sysConst.COLOR.viewTitleBackgroundGreen;
+        }
+        if (e.col >= 3) {
+          e.cell.style.backgroundColor = sysConst.COLOR.viewTitleBackgroundBlue;
+        }
+      }
+      if (e.panel.cellType == wjGrid.CellType.Cell) {
+        e.cell.style.backgroundColor = sysConst.COLOR.lightYellow;
+      }
+      if (e.panel.cellType == wjGrid.CellType.ColumnFooter) {
+        e.cell.style.backgroundColor = sysConst.COLOR.lightYellow;
+        e.cell.style.fontWeight = 'normal';
+      }
+    },
     onFormatItemListPlan(flexGrid, e) {
-      console.log(e);
+      if (e.panel.cellType == wjGrid.CellType.ColumnHeader) {
+        if (e.row == 0) {
+          e.cell.style.textAlign = 'center';
+          e.cell.style.alignItems = 'center';
+        }
+        if (e.row == 1) {
+          if (e.col >= 1 && e.col <= 7) {
+            e.cell.style.writingMode = 'vertical-rl';
+            e.cell.style.justifyContent = 'left';
+            e.cell.style.textAlign = 'left';
+          }
+          e.cell.style.display = 'flex';
+          if (e.col == 0) {
+            this.onJustifyCenterMiddle(e);
+          }
+          if (e.col >= 8) {
+            e.cell.style.textAlign = 'center';
+            e.cell.style.display = 'block';
+          }
+        }
+        if (e.row == 2) {
+          this.onJustifyCenterMiddle(e);
+        }
+        e.cell.style.alignItems = 'center';
+
+        if (e.col == 0) {
+          e.cell.style.backgroundColor =
+            sysConst.COLOR.viewTitleBackgroundGreen;
+        }
+        if (e.col > 0) {
+          e.cell.style.backgroundColor = sysConst.COLOR.viewTitleBackgroundBlue;
+        }
+      }
+      if (e.panel.cellType == wjGrid.CellType.Cell) {
+        e.cell.style.backgroundColor = sysConst.COLOR.lightYellow;
+      }
+      if (e.panel.cellType == wjGrid.CellType.ColumnFooter) {
+        e.cell.style.backgroundColor = sysConst.COLOR.lightYellow;
+        e.cell.style.fontWeight = 'normal';
+      }
     },
     onFormatItemList(flexGrid, e) {
       if (e.panel.cellType == wjGrid.CellType.ColumnHeader) {
@@ -1299,11 +1634,15 @@ div#KasanKomoku {
     border-radius: 4px 0px 0px 4px;
   }
   #listGrid {
-    width: 800px;
+    max-width: 800px;
     border-radius: 0px;
   }
   #listGridPlan {
-    width: 600px;
+    max-width: 800px;
+    border-radius: 0px;
+  }
+  #listGridFix {
+    max-width: 800px;
     border-radius: 0px;
   }
   #totalGrid {

@@ -1,12 +1,122 @@
-[2023-03-22 09:51:21.607][ERROR][none] SyntaxError: "undefined" is not valid JSON
-    at JSON.parse (<anonymous>)
-    at /home/tokei/develop/100Sogo_WebApl/src/trunk/backend/src/index.js:79:23
-    at Layer.handle [as handle_request] (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/layer.js:95:5)
-    at next (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/route.js:144:13)
-    at Route.dispatch (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/route.js:114:3)
-    at Layer.handle [as handle_request] (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/layer.js:95:5)
-    at /home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/index.js:284:15
-    at param (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/index.js:365:14)
-    at param (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/index.js:376:14)
-    at param (/home/tokei/develop/100Sogo_WebApl/src/trunk/backend/node_modules/express/lib/router/index.js:376:14)
-[2023-03-22 09:51:21.607][ERROR][none] システムエラーが発生しました。[SyntaxError: "undefined" is not valid JSON]
+[2023-03-24 15:22:26.566][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:24:27.055][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:27:05.813][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:27:26.389][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:32:54.014][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:33:39.454][ERROR][none] システムエラーが発生しました。[InternalServerError:[0][110003]共有API接続時にエラーが発生しました。StatusCode=500,System.Globalization.CultureNotFoundException: Culture is not supported. (Parameter 'name')
+[r�
+ir�
+wr�
+�r�
+�r�
+�r�
+
+s�
+s�
+&s�
+4s�
+bs�
+~s�
+�s�
+�s�
+�s�
+�s�
+�s�
+ is an invalid culture identifier.
+   at System.Globalization.CultureInfo.GetCultureInfo(String name)
+   at System.Reflection.RuntimeAssembly.GetLocale()
+   at System.Reflection.RuntimeAssembly.GetName(Boolean copiedName)
+   at Microsoft.AspNetCore.Mvc.MvcCoreLoggerExtensions.ExecutingAction(ILogger logger, ActionDescriptor action)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+
+HEADERS
+=======
+Accept: application/json, text/plain, */*
+Connection: keep-alive
+Host: 192.168.30.32
+User-Agent: axios/1.3.3
+Accept-Encoding: gzip, compress, deflate, br
+traceparent: 00-41ccf0cd25d3a6b770bbca55bf765017-a94f40ef83892517-00
+X-Forwarded-For: 192.168.20.113, 192.168.30.32
+X-Forwarded-Proto: http
+x-api-account: toukei-common-api
+x-api-key: jKGbd4PqxN5yzyxn
+x-trace-id: 0
+x-corporation-unique-id: 110003
+]
+[2023-03-24 15:33:41.784][ERROR][none] システムエラーが発生しました。[InternalServerError:[0][110003]共有API接続時にエラーが発生しました。StatusCode=500,System.Globalization.CultureNotFoundException: Culture is not supported. (Parameter 'name')
+[r�
+ir�
+wr�
+�r�
+�r�
+�r�
+
+s�
+s�
+&s�
+4s�
+bs�
+~s�
+�s�
+�s�
+�s�
+�s�
+�s�
+ is an invalid culture identifier.
+   at System.Globalization.CultureInfo.GetCultureInfo(String name)
+   at System.Reflection.RuntimeAssembly.GetLocale()
+   at System.Reflection.RuntimeAssembly.GetName(Boolean copiedName)
+   at Microsoft.AspNetCore.Mvc.MvcCoreLoggerExtensions.ExecutingAction(ILogger logger, ActionDescriptor action)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+
+HEADERS
+=======
+Accept: application/json, text/plain, */*
+Connection: keep-alive
+Host: 192.168.30.32
+User-Agent: axios/1.3.3
+Accept-Encoding: gzip, compress, deflate, br
+traceparent: 00-1dfe00589e1cb373366a1e9ddf888208-ea2bd8f4de70d122-00
+X-Forwarded-For: 192.168.20.113, 192.168.30.32
+X-Forwarded-Proto: http
+x-api-account: toukei-common-api
+x-api-key: jKGbd4PqxN5yzyxn
+x-trace-id: 0
+x-corporation-unique-id: 110003
+]
+[2023-03-24 15:33:44.219][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:34:55.067][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:34:56.692][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:35:26.796][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:35:28.883][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:36:44.685][ERROR][none] システムエラーが発生しました。[ReferenceError: config is not defined]
+[2023-03-24 15:37:46.175][ERROR][none] システムエラーが発生しました。[TypeError: Cannot read properties of undefined (reading 'api')]
+[2023-03-24 15:37:48.154][ERROR][none] システムエラーが発生しました。[TypeError: Cannot read properties of undefined (reading 'api')]
+[2023-03-24 15:38:02.595][ERROR][none] システムエラーが発生しました。[TypeError: Cannot read properties of undefined (reading 'api')]
+[2023-03-24 15:39:15.696][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]更新に失敗しました。]
+[2023-03-24 15:42:25.122][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:06:47.466][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]更新に失敗しました。]
+[2023-03-24 16:13:45.433][ERROR][none] システムエラーが発生しました。[[object Object]]
+[2023-03-24 16:14:23.299][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:15:32.170][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:17:39.504][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:18:38.569][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:20:03.008][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:20:41.810][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:24:07.136][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:25:05.067][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:27:13.368][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]削除に失敗しました。]
+[2023-03-24 16:53:27.071][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]更新に失敗しました。]
+[2023-03-24 16:53:45.922][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]更新に失敗しました。]
+[2023-03-24 16:54:08.233][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]更新に失敗しました。]
+[2023-03-24 17:04:36.989][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]Error parsing column 9 (yobi=7 - Decimal)]
+[2023-03-24 17:05:07.337][ERROR][none] システムエラーが発生しました。[InternalServerError:[123][110003]Error parsing column 9 (yobi=7 - Decimal)]

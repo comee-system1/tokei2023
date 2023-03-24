@@ -1,3 +1,4 @@
+const STATUS_OK = 200;
 const COLOR = {
     red: '#ff502f',
     black: '#000',
@@ -244,6 +245,7 @@ const COLORPALETTE = [{
 ];
 
 export default {
+    STATUS_OK,
     COLOR,
     COLORPALETTE,
     FORMAT,

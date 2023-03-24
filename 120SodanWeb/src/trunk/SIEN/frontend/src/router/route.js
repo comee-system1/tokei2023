@@ -34,28 +34,8 @@ const TitleKeiyaku = "契約報告書";
 const TitleChiikiSoudan = "地域相談支援";
 Vue.use(VueRouter)
 
-const routes = [
-    // {
-    //     path: '/KihonJyoho/:uniqid',
-    //     name: '基本情報',
-    //     component: KihonJyoho,
-    //     meta: {
-    //         title: usedTitle,
-    //         calender: true
-    //     },
-    // },
-    // {
-    //     path: '/JyukyuTouroku/:uniqid',
-    //     name: '受給者証登録',
-    //     component: JyukyuTouroku,
-    //     meta: {
-    //         title: usedTitle,
-    //         calender: true
-    //     },
-    // },
-
-    {
-        path: '/SIENT/UketukeTourokuParent/:uniqid',
+const routes = [{
+        path: '/SIENT/UketukeTourokuParent',
         name: '受付・対応登録',
         component: SienTUketukeTourokuParent,
         meta: {
@@ -63,15 +43,23 @@ const routes = [
         },
     },
     {
-        path: '/UketukeSanshoParent/:uniqid',
-        name: '受付対応日報・月報',
+        path: '/UketukeSanshoParent/:kind',
+        name: '受付・対応登録',
         component: UketukeSanshoParent,
         meta: {
             title: TitleSoudansien,
         },
     },
     {
-        path: '/UketukeCheckList/:uniqid',
+        path: '/UketukeSanshoParent/:kind',
+        name: '日報参照',
+        component: UketukeSanshoParent,
+        meta: {
+            title: TitleSoudansien,
+        },
+    },
+    {
+        path: '/UketukeCheckList',
         name: '受付対応チェックリスト',
         component: UketukeCheckList,
         meta: {
@@ -79,7 +67,15 @@ const routes = [
         },
     },
     {
-        path: '/AssessmentInput/:uniqid',
+        path: '/UketukeSanshoParent/:kind',
+        name: '月報参照',
+        component: UketukeSanshoParent,
+        meta: {
+            title: TitleSoudansien,
+        },
+    },
+    {
+        path: '/AssessmentInput',
         name: 'アセスメント',
         component: AssessmentInput,
         meta: {
@@ -87,15 +83,15 @@ const routes = [
         },
     },
     {
-        path: '/KojinRireki/:kind/:uniqid',
-        name: '個人履歴',
+        path: '/KojinRireki/:kind',
+        name: '個人履歴参照',
         component: KojinRireki,
         meta: {
             title: TitleSoudansien,
         },
     },
     {
-        path: '/SoudanHoukokusyoJyoukenParent/:uniqid',
+        path: '/SoudanHoukokusyoJyoukenParent',
         name: '報告書用集計条件設定',
         component: SoudanHoukokusyoJyoukenParent,
         meta: {
@@ -103,15 +99,15 @@ const routes = [
         },
     },
     {
-        path: '/SoudanHoukokusyo/:uniqid',
-        name: '報告書',
+        path: '/SoudanHoukokusyo',
+        name: '報告書参照',
         component: SoudanHoukokusyo,
         meta: {
             title: TitleSoudansien,
         },
     },
     {
-        path: '/MstMenu/:uniqid',
+        path: '/MstMenu',
         name: 'マスタ',
         component: MstMenu,
         meta: {
@@ -119,7 +115,7 @@ const routes = [
         },
     },
     {
-        path: '/KeikakuUketukeIcrn/:kind/:uniqid',
+        path: '/KeikakuUketukeIcrn/:kind',
         name: '計画相談受付・対応登録',
         component: SienPUketukeTouroku,
         meta: {
@@ -127,15 +123,15 @@ const routes = [
         },
     },
     {
-        path: '/KeikakuKojinRireki/:kind/:uniqid',
-        name: '計画相談個人履歴',
+        path: '/KeikakuKojinRireki/:kind',
+        name: '計画相談個人履歴参照',
         component: KojinRireki,
         meta: {
             title: TitleKeikaku,
         },
     },
     {
-        path: '/MonitoringParent/:uniqid',
+        path: '/MonitoringParent',
         name: 'モニタリング',
         component: MonitoringParent,
         meta: {
@@ -143,7 +139,7 @@ const routes = [
         },
     },
     {
-        path: '/TantoKaigi/:kind/:uniqid',
+        path: '/TantoKaigi/:kind',
         name: '担当者会議',
         component: TantoKaigi,
         meta: {
@@ -151,7 +147,7 @@ const routes = [
         },
     },
     {
-        path: '/TantousyaBetuJisseki/:uniqid',
+        path: '/TantousyaBetuJisseki',
         name: '担当者別実績表',
         component: TantousyaBetuJisseki,
         meta: {
@@ -159,7 +155,7 @@ const routes = [
         },
     },
     {
-        path: '/KeikakuLists/:uniqid',
+        path: '/KeikakuLists',
         name: '計画作成',
         component: KeikakuLists,
         meta: {
@@ -167,7 +163,7 @@ const routes = [
         },
     },
     {
-        path: '/KeiyakuHokoku/:uniqid',
+        path: '/KeiyakuHokoku',
         name: '契約報告書',
         component: KeiyakuHokoku,
         meta: {
@@ -175,7 +171,7 @@ const routes = [
         },
     },
     {
-        path: '/ChiikiUketukeIcrn/:kind/:uniqid',
+        path: '/ChiikiUketukeIcrn/:kind',
         name: '地域相談受付・対応登録',
         component: SienPUketukeTouroku,
         meta: {
@@ -183,15 +179,15 @@ const routes = [
         },
     },
     {
-        path: '/ChiikiKojinRireki/:kind/:uniqid',
-        name: '地域相談個人履歴',
+        path: '/ChiikiKojinRireki/:kind',
+        name: '地域相談個人履歴参照',
         component: KojinRireki,
         meta: {
             title: TitleChiikiSoudan,
         },
     },
     {
-        path: '/ChiikiIkoSienKeikaku/:uniqid',
+        path: '/ChiikiIkoSienKeikaku',
         name: '地域移行支援計画',
         component: ChiikiIkoSienKeikaku,
         meta: {
@@ -199,7 +195,7 @@ const routes = [
         },
     },
     {
-        path: '/ChiikiteityakuDaicho/:uniqid',
+        path: '/ChiikiteityakuDaicho',
         name: '地域定着台帳',
         component: ChiikiteityakuDaicho,
         meta: {
@@ -207,7 +203,7 @@ const routes = [
         },
     },
     {
-        path: '/ChiikiteityakuDaichoMst/:uniqid',
+        path: '/ChiikiteityakuDaichoMst',
         name: '地域定着台帳様式設定',
         component: ChiikiteityakuDaichoMst,
         meta: {
@@ -216,9 +212,9 @@ const routes = [
     },
 
     {
-        path:'/KoteiinfList/:uniqid',
-        name:'固定情報',
-        component:KoteiinfList,
+        path: '/KoteiinfList',
+        name: '固定情報',
+        component: KoteiinfList,
         meta: {
             title: TitleSoudansien,
         },

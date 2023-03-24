@@ -38,7 +38,7 @@ export async function putConnect(type, params, folderName = "", requestBody = []
         },
         headers
     ).then(function (response) {
-        return response.data.response;
+        return response;
     }).catch(function (error) {
         console.log("api接続用サーバーに接続失敗。BACKENDの実行確認");
         console.log(error);

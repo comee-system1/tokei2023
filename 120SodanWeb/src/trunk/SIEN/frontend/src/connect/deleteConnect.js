@@ -34,7 +34,7 @@ export async function deleteConnect(type, params, folderName = "", requestBody =
     };
 
     return await axios.delete(common.LOG_DOMAIN + ":" + common.LOG_PORT + "/" + folder + "/" + str, headers).then(function (response) {
-        return response.data.response;
+        return response;
     }).catch(function (error) {
         console.log("api接続用サーバーに接続失敗。BACKENDの実行確認");
         console.log(error);
