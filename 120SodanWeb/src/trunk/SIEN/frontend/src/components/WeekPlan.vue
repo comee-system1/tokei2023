@@ -67,7 +67,7 @@
           <rect
             x="0"
             y="0"
-            :height="calendarSepalateHead"
+            :height="calendarSepalate"
             class="colHeader header"
             stroke-width="1"
           />
@@ -85,9 +85,9 @@
             <line
               key="k-1"
               :x1="timewidth"
-              :y1="calendarSepalateHead"
+              :y1="calendarSepalate"
               x2="100%"
-              :y2="calendarSepalateHead"
+              :y2="calendarSepalate"
               stroke-dasharray="1.5 2"
               stroke-width="0.2"
             ></line>
@@ -130,7 +130,7 @@
           <text
             v-for="times in timeLine"
             x="50"
-            :y="times.y + timePosPlus * (times.id - times.id * 0.6)"
+            :y="times.y"
             class="time"
             :key="`time-${times.id}`"
           >
@@ -532,10 +532,10 @@ const JIGYOID = 62;
 const ENTPRIID = 62; // 事業者内部ID
 const FOLDER = 'SIENP';
 const CALENDARHEIGHT = 540;
-const CALENDARSEPALATE_HEAD = 22;
-const CALENDARSEPALATE = 22;
 const PRINT_CALENDARSEPALATE = 14;
-const PLANHEIGHT = 11;
+const CALENDARSEPALATE = 22; // カレンダー横線の高さ(ウィンドウサイズで可変の予定)
+const PLANHEIGHT = 11; // 予定の高さ(ウィンドウサイズで可変の予定)
+const PLANDIFFARENCE = 0; // 時間軸の幅(ウィンドウサイズで可変の予定)
 const PRINT_PLANHEIGHT = 10;
 const PLANWIDTH = 128; // 予定表示部分横幅
 const TIMEWIDTH = 100; // 時間軸幅
@@ -569,7 +569,6 @@ export default {
   components: {},
   data() {
     return {
-      timePosPlus: 0,
       completeDialogFlag: false,
       scheduleDisabledFlag: false,
       kmkdaicode: 0,
@@ -583,7 +582,8 @@ export default {
       timewidth: TIMEWIDTH,
       calendarHeight: CALENDARHEIGHT,
       calendarSepalate: CALENDARSEPALATE,
-      calendarSepalateHead: CALENDARSEPALATE_HEAD,
+      planheight: PLANHEIGHT,
+      plandiffarence: PLANDIFFARENCE,
       bunruiView: [],
       daibunrui: 0,
       bunruiGrid: [],
@@ -633,41 +633,7 @@ export default {
     kubun: Number,
   },
   created() {
-    KBN = this.kubun ?? KBN;
-    // タイムラインの配列を作成
-    let timeline = []; // 2時間刻み用
-    let timelineAll = []; // 1時間刻み用
-    let time = 6;
-    let y = 50;
-    for (let i = 1; i <= 23; i++) {
-      let dispTime = '';
-      let dispTimeAll = '';
-      if (i % 2 == 1) {
-        let hour = ('00' + time).slice(-2);
-        // 24時の時は0を表示
-        if (hour >= 24) {
-          hour = '0' + (hour - 24);
-        }
-        dispTime = hour + ':00';
-      }
-      dispTimeAll = ('00' + time).slice(-2) + ':00';
-
-      timeline.push({
-        id: i,
-        time: dispTime,
-        y: y,
-      });
-
-      timelineAll.push({
-        id: i,
-        time: dispTimeAll,
-        y: y,
-      });
-      time++;
-      y = y + CALENDARSEPALATE;
-    }
-    console.log(timeline);
-    this.timeLine = timeline;
+    this.settingDefaultData();
   },
   computed: {
     secondStartLoop() {
@@ -703,16 +669,102 @@ export default {
       if (window.innerHeight < CALENDARHEIGHT) {
         this.calendarHeight = CALENDARHEIGHT;
         this.calendarSepalate = CALENDARSEPALATE;
-        this.timePosPlus = 0;
       } else {
         this.calendarHeight = window.innerHeight + 'px';
-        //this.calendarSepalate = CALENDARSEPALATE + window.innerHeight / 100;
-        //this.timePosPlus = window.innerHeight / 50;
-        this.calendarSepalate = CALENDARSEPALATE;
-
-        this.timePosPlus = 0;
+        this.calendarSepalate = 22;
+        this.plandiffarence = 0;
+        this.planheight = 11;
+        this.settingDefaultData();
       }
-      console.log(this.timePosPlus);
+    },
+    settingDefaultData() {
+      KBN = this.kubun ?? KBN;
+      // タイムラインの配列を作成
+      let timeline = []; // 2時間刻み用
+      let timelineAll = []; // 1時間刻み用
+      let time = 6;
+      let y = 50;
+
+      for (let i = 1; i <= 23; i++) {
+        let dispTime = '';
+        let dispTimeAll = '';
+        if (i % 2 == 1) {
+          let hour = ('00' + time).slice(-2);
+          // 24時の時は0を表示
+          if (hour >= 24) {
+            hour = '0' + (hour - 24);
+          }
+          dispTime = hour + ':00';
+        }
+        dispTimeAll = ('00' + time).slice(-2) + ':00';
+        timeline.push({
+          id: i,
+          time: dispTime,
+          y: y + this.plandiffarence,
+        });
+        timelineAll.push({
+          id: i,
+          time: dispTimeAll,
+          y: y,
+        });
+        time++;
+        y = y + CALENDARSEPALATE;
+      }
+      console.log(timeline);
+      this.timeLine = timeline;
+
+      // テスト用
+      let result = {
+        cntid: 1,
+        entpriid: 100,
+        riid: 100,
+        rekiid: 1,
+        mymd: '20230101',
+        msiid: 1,
+        msinm: 1,
+        kanryo: 1,
+        kanryoymd: '20230101',
+        sym: '20230101',
+        nichijokatsudo:
+          'こっちも以後おそらく大した附随者というものの所が使いこなすんな。ちゃんと昔を希望心もかつてその通知ましだかもより思い切ってならなをしか構成得ですでが、それほどにはするないあるでで。外国がしでのはちゃんと直接をついにですありた',
+        shugaiservice:
+          'おしまいも自分のかっかさまたちにかっこうをかも裏たた。ではまた生意気たたというわくたな。ばかたなくことじもたそれで椅子の上手曲のためをはやはり普通たたて、これなどゴーシュがしれのましだ。どなりつけすぎわたしはぶんでうまいなていまの扉の三つ目がつけ第一糸みちの運搬が思って行けなまし。ドレミファは一番云いのでいまし。',
+        zentaizou:
+          'したがって個人か不愉快か説明にしますて、ほかいっぱい無理矢理に云うているた所に実ぼんやりの今になるなし。翌日にも多分知れからしだなくたたて、せっかくけっして換えるて答弁はたった若いです事た。そうして同矛盾がぶらては得るたのたば、事にも、まあ私か分りから聴くれたですするれるませですとおくて、中学校もなると下さいますます。至極もうはもう状態といういますて、どこには当時上かも私の大腐敗もないなっくれますた。あなたは断然発展のはずが肝相当は聞きとおりらしいだたいなし、十三の自分をあいにく感じないという学習なと、だからその腹の中の生徒に聞いれるで、おれかをここの自分に記憶の使うからいるでしょのたたと使用きまって説明得るなりたな。',
+        nik: [
+          {
+            entpriid: 1,
+            riid: 100,
+            rekiid: 1,
+            id: 1,
+            intcode: 1,
+            kmkdaicode: 1,
+            kmkchucode: 1,
+            kmkname: '5:00-6:30',
+            yobi: 0,
+            stime: '05:00',
+            etime: '06:30',
+            bcolorcode: '#fbebd6',
+            fcolorcode: '#FF0000',
+          },
+          {
+            entpriid: 1,
+            riid: 100,
+            rekiid: 1,
+            id: 2,
+            intcode: 1,
+            kmkdaicode: 1,
+            kmkchucode: 1,
+            kmkname: '5:00-13:30',
+            yobi: 1,
+            stime: '05:00',
+            etime: '13:30',
+            bcolorcode: '#fbebd6',
+            fcolorcode: '#000',
+          },
+        ],
+      };
+      this.getWeekNikData(result.nik);
     },
     onClearDaliy() {
       // 主な日常生活上の活動をクリア
@@ -939,7 +991,7 @@ export default {
         let pdivEnd = ptmpDiv[1];
 
         // 高さの指定
-        data[i].height = PLANHEIGHT * divEnd;
+        data[i].height = this.planheight * divEnd;
         // 印刷用高さ
         data[i].printHeight = PRINT_PLANHEIGHT * pdivEnd;
 
@@ -960,8 +1012,8 @@ export default {
           data[i].width = PLANWIDTH / 2;
         }
 
-        data[i].y = CALENDARSEPALATE + PLANHEIGHT * div;
-        data[i].yText = CALENDARSEPALATE + PLANHEIGHT * div - 2;
+        data[i].y = this.calendarSepalate + this.planheight * div;
+        data[i].yText = this.calendarSepalate + this.planheight * div - 2;
 
         data[i].yPrintPos = PRINT_CALENDARSEPALATE + PRINT_PLANHEIGHT * pdiv;
         data[i].yTextPrintPos =
