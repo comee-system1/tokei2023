@@ -1823,9 +1823,13 @@ export default {
             if (kankeiObj.codeD == '') {
               this.selectDataObj.sdnkanid = 0;
               this.selectDataObj.sdnkanrk = '';
+              this.selectDataObj.sdnkanchuid = 0;
+              this.selectDataObj.sdnkanchuHoninFlg = 0;
             } else {
               this.selectDataObj.sdnkanid = kankeiObj.sdnkanid;
               this.selectDataObj.sdnkanrk = kankeiObj.sdnkannm;
+              this.selectDataObj.sdnkanchuid = kankeiObj.Sdnkanchuid;
+              this.selectDataObj.sdnkanchuHoninFlg = kankeiObj.Honninflg;
             }
             if (kankeiObj.honninflg == KANKEI_KBN.Honnin) {
               this.selectDataObj.sdnnam = this.userInfo.names;
@@ -1855,30 +1859,42 @@ export default {
             let kankeiObj = flexGrid.cells.rows[ht.row].dataItem;
             if (kankeiObj.codeD == '') {
               this.selectDataObj.sdnnam1Kankeiid = 0;
+              this.selectDataObj.sdnnam1Kankeiidchu = 0;
+              this.selectDataObj.sdnnam1KankeiHoninFlg = 0;
               this.selectDataObj.sdnnam1Kankei = '';
             } else {
-              this.selectDataObj.sdnnam1Kankeiid = kankeiObj.sdnkanid;
-              this.selectDataObj.sdnnam1Kankei = kankeiObj.sdnkannm;
+              this.selectDataObj.sdnnam1Kankeiid = kankeiObj.Sdnkandaiid;
+              this.selectDataObj.sdnnam1Kankeiidchu = kankeiObj.Sdnkanchuid;
+              this.selectDataObj.sdnnam1KankeiHoninFlg = kankeiObj.Honninflg;
+              this.selectDataObj.sdnnam1Kankei = kankeiObj.Sdnkandainm;
             }
             this.inputClicked(DISP_MST_GRD.Douseki1);
           } else if (this.dispMstGrid == DISP_MST_GRD.Douseki2Kaneki) {
             let kankeiObj = flexGrid.cells.rows[ht.row].dataItem;
             if (kankeiObj.codeD == '') {
               this.selectDataObj.sdnnam2Kankeiid = 0;
+              this.selectDataObj.sdnnam2Kankeiidchu = 0;
+              this.selectDataObj.sdnnam2KankeiHoninFlg = 0;
               this.selectDataObj.sdnnam2Kankei = '';
             } else {
-              this.selectDataObj.sdnnam2Kankeiid = kankeiObj.sdnkanid;
-              this.selectDataObj.sdnnam2Kankei = kankeiObj.sdnkannm;
+              this.selectDataObj.sdnnam2Kankeiid = kankeiObj.Sdnkandaiid;
+              this.selectDataObj.sdnnam2Kankeiidchu = kankeiObj.Sdnkanchuid;
+              this.selectDataObj.sdnnam2KankeiHoninFlg = kankeiObj.Honninflg;
+              this.selectDataObj.sdnnam2Kankei = kankeiObj.Sdnkandainm;
             }
             this.inputClicked(DISP_MST_GRD.Douseki2);
           } else if (this.dispMstGrid == DISP_MST_GRD.Douseki3Kaneki) {
             let kankeiObj = flexGrid.cells.rows[ht.row].dataItem;
             if (kankeiObj.codeD == '') {
               this.selectDataObj.sdnnam3Kankeiid = 0;
+              this.selectDataObj.sdnnam3Kankeiidchu = 0;
+              this.selectDataObj.sdnnam3KankeiHoninFlg = 0;
               this.selectDataObj.sdnnam3Kankei = '';
             } else {
-              this.selectDataObj.sdnnam3Kankeiid = kankeiObj.sdnkanid;
-              this.selectDataObj.sdnnam3Kankei = kankeiObj.sdnkannm;
+              this.selectDataObj.sdnnam3Kankeiid = kankeiObj.Sdnkandaiid;
+              this.selectDataObj.sdnnam3Kankeiidchu = kankeiObj.Sdnkanchuid;
+              this.selectDataObj.sdnnam3KankeiHoninFlg = kankeiObj.Honninflg;
+              this.selectDataObj.sdnnam3Kankei = kankeiObj.Sdnkandainm;
             }
             this.inputClicked(DISP_MST_GRD.Douseki3);
           }
@@ -2777,6 +2793,7 @@ export default {
         sdnkanid: 0,
         sdnkanrk: '',
         sdnkanchuid: 0,
+        sdnkanchuHoninFlg: 0,
         sdnkanchurk: '',
         sdnnam: '',
         sdnnam1: '',
@@ -2788,6 +2805,12 @@ export default {
         sdnnam1Kankeiid: 0,
         sdnnam2Kankeiid: 0,
         sdnnam3Kankeiid: 0,
+        sdnnam1Kankeiidchu: 0,
+        sdnnam2Kankeiidchu: 0,
+        sdnnam3Kankeiidchu: 0,
+        sdnnam1KankeiHoninFlg: 0,
+        sdnnam2KankeiHoninFlg: 0,
+        sdnnam3KankeiHoninFlg: 0,
         sdntel: '',
         setaiid: 0,
         setairk: '',

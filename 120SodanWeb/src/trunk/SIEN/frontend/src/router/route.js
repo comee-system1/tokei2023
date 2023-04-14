@@ -75,7 +75,7 @@ const routes = [{
         },
     },
     {
-        path: '/AssessmentInput',
+        path: '/AssessmentInput/:kind',
         name: 'アセスメント',
         component: AssessmentInput,
         meta: {

@@ -1,0 +1,72 @@
+{
+    "express": {
+        "port": "8000"
+    },
+    "cors": {
+        "origin": "http://t-sct1wb00.fukushikenbunroku.com:59080",
+        "allowed_headers": "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept",
+        "methods": "GET,POST,PUT,DELETE",
+        "options_success_status": "204"
+    },
+    "api_common": {
+        "base_url": "http://192.168.30.32/common/",
+        "timeout": "5000",
+        "x_api_account": "toukei-common-api",
+        "x_api_key": "jKGbd4PqxN5yzyxn"
+    },
+    "introspect": {
+        "endpoint": "http://t-sct1wb00.fukushikenbunroku.com:8080/realms/{REALM-NAME}/protocol/openid-connect/token/introspect",
+        "timeout": "5000",
+        "realm_name_pattern": "R{CORPORATION-UNIQUE-ID}_admin",
+        "client_id": "fk-admin-web-backend",
+        "client_secret": "gmaFO0b3BWsUGbDVPqVeHHx7StwCli75"
+    },
+    "log4js": {
+        "appenders": {
+            "logger": {
+                "type": "dateFile",
+                "filename": "log/app.log",
+                "backups": 14,
+                "compress": true,
+                "pattern": "-yyyy-MM-dd",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "[%d{yyyy-MM-dd hh:mm:ss.SSS}][%5p][%X{requestId}] %m"
+                }
+            },
+            "error_logger_appender": {
+                "type": "dateFile",
+                "filename": "log/error.log",
+                "backups": 14,
+                "compress": true,
+                "pattern": "-yyyy-MM-dd",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "[%d{yyyy-MM-dd hh:mm:ss.SSS}][%5p][%X{requestId}] %m"
+                }
+            },
+            "error_logger": {
+                "type": "logLevelFilter",
+                "appender": "error_logger_appender",
+                "level": "error"
+            },
+            "out": {
+                "type": "stdout",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "[%d{yyyy-MM-dd hh:mm:ss.SSS}][%5p][%X{requestId}] %m"
+                }
+            }
+        },
+        "categories": {
+            "default": {
+                "appenders": [
+                    "logger",
+                    "error_logger"
+                ],
+                "level": "debug",
+                "enableCallStack": true
+            }
+        }
+    }
+}

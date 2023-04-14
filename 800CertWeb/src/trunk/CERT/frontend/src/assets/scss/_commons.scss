@@ -1,0 +1,24 @@
+@import "common.scss";
+
+html {
+    overflow-x: auto;
+    /* overflow-y: auto; */
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    min-width: 1366px;
+
+    body {
+
+        .v-application {
+            font-family: "メイリオ",
+                sans-serif !important;
+
+            .body-2 {
+                font-family: "メイリオ", sans-serif !important;
+            }
+        }
+
+
+
+    }
+}

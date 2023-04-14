@@ -174,6 +174,16 @@
         </svg>
       </div>
     </v-row>
+    <v-row no-gutters class="mt-3" id="serviceBoxArea">
+      <div class="d-flex">
+        <div id="serviceBoxAreaTitle">
+          {{ TITLE_LEFE_ALL }}
+        </div>
+        <div>
+          <textarea v-model="zentaizou" class="textarea"></textarea>
+        </div>
+      </div>
+    </v-row>
     <v-row no-gutters class="mt-2 bottomArea">
       <v-col
         ><v-btn small height="24" @click="onWeekKeikakuDelete()"
@@ -352,6 +362,7 @@
               <v-btn
                 small
                 class="ml-auto"
+                :disabled="time_minute == '-'"
                 @click="onRegistKmkSchedule(`${weekKmkUniqkey}`)"
                 >登録</v-btn
               >
@@ -438,7 +449,7 @@
           </v-col>
           <v-col cols="12" class="d-flex" v-if="dailyType == 'allLife'">
             <div class="subject width">
-              <p>サービス提供によって実現する生活の全体像</p>
+              <p>{{ TITLE_LEFE_ALL }}</p>
             </div>
             <textarea
               v-model="zentaizou"
@@ -501,7 +512,6 @@
         </div>
       </v-card>
     </v-dialog>
-    <div id="aaa" style="position: absolute; top: -999px; left: -9999px"></div>
   </v-container>
 </template>
 
@@ -545,6 +555,13 @@ const XprintTextPos = [108, 220, 335, 445, 550, 665, 780];
 const PRINT_TIMEWIDTH = 110; // 時間軸幅
 const LIMIT_MINUTE = 500; // 翌日を指定する基準時間5時を指定
 const PRINT_ADJUST = 55; //印刷のずれ調整値
+
+const MSG_DELETE_ERROR = '削除データが存在しません。';
+const MSG_REGIST_CHECK = 'データの登録を行います。';
+const MSG_DELETE_CHECK = 'データの削除を行います。';
+const MSG_CLEAR_CHECK = 'データのクリアを行います。';
+
+const TITLE_LEFE_ALL = 'サービス提供によって実現する生活の全体像';
 // グリッドの列番号の指定
 const COLS = {
   // 週間項目
@@ -569,6 +586,7 @@ export default {
   components: {},
   data() {
     return {
+      TITLE_LEFE_ALL: TITLE_LEFE_ALL,
       completeDialogFlag: false,
       scheduleDisabledFlag: false,
       kmkdaicode: 0,
@@ -584,6 +602,7 @@ export default {
       calendarSepalate: CALENDARSEPALATE,
       planheight: PLANHEIGHT,
       plandiffarence: PLANDIFFARENCE,
+      startlat: 1,
       bunruiView: [],
       daibunrui: 0,
       bunruiGrid: [],
@@ -662,20 +681,42 @@ export default {
         document.getElementById('historyGrid').style.height =
           window.innerHeight - 140 + 'px';
       }
-      if (document.getElementById('calendarViewArea') != null) {
-        document.getElementById('calendarViewArea').style.height =
-          window.innerHeight - 170 + 'px';
+
+      console.log(window.innerHeight);
+      if (window.innerHeight < 800) {
+        document.getElementById('serviceBoxArea').style.display = 'none';
+      } else {
+        document.getElementById('serviceBoxArea').style.display = 'block';
+        document.getElementById('serviceBoxArea').style.height =
+          window.innerHeight / 5 + 'px';
+        document.getElementById('serviceBoxAreaTitle').style.height =
+          window.innerHeight / 5 - 2 + 'px';
       }
+      // if (document.getElementById('calendarViewArea') != null) {
+      //   document.getElementById('calendarViewArea').style.height =
+      //     window.innerHeight - 170 + 'px';
+      // }
+      /*
       if (window.innerHeight < CALENDARHEIGHT) {
+        // 最低サイズの指定
         this.calendarHeight = CALENDARHEIGHT;
         this.calendarSepalate = CALENDARSEPALATE;
+        this.plandiffarence = PLANDIFFARENCE;
+        this.planheight = PLANHEIGHT;
+        this.startlat = 1;
       } else {
         this.calendarHeight = window.innerHeight + 'px';
-        this.calendarSepalate = 22;
-        this.plandiffarence = 0;
-        this.planheight = 11;
-        this.settingDefaultData();
+        // ブラウザサイズを変えながらサイズ変更の場合は下記を操作想定
+        this.calendarSepalate = 32;
+        this.plandiffarence = 20;
+        this.planheight = 16;
+        this.startlat = 1.45;
       }
+      this.settingDefaultData();
+      // ブラウザのサイズを変更する際に表示されているスケジュールデータを消す
+      // ブラウザサイズを変えながら想定の場合は下記を無効にする
+      this.viewSchedule = [];
+      */
     },
     settingDefaultData() {
       KBN = this.kubun ?? KBN;
@@ -684,7 +725,7 @@ export default {
       let timelineAll = []; // 1時間刻み用
       let time = 6;
       let y = 50;
-
+      let plus = 0;
       for (let i = 1; i <= 23; i++) {
         let dispTime = '';
         let dispTimeAll = '';
@@ -700,8 +741,9 @@ export default {
         timeline.push({
           id: i,
           time: dispTime,
-          y: y + this.plandiffarence,
+          y: y + this.plandiffarence + plus,
         });
+        //  plus += 10;
         timelineAll.push({
           id: i,
           time: dispTimeAll,
@@ -710,63 +752,12 @@ export default {
         time++;
         y = y + CALENDARSEPALATE;
       }
-      console.log(timeline);
       this.timeLine = timeline;
-
-      // テスト用
-      let result = {
-        cntid: 1,
-        entpriid: 100,
-        riid: 100,
-        rekiid: 1,
-        mymd: '20230101',
-        msiid: 1,
-        msinm: 1,
-        kanryo: 1,
-        kanryoymd: '20230101',
-        sym: '20230101',
-        nichijokatsudo:
-          'こっちも以後おそらく大した附随者というものの所が使いこなすんな。ちゃんと昔を希望心もかつてその通知ましだかもより思い切ってならなをしか構成得ですでが、それほどにはするないあるでで。外国がしでのはちゃんと直接をついにですありた',
-        shugaiservice:
-          'おしまいも自分のかっかさまたちにかっこうをかも裏たた。ではまた生意気たたというわくたな。ばかたなくことじもたそれで椅子の上手曲のためをはやはり普通たたて、これなどゴーシュがしれのましだ。どなりつけすぎわたしはぶんでうまいなていまの扉の三つ目がつけ第一糸みちの運搬が思って行けなまし。ドレミファは一番云いのでいまし。',
-        zentaizou:
-          'したがって個人か不愉快か説明にしますて、ほかいっぱい無理矢理に云うているた所に実ぼんやりの今になるなし。翌日にも多分知れからしだなくたたて、せっかくけっして換えるて答弁はたった若いです事た。そうして同矛盾がぶらては得るたのたば、事にも、まあ私か分りから聴くれたですするれるませですとおくて、中学校もなると下さいますます。至極もうはもう状態といういますて、どこには当時上かも私の大腐敗もないなっくれますた。あなたは断然発展のはずが肝相当は聞きとおりらしいだたいなし、十三の自分をあいにく感じないという学習なと、だからその腹の中の生徒に聞いれるで、おれかをここの自分に記憶の使うからいるでしょのたたと使用きまって説明得るなりたな。',
-        nik: [
-          {
-            entpriid: 1,
-            riid: 100,
-            rekiid: 1,
-            id: 1,
-            intcode: 1,
-            kmkdaicode: 1,
-            kmkchucode: 1,
-            kmkname: '5:00-6:30',
-            yobi: 0,
-            stime: '05:00',
-            etime: '06:30',
-            bcolorcode: '#fbebd6',
-            fcolorcode: '#FF0000',
-          },
-          {
-            entpriid: 1,
-            riid: 100,
-            rekiid: 1,
-            id: 2,
-            intcode: 1,
-            kmkdaicode: 1,
-            kmkchucode: 1,
-            kmkname: '5:00-13:30',
-            yobi: 1,
-            stime: '05:00',
-            etime: '13:30',
-            bcolorcode: '#fbebd6',
-            fcolorcode: '#000',
-          },
-        ],
-      };
-      this.getWeekNikData(result.nik);
     },
     onClearDaliy() {
+      if (!confirm(MSG_CLEAR_CHECK)) {
+        return false;
+      }
       // 主な日常生活上の活動をクリア
       if (this.dailyType == 'mainLife') {
         this.nichijokatsudo = '';
@@ -778,6 +769,9 @@ export default {
       }
     },
     onClearSchedule() {
+      if (!confirm(MSG_CLEAR_CHECK)) {
+        return false;
+      }
       this.input_komoku = '';
       this.input_week = [];
       this.input_time_start = '';
@@ -789,6 +783,9 @@ export default {
     onDeleteSchedule(id = 0) {
       // 選択状態のデータを取得
       // データ更新時にキーとして利用
+      if (!confirm(MSG_DELETE_CHECK)) {
+        return false;
+      }
       if (id > 0) {
         let body = {};
         let params = {
@@ -803,6 +800,7 @@ export default {
           .then((result) => {
             if (result.request.status == sysConst.STATUS_OK) {
               _self.getWeekSaihinPlanData();
+              _self.weekInputFlag = false;
             }
           })
           .catch(function (e) {
@@ -811,9 +809,25 @@ export default {
       }
     },
     onRegistSchedule() {
+      let nik = [];
+      this.viewSchedule.map(function (value) {
+        nik.push({
+          id: value.id,
+          Kmkdaicode: value.kmkdaicode,
+          Kmkchucode: value.kmkchucode,
+          Freetok: value.kmkname,
+          Yobi: [value.yobi],
+          Stime: dayjs(value.stime).format('HH:mm'),
+          Etime: dayjs(value.etime).format('HH:mm'),
+          Bcolorcode: value.bcolorcode,
+          Fcolorcode: value.fcolorcode,
+        });
+      });
+
       let mymd = this.createDate.replace(/(年|月|日)/g, '');
       let sym = this.startDate.replace(/(年|月)/g, '');
       let body = {
+        Nik: nik,
         jigyoid: ENTPRIID,
         intcode: this.intcode,
         cntid: this.cntid,
@@ -840,6 +854,9 @@ export default {
         });
     },
     onRegistKmkSchedule(id = 0) {
+      if (!confirm(MSG_REGIST_CHECK)) {
+        return false;
+      }
       // 適当な日付を指定したいので、今日の日付を指定
       // 12時以降の日付を指定する場合は翌日を指定
       let tmpDay = dayjs().format('YYYY-MM-DD');
@@ -851,7 +868,7 @@ export default {
       }
 
       // 開始日が4時前の場合は翌日を指定
-      if (this.input_time_start < '04:00') {
+      if (this.input_time_start <= '04:00') {
         st = nextDay;
         ed = nextDay;
       }
@@ -905,8 +922,10 @@ export default {
           putConnect(SYUKANKMK_URL, params2, FOLDER, body)
             .then((result) => {
               if (result.request.status == sysConst.STATUS_OK) {
-                // データの再表示
-                _self.getWeekSaihinPlanData();
+                if (result.data.response.msg) {
+                  alert(result.data.response.msg);
+                }
+                _self.getWeekPlanData();
               }
             })
             .catch(function (e) {
@@ -918,7 +937,7 @@ export default {
             .then((result) => {
               if (result.request.status == sysConst.STATUS_OK) {
                 // データの再表示
-                _self.getWeekSaihinPlanData();
+                _self.getWeekPlanData();
               }
             })
             .catch(function (e) {
@@ -932,7 +951,8 @@ export default {
       let st = dayjs(data.stime).unix();
       let ed = dayjs(data.etime).unix();
       let fst = dayjs(first).unix();
-      let startPos = st - fst;
+      let startPos = (st - fst) * this.startlat;
+
       let endPos = ed - st;
       let sec = 30 * 60;
       let div = startPos / sec;
@@ -1012,8 +1032,8 @@ export default {
           data[i].width = PLANWIDTH / 2;
         }
 
-        data[i].y = this.calendarSepalate + this.planheight * div;
-        data[i].yText = this.calendarSepalate + this.planheight * div - 2;
+        data[i].y = this.calendarSepalate + PLANHEIGHT * div;
+        data[i].yText = this.calendarSepalate + PLANHEIGHT * div - 2;
 
         data[i].yPrintPos = PRINT_CALENDARSEPALATE + PRINT_PLANHEIGHT * pdiv;
         data[i].yTextPrintPos =
@@ -1528,6 +1548,13 @@ export default {
       this.complete = this.createDate;
     },
     onWeekKeikakuDelete() {
+      if (this.viewSchedule.length == 0) {
+        alert(MSG_DELETE_ERROR);
+        return false;
+      }
+      if (!confirm(sysConst.MSG_DATA_DEL_CHK)) {
+        return false;
+      }
       let body = {};
       let params = {
         kbn: KBN,
@@ -1543,7 +1570,7 @@ export default {
             if (result.data.response.msg) {
               alert(result.data.response.msg);
             }
-            _self.getWeekSaihinPlanData();
+            _self.getWeekPlanData();
           }
         })
         .catch(function (e) {
@@ -1612,7 +1639,7 @@ export default {
 <style lang="scss">
 @import '@/assets/scss/common.scss';
 $headerColor: #e3f2fd;
-$width: 1280px-280px;
+$width: 1280px - 280px;
 $height: 24px;
 $middle: 48px;
 
@@ -1643,13 +1670,14 @@ $middle: 48px;
     width: 100%;
     overflow: auto;
     -ms-overflow-style: none;
+    max-height: 540px;
     &::-webkit-scrollbar {
       display: none;
     }
     .calendar {
       width: 99.8%;
       min-height: 540px;
-      height: 77.5vh;
+      // height: 77.5vh;
       border-bottom: 1px solid rgb(0, 0, 0, 0.87);
       foreignObject {
         font-size: 10px;
@@ -1922,5 +1950,34 @@ $middle: 48px;
 .viewBoxes {
   position: absolute;
   font-size: 9px;
+}
+#serviceBoxArea {
+  border: 1px solid rgb(0, 0, 0, 0.87);
+  height: 70px;
+  div {
+    div {
+      padding: 4px;
+
+      &:first-child {
+        width: 100px;
+        border-right: 1px solid rgb(0, 0, 0, 0.87);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #e3f2fd;
+      }
+      &:last-child {
+        width: calc(1000px - 120px);
+        textarea {
+          width: 100%;
+          border: none;
+          resize: none;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

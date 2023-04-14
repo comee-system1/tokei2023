@@ -255,7 +255,7 @@ export default {
             },
             {
               name: 'アセスメント',
-              link: '/AssessmentInput',
+              link: '/AssessmentInput/1',
             },
             {
               name: '計画作成',
@@ -299,7 +299,7 @@ export default {
             // },
             {
               name: 'アセスメント',
-              link: '/TemporaryPage',
+              link: '/AssessmentInput/2',
             },
             {
               name: '地域移行支援計画作成',

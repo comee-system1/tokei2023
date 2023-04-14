@@ -399,11 +399,14 @@ export default {
       maingrid: {},
       userdrawer: true,
       createflg: false,
+      isKeikakuSoudan: true,
     };
   },
   mounted() {
+    this.isKeikakuSoudan = this.$route.params.kind == 1;
     window.addEventListener('resize', this.calculateWindowHeight);
     this.calculateWindowHeight();
+    this.setMstKbn();
   },
   methods: {
     calculateWindowHeight() {
@@ -555,6 +558,25 @@ export default {
       //       messageConst.ERROR.ERROR + '[' + error.response.data.message + ']'
       //     );
       //   });
+    },
+    setMstKbn() {
+      let params = {
+        pJigyoid: jigyoid,
+        pSvcKbn: this.isKeikakuSoudan ? 1 : 2,
+      };
+      console.log(params);
+      this.rirekiList = [];
+      this.viewdataAll = {};
+      getConnect('/asesKbn', params, 'COMMON')
+        .then((result) => {
+          console.log('%o', result);
+          // this.rirekiList = result.data;
+        })
+        .catch(function (error) {
+          alert(
+            messageConst.ERROR.ERROR + '[' + error.response.data.message + ']'
+          );
+        });
     },
     setRireki() {
       let params = {
