@@ -3,6 +3,7 @@ const Config = require('config');
 const ApiRepository = require('../../repositories/Api');
 const Logger = require('../../utils/logger').logger();
 
+
 /**
  * 管理者アカウントの一覧を取得する
  * @param {object} req Expressのリクエストオブジェクト

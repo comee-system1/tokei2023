@@ -3,7 +3,7 @@ import Axios from 'axios';
 export async function getConnect(path, token, requestId, realm, param) {
 
     const origin = process.env.NODE_ENV === 'production' ?
-        'http://t-sct1wb00.fukushikenbunroku.com:69080' : 'http://localhost:8000';
+        'http://t-sct1wb00.fukushikenbunroku.com:65433' : 'http://localhost:8000';
 
     const corporationUniqueId = realm.match(/^R([0-9]+)_admin$/);
     if (corporationUniqueId == null) {

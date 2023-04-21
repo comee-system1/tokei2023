@@ -158,7 +158,6 @@ Router.get('/gmenu',
                 await StaffAccountService.getGroundMenu(req)
                     .then(function (result) {
                         const body = {};
-                        console.log(result);
                         // データが無かったのでテスト用
                         result['syslst'][0]['syosai'] = [{
                                 sysryaku: 'テスト',
@@ -301,6 +300,64 @@ Router.put('/put-data*',
 
         }
 );
+/**
+ * POSTリクエスト（画面初期表示データ取得）を処理する
+ */
+Router.post('/post-auth',
+    /**
+     * 前処理を実行する
+     */
+    function (req, res, next) {
+        // リクエストカスタムヘッダが空かどうかを検証する
+        if ((req.get('x-access-token') == null) || (req.get('x-corporation-unique-id') == null)) {
+            Logger.warn('リクエストヘッダが不正です。');
+            next(CreateError(400));
+            return;
+        }
+        // リクエストカスタムヘッダをログに出力する
+        Logger.info('事業者ユニークID:' + req.get('x-corporation-unique-id'));
+
+        next();
+    },
+    /**
+     * トークンイントロスペクションを実行する
+     */
+    async function (req, res, next) {
+            try {
+                // テスト時は無効にする
+                // 実装時は下記条件は不要
+                if (req.headers.host != LOCAL) {
+                    await CertificationService.introspect(req).then(function (result) {
+                        if (!result) {
+                            next(CreateError(401));
+                            return;
+                        }
+                    });
+                }
+                next();
+            } catch (err) {
+                next(CreateError(500));
+            }
+        },
+        /**
+         * メイン処理を行う
+         */
+        async function (req, res, next) {
+            // 更新処理を実行する
+            await StaffAccountService.updateGmenu(req)
+                .then(async function (result) {
+                    if (result['isSuccess'] === true) {
+                        // 正常終了
+                        Logger.info('処理が正常終了しました。');
+                    }
+                })
+                .catch(function (err) {
+                    next(CreateError(500));
+                });
+        }
+);
+
+
 /**
  * POSTリクエスト（画面初期表示データ取得）を処理する
  */

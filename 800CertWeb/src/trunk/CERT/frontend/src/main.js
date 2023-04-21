@@ -34,8 +34,10 @@ let initOptions = {
 // ローカルで動作させたかったため下記を有効にしています。
 let initOptions = {
     url: process.env.NODE_ENV === 'production' ? 'http://t-sct1wb00.fukushikenbunroku.com:8080/' : 'http://localhost:8884/',
-    realm: process.env.NODE_ENV === 'production' ? 'Admin' + str : str,
-    clientId: process.env.NODE_ENV === 'production' ? 'fk-admin-web-frontend' : 'account',
+    //realm: process.env.NODE_ENV === 'production' ? 'Admin' + str : str,
+    realm: 'R' + str + '_admin',
+    //clientId: process.env.NODE_ENV === 'production' ? 'fk-admin-web-frontend' : 'account',
+    clientId: 'fk-admin-web-frontend',
     onLoad: 'login-required',
 };
 

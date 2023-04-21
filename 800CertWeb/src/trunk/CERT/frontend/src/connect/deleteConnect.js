@@ -3,7 +3,7 @@ import Axios from 'axios';
 export async function deleteConnect(path, token, requestId, realm, param) {
 
     const origin = process.env.NODE_ENV === 'production' ?
-        'http://t-sct1wb00.fukushikenbunroku.com:69080' : 'http://localhost:8000';
+        'http://t-sct1wb00.fukushikenbunroku.com:65433' : 'http://localhost:8000';
 
     const corporationUniqueId = realm.match(/^R([0-9]+)_admin$/);
     if (corporationUniqueId == null) {
@@ -20,14 +20,14 @@ export async function deleteConnect(path, token, requestId, realm, param) {
     header['x-corporation-unique-id'] = corporationUniqueId[1];
 
     return await Axios.delete(origin + '/' + path, {
-        timeout: 5000,
-        headers: header,
-        data: data
-    })
-    .then(function (response) {
-        return response.data;
-    })
-    .catch(function () {
-        return false;
-    });
+            timeout: 5000,
+            headers: header,
+            data: data
+        })
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function () {
+            return false;
+        });
 }

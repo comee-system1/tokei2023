@@ -6,16 +6,22 @@ import AccountsData from '../views/admin/AccountsData.vue'
 import StaffData from '../views/admin/StaffData.vue'
 import AllStoreList from '../views/admin/AllStoreList.vue'
 import TemploraryPage from '../views/admin/TemploraryPage.vue'
-
+const title = {
+  component: StaffData,
+};
 const routes = [{
-    path: '/StaffData/:client?',
-    name: 'StaffData',
-    component: StaffData,
-    meta: {
-      title: "職員アカウント管理",
-      sub: "職員マスタで登録済みの職員に対して、福祉見聞録システムを使用可能にするアカウント発行や、グランドメニューに表示するボタンの設定などができます。"
-    },
+    path: '/:client?',
+    redirect: {
+      name: 'StaffData'
+    }
   },
+  {
+    path: '/staffData/:client?',
+    name: 'StaffData',
+    component: title.component,
+
+  },
+
   {
     path: '/accountsData/:client?',
     name: 'AccountsData',
@@ -24,8 +30,7 @@ const routes = [{
       title: "",
       sub: ""
     },
-  },
-  {
+  }, {
     path: '/allStoreList/:client?',
     name: 'AllStoreList',
     component: AllStoreList,
@@ -34,8 +39,7 @@ const routes = [{
       sub: "職員マスタで登録済みの職員に対して、福祉見聞録システムを使用可能にするアカウント発行や、グランドメニューに表示するボタンの設定などができます。"
 
     },
-  },
-  {
+  }, {
     path: '/temploraryPage',
     name: 'Temp',
     component: TemploraryPage,

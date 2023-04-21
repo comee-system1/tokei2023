@@ -292,6 +292,53 @@ exports.getStaffList = async function (req) {
  * @param {object} req Expressのリクエストオブジェクト
  * @returns 処理結果
  */
+exports.updateGmenu = async function (req) {
+    const repository = new ApiRepository();
+
+    // APIのクエリパラメータを設定する
+    repository.setQuery({});
+    // APIのURLを設定する
+    repository.setUrl(Config.get('api_common').base_url + 'gmenu/v1/gmenu');
+
+    // APIのカスタムリクエストヘッダを設定する
+    repository.setXApiAccount(Config.get('api_common').x_api_account);
+    repository.setXApiKey(Config.get('api_common').x_api_key);
+    repository.setXCorporationUniqueId(req.get('x-corporation-unique-id'));
+
+    // APIのボディを設定する
+    //const body = req.body;
+    let body = {};
+    body = {
+        "inskbn": req.body.inskbn,
+        "acnt": [{
+            "acntid": req.body.acnt[0].acntid,
+            "syosai": req.body.acnt[0].syosai
+        }]
+    }
+
+    repository.setBody(JSON.stringify(body));
+    // Axiosのタイムアウト値を設定する
+    repository.setTimeout(Config.get('api_common').timeout);
+
+    // APIを実行する
+    try {
+        return await repository.apiPost().then(result => {
+            //console.log(result);
+            let obj = {};
+            obj['isSuccess'] = result['okflg'];
+            obj['message'] = result['msg'];
+            return obj;
+        });
+    } catch (err) {
+        throw err;
+    }
+
+}
+/**
+ * 管理者アカウントを更新登録する
+ * @param {object} req Expressのリクエストオブジェクト
+ * @returns 処理結果
+ */
 exports.updateStaff = async function (req) {
 
     const repository = new ApiRepository();
@@ -336,7 +383,7 @@ exports.updateStaff = async function (req) {
             return obj;
         });
     } catch (err) {
-        console.log(err);
+        //console.log(err);
         throw err;
     }
 

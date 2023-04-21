@@ -1,10 +1,6 @@
 <template>
   <div class="pa-1" id="accountsData">
-    <v-row no-gutters class="d-flex pt-1 pb-1" id="subTitle">
-      <h2>{{ $route.meta.title }}</h2>
-      <label>{{ $route.meta.sub }}</label>
-    </v-row>
-    <v-row no-gutters class="mt-2">
+    <v-row no-gutters>
       <v-col>
         <label class="labeled">所属事業所</label>
         <select
@@ -18,12 +14,12 @@
         </select>
       </v-col>
     </v-row>
-    <v-row no-gutters class="mt-1">
-      <label class="labeled">アカウントID</label>
-      <div class="ml-1 boarderArea d-flex">
+    <v-row no-gutters class="mt-1 d-flex">
+      <label class="labeled gray">職員</label>
+      <div class="ml-1 boarderArea wShort d-flex">
         <v-card
           class="d-flex ml-1"
-          v-for="(item, syokuinKey) in accountsArray"
+          v-for="(item, syokuinKey) in syokuinArray"
           :key="`syokuin-${syokuinKey}`"
           elevation="0"
         >
@@ -32,86 +28,73 @@
             :id="'syokuin_' + item.id"
             :value="item.id"
             name="syokuin"
-            v-model="selAccount"
-            @change="onSelAccount()"
+            v-model="syokuinAccount"
+            @change="onSelSyokuin()"
           />
           <label :for="'syokuin_' + item.id" class="ml-1 mr-2">{{
             item.value
           }}</label>
         </v-card>
       </div>
-
-      <label class="labeled ml-1">利用状況</label>
-      <div class="ml-1 boarderArea d-flex">
-        <v-card
-          class="ml-1 d-flex"
-          v-for="(filters, filterIndex) in filterArray"
-          :key="`filter-${filterIndex}`"
-          elevation="0"
-        >
-          <input
-            type="checkbox"
-            :id="'filter_' + filters.id"
-            :value="filters.id"
-            v-model="selFilter"
-            v-if="filters.id <= 3"
-            @change="onSelFilter()"
-          />
-          <label
-            :for="'filter_' + filters.id"
-            class="ml-1 mr-2"
-            v-if="filters.id <= 3"
-            >{{ filters.value }}</label
-          >
-        </v-card>
-      </div>
-
-      <label class="labeled ml-1">その他絞込</label>
-      <div class="ml-1 boarderArea wMdle d-flex">
+      <label class="labeled gray">アカウントID</label>
+      <div class="ml-1 boarderArea wLong d-flex">
         <v-card
           class="d-flex ml-1"
-          v-for="(item, otherKey) in otherArray"
-          :key="`other-${otherKey}`"
+          v-for="(item, accountKey) in accountsArray"
+          :key="`account-${accountKey}`"
           elevation="0"
         >
           <input
             type="radio"
-            :id="'other_' + item.id"
+            :id="'account_' + item.id"
             :value="item.id"
-            name="other"
-            v-model="selOther"
-            @change="onSelOther()"
+            name="account"
+            v-model="selAccount"
+            @change="onSelAccount()"
           />
-          <label :for="'other_' + item.id" class="ml-1 mr-2">{{
+          <label :for="'account_' + item.id" class="ml-1 mr-2">{{
             item.value
           }}</label>
+          <div v-if="item.id == 2" class="d-flex">
+            【<v-card
+              class="ml-1 d-flex"
+              v-for="(filters, filterIndex) in filterArray"
+              :key="`filter-${filterIndex}`"
+              elevation="0"
+            >
+              <input
+                type="checkbox"
+                :id="'filter_' + filters.id"
+                :value="filters.id"
+                v-model="selFilter"
+                v-if="filters.id <= 3"
+                @change="onSelFilter()"
+                :disabled="selAccount == 2 ? false : true"
+              />
+              <label
+                :for="'filter_' + filters.id"
+                class="ml-1 mr-2"
+                v-if="filters.id <= 3"
+                >{{ filters.value }}</label
+              > </v-card
+            >】
+          </div>
         </v-card>
       </div>
     </v-row>
-
-    <v-row no-gutters class="mt-3 filterHeight">
-      <v-col>
-        <alphabet-button
-          id="alpCommon"
-          ref="alp"
-          @onAlphabetical="onAlphabetical"
-        >
-        </alphabet-button>
-      </v-col>
-      <v-col>
-        <label class="accountConfLabel"
-          >アカウント発行要確認新規職員:<span>{{ accountCount }}</span
-          >名</label
-        >
-      </v-col>
+    <v-row no-gutters class="filterHeight mt-1">
       <v-col class="justify-end d-flex">
         <label class="labeled pinked min ml-1">権限入力</label>
         <v-btn
-          v-for="val in authItem"
+          v-for="(val, k) in authItem"
           :key="val.id"
           height="24"
           @click="authClick(val.id)"
-          :class="{ isActive: authBtnActive[val.id], 'ml-1 border': true }"
+          :class="{
+            isActive: authBtnActive[val.id],
+            'ml-1 border ': true,
+            borderWidth: k <= 1,
+          }"
           :elevation="authBtnActive[val.id] ? 0 : 1"
           >{{ val.text }}</v-btn
         >
@@ -121,7 +104,7 @@
           class="ml-1"
           height="24"
           @click="authCopyDialogOpenPosition()"
-          >権限コピー</v-btn
+          >コピー</v-btn
         >
         <v-btn
           small
@@ -131,7 +114,7 @@
           @mouseleave="onsignExplain(0)"
         >
           <v-icon small color=""> mdi-message-text </v-icon>
-          記号説明
+          記号
         </v-btn>
         <v-card id="signExplain" v-show="signExplainFlag">
           <div v-for="(value, index) in explainArray" :key="index">
@@ -141,6 +124,25 @@
             </v-row>
           </div>
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row no-gutters class="filterHeight mt-1">
+      <v-col cols="4">
+        <alphabet-button
+          id="alpCommon"
+          ref="alp"
+          @onAlphabetical="onAlphabetical"
+        >
+        </alphabet-button>
+      </v-col>
+      <v-col cols="4" class="text-center">
+        新規職員:<v-btn height="20" width="30" minWidth="30">{{
+          accountCount
+        }}</v-btn>
+      </v-col>
+      <v-col class="text-end" cols="4">
+        <span class="text-h6">{{ displayCount }}</span
+        >件表示
       </v-col>
     </v-row>
     <v-row no-gutters class="mt-1">
@@ -203,8 +205,9 @@
     </v-row>
     <v-row class="mt-3 bottomButtonArea" no-gutters>
       <div class="text-end">
-        <label class="message" v-if="activateCancel == false"
-          >変更内容を保存する場合は登録を行ってください</label
+        <label class="message" v-if="activateCancel == false">
+          <v-icon icon="mdi-information"></v-icon>
+          変更内容を保存する場合は【権限登録】を行ってください。</label
         >
         <v-btn
           class="ml-2"
@@ -216,7 +219,11 @@
         >
       </div>
       <div class="text-end">
-        <v-btn class="doButton" :disabled="activateCancel" height="24"
+        <v-btn
+          class="doButton"
+          :disabled="activateCancel"
+          height="24"
+          @click="authRegist()"
           >権限登録</v-btn
         >
       </div>
@@ -259,6 +266,11 @@
     <AlertDialog
       v-if="authCopyType == 3"
       :message="`コピー完了しました。`"
+      :width="350"
+    />
+    <AlertDialog
+      v-if="authCopyType == 4"
+      :message="`登録完了しました`"
       :width="350"
     />
 
@@ -518,7 +530,8 @@
                 type="text"
                 v-model="dialogAccountID"
                 class="v-card ml-1 box mdl pl-1"
-                :disabled="dialogAccount == 2 ? true : false"
+                :disabled="dialogAccount == 1 ? true : false"
+                :readonly="useButton != usingStatusType[3] ? true : false"
               />
               <v-tooltip
                 :text="`${dialogMessageID}`"
@@ -542,7 +555,7 @@
                 type="text"
                 v-model="dialogAccountMail"
                 class="v-card ml-1 box mdl pl-1"
-                :disabled="dialogAccount == 2 ? true : false"
+                :disabled="dialogAccount == 1 ? true : false"
               />
               <v-tooltip
                 :text="`${dialogMessageMail}`"
@@ -563,9 +576,7 @@
               <div
                 :class="`ml-1 questionStatusButton ${useButton}`"
                 @click="editUseStatus()"
-              >
-                利用中
-              </div>
+              ></div>
               <v-tooltip
                 :text="`${dialogMessageUse}`"
                 max-width="540"
@@ -661,6 +672,7 @@ export default {
         'stopButton', // 停止中
         'noRegistButton', // 未登録
       ],
+      displayCount: 0,
       dialogAccountFlag: false,
       dialogAccountRegistOpenType: 0, //1:登録フォーム, 2:登録確認, 3:登録完了
       dialogAccountDeleteOpenType: 0, //1:削除フォーム, 2:削除確認, 3:削除完了
@@ -670,12 +682,11 @@ export default {
       syokuinViewDataFlag: false,
       flexGrid: [],
       signExplainFlag: false,
-      authBtnActive: { 1: true },
-      authBtnSelected: 1, // 権限入力の選択状態
+      authBtnActive: { 0: true },
+      authBtnSelected: 0, // 権限入力の選択状態
       authSelected: [],
       selAccount: 1,
-      selOther: 1,
-      syozokuGroup: 'ALL',
+      syozokuGroup: 0,
       selFilter: [1, 2, 3],
       selected: 0,
       syokuinViewData: [],
@@ -683,6 +694,25 @@ export default {
       accountCount: 0,
       activateCancel: true,
       groupArray: [],
+      syokuinAccount: 4,
+      syokuinArray: [
+        {
+          id: 4,
+          value: '全表示',
+        },
+        {
+          id: 1,
+          value: '在籍者',
+        },
+        {
+          id: 2,
+          value: '勤務修了者',
+        },
+        {
+          id: 3,
+          value: '退職者',
+        },
+      ],
       accountsArray: [
         {
           id: 1,
@@ -715,20 +745,7 @@ export default {
           value: '未登録',
         },
       ],
-      otherArray: [
-        {
-          id: 1,
-          value: '全表示',
-        },
-        {
-          id: 2,
-          value: 'メール有',
-        },
-        {
-          id: 3,
-          value: '権限未設定',
-        },
-      ],
+
       filterAbled: [],
       columnArray: [
         {
@@ -794,12 +811,12 @@ export default {
       ],
       columnAuthArray: [],
       authItem: [
-        { id: 1, text: '〇 一般権限', value: '〇' },
-        { id: 2, text: '● 画面権限者', value: '●' },
-        { id: 0, text: 'クリア', value: '' },
+        { id: 0, text: '〇 一般権限', value: '〇' },
+        { id: 1, text: '● 画面権限者', value: '●' },
+        { id: 99, text: 'クリア', value: '' },
       ],
       filtered: {}, // フィルターデータ
-      headerheight: 240,
+      headerheight: 200,
       explainArray: sysConst.TOOLTIPMESSAGE,
       searchOption: {}, // 検索条件
       dialogAccount: 1,
@@ -846,6 +863,7 @@ export default {
       pEnabled: 0,
       pSiid: 0,
       mailSendType: 0, // 1:未登録 2:停止 3:使用中
+      editrow: [],
     };
   },
   methods: {
@@ -975,6 +993,14 @@ export default {
       }
       this.syokuinViewData = tmplist;
     },
+    onSelSyokuin() {
+      let select = this.syokuinAccount;
+      let selected = this.syokuinArray.find(function (value) {
+        return value.id == select ? value : '';
+      });
+      this.searchOption.syokuinSelected = selected.id;
+      this.searched();
+    },
     onSelAccount() {
       let select = this.selAccount;
       let selected = this.accountsArray.find(function (value) {
@@ -987,28 +1013,7 @@ export default {
       this.searchOption.selFilter = this.selFilter;
       this.searched();
     },
-    onSelOther() {
-      let selOther = this.selOther;
-      let selected = this.otherArray.find(function (value) {
-        return value.id == selOther ? value : '';
-      });
 
-      // 権限未設定を選択時、権限の登録数を保持する
-      if (selected.id == 3) {
-        for (let i = 0; i < this.syokuinViewData.length; i++) {
-          let groundAuth = this.syokuinViewData[i].groundAuth;
-          let cnt = 0;
-          Object.keys(groundAuth).forEach(function (key) {
-            if (groundAuth[key]) {
-              cnt += 1;
-            }
-          });
-          this.syokuinViewData[i].groundAuthFlag = cnt;
-        }
-      }
-      this.searchOption.otherSelect = selected;
-      this.searched();
-    },
     onAlphabetical(k) {
       this.searched(k);
     },
@@ -1016,12 +1021,38 @@ export default {
       let result = this.syokuinViewData;
       // アカウントID検索
       if (
-        this.searchOption.accountSelect &&
-        this.searchOption.accountSelect != 1
+        (this.searchOption.accountSelect &&
+          this.searchOption.accountSelect != 1) ||
+        (this.searchOption.syokuinSelected &&
+          this.searchOption.syokuinSelected != 4)
       ) {
         let accountTemp = [];
 
         for (let i = 0; i < result.length; i++) {
+          // 職員在籍者
+          if (
+            this.searchOption.syokuinSelected == 1 &&
+            result[i].startDate != '' &&
+            result[i].endDate == ''
+          ) {
+            accountTemp.push(result[i]);
+          }
+          // 職員勤務修了者
+          if (
+            this.searchOption.syokuinSelected == 2 &&
+            result[i].startDate != '' &&
+            result[i].endDate != ''
+          ) {
+            accountTemp.push(result[i]);
+          }
+          // 職員退職者
+          if (
+            this.searchOption.syokuinSelected == 3 &&
+            result[i].taisyoku != ''
+          ) {
+            accountTemp.push(result[i]);
+          }
+
           // 発行済み
           if (
             this.searchOption.accountSelect == 2 &&
@@ -1037,7 +1068,6 @@ export default {
             accountTemp.push(result[i]);
           }
         }
-
         result = accountTemp;
       }
 
@@ -1217,6 +1247,8 @@ export default {
         this.filtered.showFilterIcons = false;
       });
 
+      //編集対象列番号
+      this.editrow = [];
       // グリッド押下時
       flexGrid.hostElement.addEventListener('click', function (e) {
         var ht = flexGrid.hitTest(e);
@@ -1249,12 +1281,13 @@ export default {
           ) {
             let temp = flexGrid.itemsSource[ht.row];
             _self.dialogSyokuinName = temp.syokuinName; // 職員名
-            // アカウント発行 未登録の場合は0
+            /*
             if (temp.accountStatus == _self.filterArray[3].value) {
-              _self.dialogAccount = 2;
-            } else {
               _self.dialogAccount = 1;
+            } else {
+              _self.dialogAccount = 0;
             }
+            */
             _self.dialogAccountID = temp.accountID; // アカウントID
             _self.dialogAccountMail = temp.mailAddress; // メールアドレス
 
@@ -1298,6 +1331,17 @@ export default {
             // 選択したグランドメニュー権限のカラムの名前
             let colNumber = ht.col - _self.columnArray.length + 1;
             // let column = 'groundAuth.column_' + colNumber;
+            // 変更対象の権限行
+            // 対象が既に登録されている行であれば登録を行わない
+            let tmpExist = true;
+            _self.editrow.filter(function (val) {
+              if (val.row == ht.row) {
+                tmpExist = false;
+              }
+            });
+            if (tmpExist) {
+              _self.editrow.push({ row: ht.row });
+            }
 
             // 選択したデータのsyokuinCodeを取得
             // 同じsyokuinCodeのデータを更新
@@ -1314,7 +1358,59 @@ export default {
         }
       });
     },
-
+    /***************************
+     * 権限登録ボタン
+     */
+    authRegist() {
+      let _self = this;
+      // 変更対象の行データのみを更新する
+      this.editrow.map(function (value) {
+        let groundAuth = _self.syokuinViewData[value.row].groundAuth;
+        let insert = [];
+        Object.entries(groundAuth).map(function (authValue) {
+          let temp = {};
+          // カラムをキーにしてデータの取得
+          if (authValue[1]) {
+            temp = _self.columnAuthArray.filter(function (column) {
+              // 選択した権限
+              return column.column == authValue[0];
+            });
+            insert.push({
+              kanritanicode: temp[0].kanritaniid,
+              kbnid: temp[0].kbnid,
+              bunid: temp[0].bunid,
+              systemid: temp[0].systemid,
+              buncode: 1, // api反映後変更想定
+              syscode: 1, // api反映後変更想定
+              kengen: authValue[1] == '〇' ? 0 : 1,
+            });
+          }
+        });
+        // 行ごとのデータ取得
+        // データ更新
+        _self.keycloak.updateToken(30).then(() => {
+          let putParam = {
+            inskbn: 0,
+            acnt: [
+              {
+                acntid: _self.syokuinViewData[value.row].accountID,
+                syosai: insert,
+              },
+            ],
+          };
+          postConnect(
+            'staff-account/post-auth',
+            _self.keycloak.token,
+            _self.keycloak.idTokenParsed.sub,
+            _self.keycloak.realm,
+            putParam
+          ).then(() => {
+            // 登録完了しました
+            _self.authCopyType = 4;
+          });
+        });
+      });
+    },
     setSyokuinViewData(syozokuGroup) {
       this.syokuinViewDataDefault = [];
       this.syokuinViewData = [];
@@ -1388,21 +1484,21 @@ export default {
                         : '',
                     groundAuth: {
                       column_1:
-                        el.riyosys[0] && el.riyosys[0].kengen ? '〇' : '',
+                        el.riyosys[0] && el.riyosys[0].kengen ? '●' : '',
                       column_2:
-                        el.riyosys[1] && el.riyosys[1].kengen ? '〇' : '',
+                        el.riyosys[1] && el.riyosys[1].kengen ? '●' : '',
                       column_3:
-                        el.riyosys[2] && el.riyosys[2].kengen ? '〇' : '',
+                        el.riyosys[2] && el.riyosys[2].kengen ? '●' : '',
                       column_4:
-                        el.riyosys[3] && el.riyosys[3].kengen ? '〇' : '',
+                        el.riyosys[3] && el.riyosys[3].kengen ? '●' : '',
                       column_5:
-                        el.riyosys[4] && el.riyosys[4].kengen ? '〇' : '',
+                        el.riyosys[4] && el.riyosys[4].kengen ? '●' : '',
                       column_6:
-                        el.riyosys[5] && el.riyosys[5].kengen ? '〇' : '',
+                        el.riyosys[5] && el.riyosys[5].kengen ? '●' : '',
                       column_7:
-                        el.riyosys[6] && el.riyosys[6].kengen ? '〇' : '',
+                        el.riyosys[6] && el.riyosys[6].kengen ? '●' : '',
                       column_8:
-                        el.riyosys[7] && el.riyosys[7].kengen ? '〇' : '',
+                        el.riyosys[7] && el.riyosys[7].kengen ? '●' : '',
                     },
                     checkedFlag: false,
                   });
@@ -1435,14 +1531,14 @@ export default {
                       ? '仮登録'
                       : '',
                   groundAuth: {
-                    column_1: el.riyosys[0] && el.riyosys[0].kengen ? '〇' : '',
-                    column_2: el.riyosys[1] && el.riyosys[1].kengen ? '〇' : '',
-                    column_3: el.riyosys[2] && el.riyosys[2].kengen ? '〇' : '',
-                    column_4: el.riyosys[3] && el.riyosys[3].kengen ? '〇' : '',
-                    column_5: el.riyosys[4] && el.riyosys[4].kengen ? '〇' : '',
-                    column_6: el.riyosys[5] && el.riyosys[5].kengen ? '〇' : '',
-                    column_7: el.riyosys[6] && el.riyosys[6].kengen ? '〇' : '',
-                    column_8: el.riyosys[7] && el.riyosys[7].kengen ? '〇' : '',
+                    column_1: el.riyosys[0] && el.riyosys[0].kengen ? '●' : '',
+                    column_2: el.riyosys[1] && el.riyosys[1].kengen ? '●' : '',
+                    column_3: el.riyosys[2] && el.riyosys[2].kengen ? '●' : '',
+                    column_4: el.riyosys[3] && el.riyosys[3].kengen ? '●' : '',
+                    column_5: el.riyosys[4] && el.riyosys[4].kengen ? '●' : '',
+                    column_6: el.riyosys[5] && el.riyosys[5].kengen ? '●' : '',
+                    column_7: el.riyosys[6] && el.riyosys[6].kengen ? '●' : '',
+                    column_8: el.riyosys[7] && el.riyosys[7].kengen ? '●' : '',
                   },
                   checkedFlag: false,
                 });
@@ -1469,7 +1565,7 @@ export default {
           let entries = [];
           entries.push({
             id: 0,
-            val: '',
+            val: '全表示',
           });
           Object.entries(tmpSelected).map(function (val) {
             entries.push({
@@ -1613,7 +1709,7 @@ export default {
           if (_self.useButton == _self.usingStatusType[1]) {
             viewData[k].accountStatus = _self.filterArray[1].value;
             _self.dialogAccountRegistOpenType = 3;
-            _self.pEnabled = 1;
+            _self.pEnabled = 0;
             _self.putDataStaff();
           }
           // 停止中
@@ -1622,6 +1718,7 @@ export default {
             _self.dialogAccountRegistOpenType = 5;
             _self.mailSendType = 2;
             _self.pEnabled = 1;
+            _self.dialogAccountMail = '';
           }
           // 未登録
           if (_self.useButton == _self.usingStatusType[3]) {
@@ -1631,7 +1728,7 @@ export default {
             ];
             viewData[k].accountStatus = _self.filterArray[3].value;
             _self.dialogAccountRegistOpenType = 4;
-            _self.pEnabled = 1;
+            _self.pEnabled = 0;
             _self.mailSendType = 1;
             _self.postDataStaff();
           }
@@ -1779,24 +1876,9 @@ export default {
      * ヘッダ作成
      *******************************/
     createHeader(flexGrid) {
-      var panel = flexGrid.columnHeaders;
-      //console.log(panel.rows.length);
-      if (panel.rows.length < 3) {
-        panel.rows.insert(1, new wjGrid.Row());
-        panel.rows.insert(2, new wjGrid.Row());
-      }
-      for (let i = 0; i < this.columnArray.length; i++) {
-        panel.setCellData(0, i, this.columnArray[i].header);
-        panel.setCellData(1, i, this.columnArray[i].header);
-        panel.setCellData(2, i, this.columnArray[i].header);
-        flexGrid.columnHeaders.columns[i].allowMerging = true;
-      }
-
-      let col = '';
-      let c = this.columnArray.length;
-
       let _self = this;
       let searchParam = { Getkbn: 0 };
+
       // グランドメニュー
       getConnect(
         'staff-account/gmenu',
@@ -1805,33 +1887,58 @@ export default {
         _self.keycloak.realm,
         searchParam
       ).then((result) => {
-        let syslst = result.response.data.gmenu.syslst;
+        var panel = flexGrid.columnHeaders;
+        if (panel.rows.length < 3) {
+          panel.rows.insert(1, new wjGrid.Row());
+          panel.rows.insert(2, new wjGrid.Row());
+
+          for (let i = 0; i < _self.columnArray.length; i++) {
+            panel.setCellData(0, i, _self.columnArray[i].header);
+            panel.setCellData(1, i, _self.columnArray[i].header);
+            panel.setCellData(2, i, _self.columnArray[i].header);
+            flexGrid.columnHeaders.columns[i].allowMerging = true;
+          }
+
+          let str = '';
+          for (let i = 3; i <= this.columnArray.length - 1; i++) {
+            str = i >= 7 ? 'アカウント管理' : '勤務情報';
+            panel.setCellData(0, i, str);
+          }
+          flexGrid.columnHeaders.rows[1].height = 60;
+        }
+        let c = _self.columnArray.length;
+        let siyokanlst = result.response.data.gmenu.siyokanlst;
         let tmp = [];
         let k = 1;
-        syslst.map(function (value) {
-          value['syosai'].map(function (val) {
-            tmp.push({
-              id: k,
-              top: 'グランドメニュー権限',
-              middle: value.bunryaku,
-              bottom: val.sysryaku,
-              binding: 'groundAuth.column_' + k,
-            });
-            k++;
+        siyokanlst.map(function (value) {
+          tmp.push({
+            id: k,
+            top: 'グランドメニュー権限',
+            middle: value.kanritaniid, // ウミネコ等が入る idではなく日本語
+            bottom: value.kanritaniid + '_' + value.systemid, // 基本相談等が入る idではなく日本語
+            binding: 'groundAuth.column_' + k,
+            column: 'column_' + k,
+            kanritaniid: value.kanritaniid,
+            systemid: value.systemid,
+            kbnid: value.kbnid,
+            bunid: value.bunid,
           });
+          k++;
         });
-        this.columnAuthArray = tmp;
-        for (let i = 0; i < this.columnAuthArray.length; i++) {
-          if (this.columnAuthArray[i]) {
-            panel.setCellData(0, c, this.columnAuthArray[i].top);
-            panel.setCellData(1, c, this.columnAuthArray[i].middle);
-            panel.setCellData(2, c, this.columnAuthArray[i].bottom);
-
+        _self.columnAuthArray = tmp;
+        for (let i = 0; i < _self.columnAuthArray.length; i++) {
+          let col = '';
+          if (_self.columnAuthArray[i]) {
             col = flexGrid.columnHeaders.columns[c];
-            col.allowMerging = true;
-            col.multiLine = true;
-            col.wordWrap = true;
+            if (col) {
+              col.allowMerging = true;
+              col.multiLine = true;
+              col.wordWrap = true;
 
+              panel.setCellData(0, c, _self.columnAuthArray[i].top);
+              panel.setCellData(1, c, _self.columnAuthArray[i].middle);
+              panel.setCellData(2, c, _self.columnAuthArray[i].bottom);
+            }
             c++;
           }
         }
@@ -1840,16 +1947,12 @@ export default {
         flexGrid.columnHeaders.rows[1].allowMerging = true;
         flexGrid.columnHeaders.rows[2].allowMerging = true;
       });
-
-      let str = '';
-      for (let i = 3; i <= this.columnArray.length - 1; i++) {
-        str = i >= 7 ? 'アカウント管理' : '勤務情報';
-        panel.setCellData(0, i, str);
-      }
-      flexGrid.columnHeaders.rows[1].height = 60;
     },
     onItemsSourceChanged(flexGrid) {
       this.createHeader(flexGrid);
+      if (flexGrid.itemsSource) {
+        this.displayCount = flexGrid.itemsSource.length;
+      }
     },
     onFormatItem(flexGrid, e) {
       let accountRowCount = this.columnArray.length - 1;
@@ -2136,6 +2239,7 @@ $mwidth: 1366px;
       font-size: 8px;
     }
   }
+
   .borderbottom {
     border-bottom: 1px solid $grid_Border_Color;
     width: 100%;
@@ -2242,6 +2346,7 @@ $mwidth: 1366px;
       }
     }
   }
+
   .borderbottom {
     border-bottom: 1px solid $grid_Border_Color;
     width: 100%;
@@ -2279,17 +2384,8 @@ $mwidth: 1366px;
 div#accountsData {
   font-size: $default_fontsize;
   min-width: $mwidth;
+  width: $mwidth;
 
-  #subTitle {
-    border-bottom: 1px solid $black;
-    h2 {
-      font-weight: normal;
-    }
-    label {
-      line-height: 28px;
-      margin-left: 20px;
-    }
-  }
   input {
     & + label {
       line-height: 24px;
@@ -2336,17 +2432,7 @@ div#accountsData {
 
   label {
     &.message {
-      background-color: $Hissu_Color !important;
-      color: $white;
-      padding: 5px;
-    }
-    &.accountConfLabel {
-      background-color: $view_Title_background_Orange;
-      height: $height;
-      width: 260px;
-      display: block;
-      text-align: center;
-      line-height: $height;
+      color: $Hissu_Color;
     }
   }
   span {
@@ -2365,6 +2451,9 @@ div#accountsData {
     &.isActive {
       color: $white;
       background-color: $view_Title_font_color_Blue;
+    }
+    &.borderWidth {
+      width: 100px;
     }
   }
   #alpCommon {
@@ -2475,11 +2564,14 @@ div#accountsData {
     }
   }
   .labeled {
-    background-color: $view_Row_background;
+    background-color: $labelColor;
     width: 100px;
     text-align: center;
     line-height: $height;
     display: inline-block;
+    &.gray {
+      background-color: $labelColorGray;
+    }
     &.pinked {
       background-color: $pink;
       line-height: $height;
@@ -2502,8 +2594,14 @@ div#accountsData {
   }
   .boarderArea {
     width: 240px;
-    &.wMdle {
-      width: 450px;
+    &.wMin {
+      width: 220px;
+    }
+    &.wShort {
+      width: 320px;
+    }
+    &.wLong {
+      width: 620px;
     }
   }
 

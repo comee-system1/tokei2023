@@ -15,11 +15,11 @@
         "x_api_key": "jKGbd4PqxN5yzyxn"
     },
     "introspect": {
-        "endpoint": "http://t-sct1wb00.fukushikenbunroku.com:8080/realms/{REALM-NAME}/protocol/openid-connect/token/introspect",
+        "endpoint": "http://localhost:8884/realms/{REALM-NAME}/protocol/openid-connect/token/introspect",
         "timeout": "5000",
         "realm_name_pattern": "R{CORPORATION-UNIQUE-ID}_admin",
         "client_id": "fk-admin-web-backend",
-        "client_secret": "gmaFO0b3BWsUGbDVPqVeHHx7StwCli75"
+        "client_secret": "rdIPshIS9Kxy3Qz2MVY7WexsalsYrIZE"
     },
     "log4js": {
         "appenders": {
