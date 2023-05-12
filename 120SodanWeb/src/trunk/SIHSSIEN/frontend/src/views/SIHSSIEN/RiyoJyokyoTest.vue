@@ -135,14 +135,14 @@
                 pinned="false"
                 sortable="false"
                 resizable="false"
-                field="ContactName"
+                field="basic_plan_1"
                 header="I"
               ></igc-column>
               <igc-column
                 movable="false"
                 sortable="false"
                 resizable="false"
-                field="ContactTitle"
+                field="basic_plan_2"
                 header="Ⅱ"
               ></igc-column>
             </igc-column-group>
@@ -152,17 +152,44 @@
                 pinned="false"
                 sortable="false"
                 resizable="false"
-                field="ContactName"
+                field="basic_moni_1"
                 header="Ⅰ"
               ></igc-column>
               <igc-column
                 movable="false"
                 sortable="false"
                 resizable="false"
-                field="ContactTitle"
+                field="basic_moni_2"
                 header="Ⅱ"
               ></igc-column>
             </igc-column-group>
+          </igc-column-group>
+
+          <igc-column-group movable="true" header="住居重複減">
+            <igc-column
+              movable="false"
+              pinned="false"
+              sortable="false"
+              resizable="false"
+              field="jyukyo_1"
+              header="Ⅰ"
+            ></igc-column>
+            <igc-column
+              movable="false"
+              pinned="false"
+              sortable="false"
+              resizable="false"
+              field="jyukyo_2"
+              header="Ⅱ"
+            ></igc-column>
+            <igc-column
+              movable="false"
+              pinned="false"
+              sortable="false"
+              resizable="false"
+              field="jyukyo_yobo"
+              header="予防"
+            ></igc-column>
           </igc-column-group>
         </igc-grid>
       </v-row>
