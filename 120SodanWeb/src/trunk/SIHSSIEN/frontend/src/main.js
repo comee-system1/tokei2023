@@ -10,10 +10,17 @@ import '@grapecity/wijmo.styles/wijmo.css';
 
 Vue.config.productionTip = false
 
+
+Vue.config.ignoredElements = [
+  'igc-grid',
+  'igc-column'
+]
+
 new Vue({
   router,
   vuetify,
   commons,
   dialogs,
+
   render: h => h(App)
 }).$mount('#app')

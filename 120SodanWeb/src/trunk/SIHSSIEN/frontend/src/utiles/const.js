@@ -115,7 +115,7 @@ const CHIIKIJIGYOKBN = {
         name: '地域定着'
     },
 }
-
+const PRINT_CELL = ["", "〇"];
 export default {
     COLOR,
     FORMAT,
@@ -124,5 +124,6 @@ export default {
     JIGYOKBN,
     KEIKAKUJIGYOKBN,
     CHIIKIJIGYOKBN,
-    JIGYO_KBN_NAME
+    JIGYO_KBN_NAME,
+    PRINT_CELL,
 }

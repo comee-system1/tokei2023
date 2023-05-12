@@ -104,7 +104,7 @@
             :showMarquee="true"
             :formatItem="onFormatItemList"
             :itemsSourceChanged="itemsSourceChanged"
-            v-show="displayType == 52"
+            v-if="displayType == keikakuSodanSien_Num"
           >
             <wj-flex-grid-filter
               :initialized="filterInitializedList"
@@ -139,6 +139,7 @@
             ></wj-flex-grid-column>
           </wj-flex-grid>
         </div>
+
         <div>
           <wj-flex-grid
             id="listGridPlan"
@@ -153,8 +154,8 @@
             :allowSorting="false"
             :showMarquee="true"
             :formatItem="onFormatItemListPlan"
-            :itemsSourceChanged="itemsSourceChanged"
-            v-show="displayType == 53"
+            :itemsSourceChanged="itemsSourceChangedPlan"
+            v-if="displayType == 53"
           >
             <wj-flex-grid-filter
               :initialized="filterInitializedList"
@@ -203,8 +204,8 @@
             :allowSorting="false"
             :showMarquee="true"
             :formatItem="onFormatItemListFix"
-            :itemsSourceChanged="itemsSourceChanged"
-            v-show="displayType == 54"
+            :itemsSourceChanged="itemsSourceChangedFix"
+            v-if="displayType == 54"
           >
             <wj-flex-grid-filter
               :initialized="filterInitializedList"
@@ -286,6 +287,10 @@ import * as wjGrid from '@grapecity/wijmo.grid';
 import sysConst from '@/utiles/const';
 const headerHeight = 90;
 const headerHeightList = 64;
+
+const keikakuSodanSien_Num = 52;
+const tiikiIkouSien_Num = 53;
+const tiikiTeityakuSien_Num = 54;
 export default {
   props: {},
   components: {
@@ -327,13 +332,13 @@ export default {
       piasaport: 1,
       jyukyosienrenkei: 1,
       tiikiseikatusien: 1,
-      syutyusien: '',
-      taiintaisyo: '',
-      tiikijyukyo: '',
-      riyo1: '',
-      riyo2: '2',
-      syuku1: '3',
-      syuku2: '',
+      syutyusien: 1,
+      taiintaisyo: 1,
+      tiikijyukyo: 1,
+      riyo1: 1,
+      riyo2: 2,
+      syuku1: 3,
+      syuku2: 1,
       taiseikakuho: 1,
       first: 2,
       second: 1,
@@ -370,14 +375,14 @@ export default {
       seconds: 3062,
       piasaport: 100,
       jyukyosienrenkei: 35,
-      tiikiseikatusien: '',
-      syutyusien: '',
-      taiintaisyo: '',
-      tiikijyukyo: '',
-      riyo1: '',
-      riyo2: '600',
-      syuku1: '900',
-      syuku2: '',
+      tiikiseikatusien: 333,
+      syutyusien: 233,
+      taiintaisyo: 200,
+      tiikijyukyo: 230,
+      riyo1: 300,
+      riyo2: 600,
+      syuku1: 900,
+      syuku2: 777,
       taiseikakuho: 306,
       first: 1424,
       second: 95,
@@ -420,10 +425,10 @@ export default {
         syutyusien: 1,
         taiintaisyo: 1,
         tiikijyukyo: 1,
-        riyo1: '',
-        riyo2: '2',
-        syuku1: '3',
-        syuku2: '',
+        riyo1: 1,
+        riyo2: 2,
+        syuku1: 3,
+        syuku2: 2,
         taiseikakuho: 1,
         first: 2,
         second: 1,
@@ -464,10 +469,10 @@ export default {
         syutyusien: 500,
         taiintaisyo: 500,
         tiikijyukyo: 2700,
-        riyo1: '',
-        riyo2: '2100',
-        syuku1: '1400',
-        syuku2: '',
+        riyo1: 1000,
+        riyo2: 2100,
+        syuku1: 1400,
+        syuku2: 800,
         taiseikakuho: 306,
         first: '',
         second: '',
@@ -487,6 +492,9 @@ export default {
   },
   data() {
     return {
+      keikakuSodanSien_Num: keikakuSodanSien_Num,
+      tiikiIkouSien_Num: tiikiIkouSien_Num,
+      tiikiTeityakuSien_Num: tiikiTeityakuSien_Num,
       displayType: 52,
       calcTotal: {}, // 合計値
       headerheight: 260,
@@ -605,7 +613,7 @@ export default {
           {
             id: 1,
             binding: 'plandate',
-            width: 80,
+            width: 100,
           },
           {
             id: 2,
@@ -887,6 +895,24 @@ export default {
       this.totalGrid = totalGrid;
       this.totalHeader();
       totalGrid.columnHeaders.rows[1].height = headerHeight;
+      let _self = this;
+      totalGrid.addEventListener(totalGrid.hostElement, 'click', (e) => {
+        var ht = totalGrid.hitTest(e);
+        if (ht.panel == totalGrid.cells) {
+          // 印刷にチェックをいれる
+          // 2行で1つなので2行分に1を立てる
+          // 同じjyukyusyaBangoを持つデータに印刷チェックをいれる
+          let jyukyusyaBango = _self.viewData[ht.row].jyukyusyaBango;
+          _self.viewData.map(function (value, k) {
+            if (value.jyukyusyaBango == jyukyusyaBango) {
+              _self.viewData[k].print = _self.viewData[k].print
+                ? sysConst.PRINT_CELL[0]
+                : sysConst.PRINT_CELL[1];
+            }
+          });
+        }
+        totalGrid.refresh();
+      });
 
       this.calcAllPoint();
     },
@@ -919,6 +945,17 @@ export default {
         new wjGrid.CellRange(0, 2, 1, 2)
       );
 
+      let bodyRanges = [];
+      let num = 0;
+      let numPlus = 0;
+      this.viewData.map(function () {
+        numPlus = num + 1;
+        if (num % 2 == 0) {
+          bodyRanges.push(new wjGrid.CellRange(num, 2, numPlus, 2));
+        }
+        num++;
+      });
+
       // フッタ
       panel = this.totalGrid.columnFooters;
       panel.rows.insert(0, new wjGrid.Row());
@@ -941,6 +978,13 @@ export default {
             }
           }
         }
+        if (panel.cellType == wjGrid.CellType.Cell) {
+          for (let h = 0; h < bodyRanges.length; h++) {
+            if (bodyRanges[h].contains(r, c)) {
+              return bodyRanges[h];
+            }
+          }
+        }
         if (panel.cellType == wjGrid.CellType.ColumnFooter) {
           for (let h = 0; h < footerRanges.length; h++) {
             if (footerRanges[h].contains(r, c)) {
@@ -951,35 +995,63 @@ export default {
       };
       this.totalGrid.mergeManager = mm;
     },
-    /*************************
-     * 基本報酬
-     */
-    onInitializedListFix(listGridFix) {
-      this.listGridFix = listGridFix;
-      this.listHeaderFix();
-      listGridFix.columnHeaders.rows[2].height = headerHeightList;
-      // 合計値の計算
-      this.calcTotalPoint('base', 0, this.listArrayFix);
-      this.calcTotalPoint('shisetsu', 3, this.listArrayFix);
-      this.calcTotalPoint('kobetsu', 6, this.listArrayFix);
-    },
     onInitializedList(listGrid) {
       this.listGrid = listGrid;
       this.listHeader();
       listGrid.columnHeaders.rows[2].height = headerHeightList;
       // 合計値の計算
-      this.calcTotalPoint('base', 2);
-      this.calcTotalPoint('shisetsu', 6);
-      this.calcTotalPoint('kobetsu', 11);
+      if (this.displayType == this.keikakuSodanSien_Num) {
+        this.calcTotalPoint('base', 2);
+        this.calcTotalPoint('shisetsu', 6);
+        this.calcTotalPoint('kobetsu', 11);
+      }
+    },
+    itemsSourceChanged(flexGrid) {
+      this.listGrid = flexGrid;
+      if (this.displayType == this.keikakuSodanSien_Num) {
+        this.calcTotalPoint('base', 2);
+        this.calcTotalPoint('shisetsu', 6);
+        this.calcTotalPoint('kobetsu', 11);
+      }
     },
     onInitializedListPlan(listGridPlan) {
       this.listGridPlan = listGridPlan;
       this.listHeaderPlan();
       listGridPlan.columnHeaders.rows[2].height = headerHeightList;
-      // // 合計値の計算
-      this.calcTotalPoint('base', 0, this.listArrayPlan);
-      this.calcTotalPoint('shisetsu', 1, this.listArrayPlan);
-      this.calcTotalPoint('kobetsu', 4, this.listArrayPlan);
+      // 合計値の計算
+      if (this.displayType == this.tiikiIkouSien_Num) {
+        this.calcTotalPoint('base', 0, this.listArrayPlan);
+        this.calcTotalPoint('shisetsu', 1, this.listArrayPlan);
+        this.calcTotalPoint('kobetsu', 4, this.listArrayPlan);
+      }
+    },
+    itemsSourceChangedPlan(flexGrid) {
+      this.listGridPlan = flexGrid;
+      if (this.displayType == this.tiikiIkouSien_Num) {
+        this.calcTotalPoint('base', 0, this.listArrayPlan);
+        this.calcTotalPoint('shisetsu', 1, this.listArrayPlan);
+        this.calcTotalPoint('kobetsu', 4, this.listArrayPlan);
+      }
+    },
+
+    onInitializedListFix(listGridFix) {
+      this.listGridFix = listGridFix;
+      this.listHeaderFix();
+      listGridFix.columnHeaders.rows[2].height = headerHeightList;
+      // 合計値の計算
+      if (this.displayType == this.tiikiTeityakuSien_Num) {
+        this.calcTotalPoint('base', 0, this.listArrayFix);
+        this.calcTotalPoint('shisetsu', 3, this.listArrayFix);
+        this.calcTotalPoint('kobetsu', 6, this.listArrayFix);
+      }
+    },
+    itemsSourceChangedFix(flexGrid) {
+      this.listGridFix = flexGrid;
+      if (this.displayType == this.tiikiTeityakuSien_Num) {
+        this.calcTotalPoint('base', 0, this.listArrayFix);
+        this.calcTotalPoint('shisetsu', 3, this.listArrayFix);
+        this.calcTotalPoint('kobetsu', 6, this.listArrayFix);
+      }
     },
 
     /********************
@@ -990,45 +1062,58 @@ export default {
     calcTotalPoint(type, st, data = this.listArray) {
       let upper = [];
       let bottom = [];
+      let up = 0;
+      let bm = 0;
       let _self = this;
-      data[type].map(function (val, k) {
-        // 基本情報の時のみ1より大きい値から取得
-        if (k > 1 || st != 2) {
-          let up = 0;
-          let bm = 0;
-          _self.viewData.map(function (value, key) {
-            if (key % 2 == 0) {
-              up += Number(value[val.binding]);
+      if (data[type]) {
+        data[type].map(function (val, k) {
+          // 基本情報の時のみ1より大きい値から取得
+          if (k > 1 || st != 2) {
+            up = 0;
+            bm = 0;
+            let p = 0;
+            _self.viewData.map((value, key) => {
+              p =
+                isNaN(value[val.binding]) || !value[val.binding]
+                  ? 0
+                  : parseInt(value[val.binding], 0);
+              if (key % 2 == 0 && p) {
+                up = up + p;
+              }
+              if (key % 2 == 1 && p) {
+                bm = bm + p;
+              }
+            });
+
+            if (up > 0) {
+              upper.push(up);
             }
-            if (key % 2 == 1) {
-              bm += Number(value[val.binding]);
+            if (bm > 0) {
+              bottom.push(bm);
             }
-          });
-          upper.push(up);
-          bottom.push(bm);
-        }
-      });
+          }
+        });
+      }
       // 値の記載
       this.settingTotalData(upper, bottom, st);
     },
     settingTotalData(upper, bottom, startPos) {
-      let _self = this;
+      let grid = [];
+      if (this.displayType == this.tiikiIkouSien_Num) {
+        grid = this.listGridPlan;
+      } else if (this.displayType == this.tiikiTeityakuSien_Num) {
+        grid = this.listGridFix;
+      } else {
+        grid = this.listGrid;
+      }
       let st = startPos;
       upper.map(function (value) {
-        _self.listGrid.columnFooters.setCellData(
-          0,
-          st,
-          value == 0 ? '' : value
-        );
+        grid.columnFooters.setCellData(0, st, value == 0 ? '' : value);
         st++;
       });
       st = startPos;
       bottom.map(function (value) {
-        _self.listGrid.columnFooters.setCellData(
-          1,
-          st,
-          value == 0 ? '' : value
-        );
+        grid.columnFooters.setCellData(1, st, value == 0 ? '' : value);
         st++;
       });
     },
@@ -1075,7 +1160,7 @@ export default {
         panel.rows.insert(1, new wjGrid.Row());
       }
 
-      this.createMerge(headerRanges, bodyRanges);
+      this.createMerge(headerRanges, bodyRanges, this.listGridFix);
     },
     listHeaderPlan() {
       var panel = this.listGridPlan.columnHeaders;
@@ -1126,7 +1211,7 @@ export default {
         panel.rows.insert(1, new wjGrid.Row());
       }
 
-      this.createMerge(headerRanges, bodyRanges);
+      this.createMerge(headerRanges, bodyRanges, this.listGridPlan);
     },
     listHeader() {
       var panel = this.listGrid.columnHeaders;
@@ -1203,7 +1288,7 @@ export default {
       panel.setCellData(1, 0, '単位数');
       this.createMerge(headerRanges, bodyRanges);
     },
-    createMerge(headerRanges = [], bodyRanges = []) {
+    createMerge(headerRanges = [], bodyRanges = [], grid = this.listGrid) {
       let mm = new wjGrid.MergeManager();
       mm.getMergedRange = function (panel, r, c) {
         if (panel.cellType == wjGrid.CellType.ColumnHeader) {
@@ -1221,7 +1306,7 @@ export default {
           }
         }
       };
-      this.listGrid.mergeManager = mm;
+      grid.mergeManager = mm;
     },
     /*******************
      * フィルターの指定
@@ -1431,12 +1516,7 @@ export default {
         e.cell.style.fontWeight = 'normal';
       }
     },
-    itemsSourceChanged(flexGrid) {
-      this.listGrid = flexGrid;
-      this.calcTotalPoint('base', 2);
-      this.calcTotalPoint('shisetsu', 6);
-      this.calcTotalPoint('kobetsu', 11);
-    },
+
     itemsSourceChangedTotal(flexGrid) {
       this.totalGrid = flexGrid;
       this.calcAllPoint();
@@ -1482,8 +1562,11 @@ export default {
         }
 
         // 空欄は下線を消す
-        if (tmp.total == '') {
+        if (tmp.total == '' && e.col != 2) {
           e.cell.style.borderBottom = 'none';
+        }
+        if (e.col == 2) {
+          this.onJustifyCenterMiddle(e);
         }
       }
       if (e.panel.cellType == wjGrid.CellType.ColumnFooter) {
@@ -1514,34 +1597,23 @@ export default {
       this.filteredList.filterDefinition = e.filterDefinition;
       this.filteredTotal.filterDefinition = e.filterDefinition;
 
-      this.calcTotalPointFilter('base', 2);
-      this.calcTotalPointFilter('shisetsu', 6);
-      this.calcTotalPointFilter('kobetsu', 11);
+      if (this.displayType == this.keikakuSodanSien_Num) {
+        this.calcTotalPoint('base', 2);
+        this.calcTotalPoint('shisetsu', 6);
+        this.calcTotalPoint('kobetsu', 11);
+      }
+      if (this.displayType == this.tiikiIkouSien_Num) {
+        this.calcTotalPoint('base', 0, this.listArrayPlan);
+        this.calcTotalPoint('shisetsu', 1, this.listArrayPlan);
+        this.calcTotalPoint('kobetsu', 4, this.listArrayPlan);
+      }
+      if (this.displayType == this.tiikiTeityakuSien_Num) {
+        this.calcTotalPoint('base', 0, this.listArrayFix);
+        this.calcTotalPoint('shisetsu', 3, this.listArrayFix);
+        this.calcTotalPoint('kobetsu', 6, this.listArrayFix);
+      }
     },
-    calcTotalPointFilter(type, st) {
-      let _self = this;
-      let upper = [];
-      let bottom = [];
-      this.listArray[type].map(function (val, k) {
-        // 基本情報の時のみ1より大きい値から取得
-        if (k > 1 || st != 2) {
-          let up = 0;
-          let bm = 0;
-          _self.listGrid.rows.map(function (value, key) {
-            if (key % 2 == 0) {
-              up += value.dataItem[val.binding];
-            }
-            if (key % 2 == 1) {
-              bm += value.dataItem[val.binding];
-            }
-          });
-          upper.push(up);
-          bottom.push(bm);
-        }
-      });
-      // 値の記載
-      this.settingTotalData(upper, bottom, st);
-    },
+
     /**************************
      * アルファベット
      */
@@ -1557,9 +1629,10 @@ export default {
       let obj = this.cityArray.find((v) => v.id == this.citySelected);
       let cityid = obj.id;
       let city = obj.text;
+
       let result = tmpviewdata.filter((value) => value.city == city || !cityid);
 
-      this.viewData = [...result];
+      this.viewData = result;
     },
 
     /******************

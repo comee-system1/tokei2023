@@ -65,36 +65,106 @@
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <wj-flex-grid
-          id="flexViewGrid"
-          :autoSearch="true"
-          :headersVisibility="'Column'"
-          :selectionMode="0"
-          :initialized="onInitialized"
-          :itemsSourceChanged="onItemsSourceChanged"
-          :itemsSource="viewData"
-          :allowResizing="false"
-          :allowDragging="false"
-          :allowSorting="false"
-          :showMarquee="false"
-          :allowMerging="'AllHeaders'"
-          :formatItem="onFormatItem"
+        <igc-grid
+          id="grid1"
+          auto-generate="false"
+          allow-filtering="false"
+          height="100%"
+          width="100%"
         >
-          <wj-flex-grid-filter
-            :initialized="filterInitialized"
-            :showFilterIcons="false"
-          ></wj-flex-grid-filter>
-          <wj-flex-grid-column
-            v-for="val in gridClumns"
-            :key="val.id"
-            :binding="val.binding"
-            :width="val.width"
-            :word-wrap="true"
-            :allowResizing="true"
-            :isReadOnly="true"
-            align="center"
-          ></wj-flex-grid-column>
-        </wj-flex-grid>
+          <igc-column
+            id="expired"
+            field="expired"
+            sortable="false"
+            :header="gridClumns[0]['header']"
+            filterable="false"
+            :width="gridClumns[0]['width']"
+          ></igc-column>
+          <igc-column
+            id="userNumber"
+            field="userNumber"
+            header="受給者証番号"
+            filterable="false"
+          ></igc-column>
+          <igc-column
+            id="userName"
+            field="userName"
+            header="利用者名"
+            filterable="false"
+          ></igc-column>
+          <igc-column-group movable="true" header="ﾓﾆﾀﾘﾝｸﾞ">
+            <igc-column
+              movable="false"
+              pinned="false"
+              sortable="false"
+              resizable="false"
+              field="ContactName"
+              header="予定月"
+            ></igc-column>
+            <igc-column
+              movable="false"
+              sortable="false"
+              resizable="false"
+              field="ContactTitle"
+              header="終期月"
+            ></igc-column>
+          </igc-column-group>
+          <igc-column
+            id="type"
+            field="type"
+            header="様式"
+            filterable="false"
+          ></igc-column>
+          <igc-column
+            id="makeDate"
+            field="makeDate"
+            header="計画作成日"
+            filterable="false"
+          ></igc-column>
+          <igc-column
+            id="monitorDate"
+            field="monitorDate"
+            header="モニタリング実施日"
+            filterable="false"
+          ></igc-column>
+
+          <igc-column-group movable="true" header="基本報酬">
+            <igc-column-group movable="true" header="計画">
+              <igc-column
+                movable="false"
+                pinned="false"
+                sortable="false"
+                resizable="false"
+                field="ContactName"
+                header="I"
+              ></igc-column>
+              <igc-column
+                movable="false"
+                sortable="false"
+                resizable="false"
+                field="ContactTitle"
+                header="Ⅱ"
+              ></igc-column>
+            </igc-column-group>
+            <igc-column-group movable="true" header="ﾓﾆﾀﾘﾝｸﾞ">
+              <igc-column
+                movable="false"
+                pinned="false"
+                sortable="false"
+                resizable="false"
+                field="ContactName"
+                header="Ⅰ"
+              ></igc-column>
+              <igc-column
+                movable="false"
+                sortable="false"
+                resizable="false"
+                field="ContactTitle"
+                header="Ⅱ"
+              ></igc-column>
+            </igc-column-group>
+          </igc-column-group>
+        </igc-grid>
       </v-row>
       <v-row no-gutters class="mt-1 justify-end ma-3">
         <v-btn small>登録</v-btn>
@@ -116,11 +186,15 @@ import '@grapecity/wijmo.vue2.grid.filter';
 import sysConst from '@/utiles/const';
 import { getConnect } from '../../connect/getConnect';
 
+import 'igniteui-webcomponents-grids/grids/combined.js';
+import { IgcGrid } from 'igniteui-webcomponents-grids/grids/themes/light/bootstrap.css';
+
 export default {
   props: {},
   components: {
     HeaderServices,
     AlphabetButton,
+    IgcGrid,
   },
   data() {
     return {
@@ -352,7 +426,30 @@ export default {
       ],
     };
   },
-  mounted() {},
+  mounted() {
+    this.data = [
+      {
+        expired: '',
+        userNumber: '000001',
+      },
+      {
+        expired: '',
+        userNumber: '0000002',
+      },
+    ];
+
+    var grid1 = document.getElementById('grid1');
+
+    this._bind = () => {
+      grid1.data = this.data;
+      grid1.rowClasses = this.rowClasses;
+    };
+
+    this._bind();
+  },
+  rowClasses() {
+    return 'activeRows';
+  },
   // beforeRouteLeave(to, from, next) {
   //   const answer = window.confirm(
   //     '編集中のものは保存されませんが、よろしいですか？'
@@ -674,10 +771,7 @@ export default {
         c++;
       }
     },
-    /************************
-     * データ表示
-     */
-    onItemsSourceChanged() {},
+
     /************************
      * 表示フォーマット
      */
@@ -840,5 +934,21 @@ div#RiyoJyokyo {
       border-bottom: 2px solid $view_Title_background_Main;
     }
   }
+}
+#grid1_expired {
+  span {
+    &.igx-grid-th__title {
+      -ms-writing-mode: tb-rl;
+      writing-mode: vertical-rl;
+      align-items: flex-start;
+      text-align: left;
+      width: 100%;
+      overflow: visible;
+    }
+  }
+}
+.igx-grid-th {
+  align-items: center !important;
+  font-weight: normal;
 }
 </style>
