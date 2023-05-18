@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import KaigoKyufuMeisaisyo from '../views/SIHSSIEN/KaigoKyufuMeisaisyo.vue'
 import RiyoJyokyo from '../views/SIHSSIEN/RiyoJyokyo.vue'
 import RiyoJyokyoTest from '../views/SIHSSIEN/RiyoJyokyoTest.vue'
+import RiyoJyokyoTest2 from '../views/SIHSSIEN/RiyoJyokyoTest2.vue'
 import KihonHoshu from '../views/SIHSSIEN/KihonHoshu.vue'
 import SeikyushoLists from '../views/SIHSSIEN/SeikyushoLists.vue'
 import JyuryouTsuchisyoList from '../views/SIHSSIEN/JyuryouTsuchisyoList.vue'
@@ -72,6 +73,14 @@ const routes = [{
         path: '/RiyoJyokyoTest/:uniqid',
         name: TitleRiyojyokyo,
         component: RiyoJyokyoTest,
+        meta: {
+            title: Title,
+        },
+    },
+    {
+        path: '/RiyoJyokyoTest2/:uniqid',
+        name: TitleRiyojyokyo,
+        component: RiyoJyokyoTest2,
         meta: {
             title: Title,
         },

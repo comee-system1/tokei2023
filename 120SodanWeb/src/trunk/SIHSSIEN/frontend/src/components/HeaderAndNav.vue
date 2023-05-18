@@ -192,6 +192,8 @@ export default {
             { name: '利用者受給者証一覧', link: '/JyukyuIcrn' },
             { name: '基本報酬件数算定', link: '/KihonHoshu' },
             { name: '利用状況一覧', link: '/RiyoJyokyo' },
+            { name: '利用状況一覧(ignite ui)', link: '/RiyoJyokyoTest' },
+            { name: '利用状況一覧(handson)', link: '/RiyoJyokyoTest2' },
             { name: 'レセプト集計', link: '/ReceptSyukei' },
             {
               name: '給付明細書',

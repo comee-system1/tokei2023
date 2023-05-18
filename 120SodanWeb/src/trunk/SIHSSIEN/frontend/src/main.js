@@ -13,7 +13,8 @@ Vue.config.productionTip = false
 
 Vue.config.ignoredElements = [
   'igc-grid',
-  'igc-column'
+  'igc-column',
+  'igc-column-group'
 ]
 
 new Vue({

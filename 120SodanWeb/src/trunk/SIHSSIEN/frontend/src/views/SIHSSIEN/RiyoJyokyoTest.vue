@@ -10,6 +10,7 @@
       <v-row no-gutters class="pa-1" justify="start">
         <v-card class="d-flex" flat tile>
           <label class="label"> 絞込 </label>
+
           <select v-model="filterSelect" class="filterSelect">
             <option
               v-for="val in filterSelectOption"
@@ -73,122 +74,187 @@
           width="100%"
         >
           <igc-column
-            id="expired"
-            field="expired"
+            v-for="val in gridClumnsOne"
+            :key="val.id"
+            :id="val.binding"
+            :field="val.binding"
             sortable="false"
-            :header="gridClumns[0]['header']"
+            :header="val.header"
             filterable="false"
-            :width="gridClumns[0]['width']"
+            :width="val.width"
+            :header-width="val.width"
+            :header-classes="val.headerClass"
           ></igc-column>
-          <igc-column
-            id="userNumber"
-            field="userNumber"
-            header="受給者証番号"
-            filterable="false"
-          ></igc-column>
-          <igc-column
-            id="userName"
-            field="userName"
-            header="利用者名"
-            filterable="false"
-          ></igc-column>
-          <igc-column-group movable="true" header="ﾓﾆﾀﾘﾝｸﾞ">
+          <igc-column-group movable="true" :header="gridClumnsTwo[0].header">
             <igc-column
-              movable="false"
-              pinned="false"
+              v-for="val in gridClumnsTwo[0].group"
+              :key="val.id"
+              :id="val.binding"
+              :field="val.binding"
               sortable="false"
-              resizable="false"
-              field="ContactName"
-              header="予定月"
-            ></igc-column>
-            <igc-column
-              movable="false"
-              sortable="false"
-              resizable="false"
-              field="ContactTitle"
-              header="終期月"
+              :header="val.header"
+              filterable="false"
+              :width="val.width"
+              :header-width="val.width"
+              :header-classes="val.headerClass"
             ></igc-column>
           </igc-column-group>
           <igc-column
-            id="type"
-            field="type"
-            header="様式"
+            v-for="val in gridClumnsThree"
+            :key="val.id"
+            :id="val.binding"
+            :field="val.binding"
+            sortable="false"
+            :header="val.header"
             filterable="false"
+            :width="val.width"
+            :header-width="val.width"
+            :header-classes="val.headerClass"
+            :has-summary="val.summary"
+            data-type="number"
           ></igc-column>
-          <igc-column
-            id="makeDate"
-            field="makeDate"
-            header="計画作成日"
-            filterable="false"
-          ></igc-column>
-          <igc-column
-            id="monitorDate"
-            field="monitorDate"
-            header="モニタリング実施日"
-            filterable="false"
-          ></igc-column>
-
-          <igc-column-group movable="true" header="基本報酬">
-            <igc-column-group movable="true" header="計画">
+          <igc-column-group movable="true" :header="gridClumnsFour[0].header">
+            <igc-column-group
+              movable="true"
+              v-for="value in gridClumnsFour[0].group"
+              :key="value.id"
+              :header="value.header"
+            >
               <igc-column
-                movable="false"
-                pinned="false"
+                v-for="val in value.group"
+                :key="val.id"
+                :id="val.binding"
+                :field="val.binding"
                 sortable="false"
-                resizable="false"
-                field="basic_plan_1"
-                header="I"
-              ></igc-column>
-              <igc-column
-                movable="false"
-                sortable="false"
-                resizable="false"
-                field="basic_plan_2"
-                header="Ⅱ"
-              ></igc-column>
-            </igc-column-group>
-            <igc-column-group movable="true" header="ﾓﾆﾀﾘﾝｸﾞ">
-              <igc-column
-                movable="false"
-                pinned="false"
-                sortable="false"
-                resizable="false"
-                field="basic_moni_1"
-                header="Ⅰ"
-              ></igc-column>
-              <igc-column
-                movable="false"
-                sortable="false"
-                resizable="false"
-                field="basic_moni_2"
-                header="Ⅱ"
+                :header="val.header"
+                filterable="false"
+                :width="val.width"
+                :header-width="val.width"
+                :header-classes="val.headerClass"
+                :has-summary="val.summary"
+                data-type="number"
               ></igc-column>
             </igc-column-group>
           </igc-column-group>
 
-          <igc-column-group movable="true" header="住居重複減">
+          <igc-column-group movable="true" :header="gridClumnsFive[0].header">
             <igc-column
-              movable="false"
-              pinned="false"
+              v-for="val in gridClumnsFive[0].group"
+              :key="val.id"
+              :id="val.binding"
+              :field="val.binding"
               sortable="false"
-              resizable="false"
-              field="jyukyo_1"
-              header="Ⅰ"
+              :header="val.header"
+              filterable="false"
+              :width="val.width"
+              :header-width="val.width"
+              :header-classes="val.headerClass"
+              :has-summary="val.summary"
+              data-type="number"
             ></igc-column>
+          </igc-column-group>
+          <igc-column-group movable="true" header="加算項目">
             <igc-column
-              movable="false"
-              pinned="false"
+              v-for="val in gridClumnsKasan"
+              :key="val.id"
+              :id="val.binding"
+              :field="val.binding"
               sortable="false"
-              resizable="false"
-              field="jyukyo_2"
-              header="Ⅱ"
+              :header="val.header"
+              filterable="false"
+              :width="val.width"
+              :header-width="val.width"
+              :header-classes="val.headerClass"
+              :has-summary="val.summary"
+              data-type="number"
             ></igc-column>
+            <igc-column-group
+              movable="true"
+              :header="gridClumnsKasanNyuin[0].header"
+            >
+              <igc-column
+                v-for="val in gridClumnsKasanNyuin[0].group"
+                :key="val.id"
+                :id="val.binding"
+                :field="val.binding"
+                sortable="false"
+                :header="val.header"
+                filterable="false"
+                :width="val.width"
+                :header-width="val.width"
+                :header-classes="val.headerClass"
+                :has-summary="val.summary"
+                data-type="number"
+              ></igc-column>
+            </igc-column-group>
+            <igc-column-group
+              movable="true"
+              :header="gridClumnsKasanKyotaku[0].header"
+            >
+              <igc-column
+                v-for="val in gridClumnsKasanKyotaku[0].group"
+                :key="val.id"
+                :id="val.binding"
+                :field="val.binding"
+                sortable="false"
+                :header="val.header"
+                filterable="false"
+                :width="val.width"
+                :header-width="val.width"
+                :header-classes="val.headerClass"
+                :has-summary="val.summary"
+                data-type="number"
+              ></igc-column>
+            </igc-column-group>
+
             <igc-column
-              movable="false"
-              pinned="false"
+              v-for="val in gridClumnsKasan2"
+              :key="val.id"
+              :id="val.binding"
+              :field="val.binding"
               sortable="false"
-              resizable="false"
-              field="jyukyo_yobo"
-              header="予防"
+              :header="val.header"
+              filterable="false"
+              :width="val.width"
+              :header-width="val.width"
+              :header-classes="val.headerClass"
+              :has-summary="val.summary"
+              data-type="number"
+            ></igc-column>
+
+            <igc-column-group
+              movable="true"
+              :header="gridClumnsKasanSyutyu[0].header"
+            >
+              <igc-column
+                v-for="val in gridClumnsKasanSyutyu[0].group"
+                :key="val.id"
+                :id="val.binding"
+                :field="val.binding"
+                sortable="false"
+                :header="val.header"
+                filterable="false"
+                :width="val.width"
+                :header-width="val.width"
+                :header-classes="val.headerClass"
+                :has-summary="val.summary"
+                data-type="number"
+              ></igc-column>
+            </igc-column-group>
+
+            <igc-column
+              v-for="val in gridClumnsKasan3"
+              :key="val.id"
+              :id="val.binding"
+              :field="val.binding"
+              sortable="false"
+              :header="val.header"
+              filterable="false"
+              :width="val.width"
+              :header-width="val.width"
+              :header-classes="val.headerClass"
+              :has-summary="val.summary"
+              data-type="number"
             ></igc-column>
           </igc-column-group>
         </igc-grid>
@@ -203,25 +269,17 @@
 <script>
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
-import '@grapecity/wijmo.cultures/wijmo.culture.ja';
 import HeaderServices from '../../components/HeaderServices.vue';
 import AlphabetButton from '@/components/AlphabetButton.vue';
-import * as wijmo from '@grapecity/wijmo';
-import * as wjGrid from '@grapecity/wijmo.grid';
-import '@grapecity/wijmo.vue2.grid.filter';
-
-import sysConst from '@/utiles/const';
 import { getConnect } from '../../connect/getConnect';
-
 import 'igniteui-webcomponents-grids/grids/combined.js';
-import { IgcGrid } from 'igniteui-webcomponents-grids/grids/themes/light/bootstrap.css';
 
+let num = 1;
 export default {
   props: {},
   components: {
     HeaderServices,
     AlphabetButton,
-    IgcGrid,
   },
   data() {
     return {
@@ -247,201 +305,309 @@ export default {
           value: '契約日順',
         },
       ],
-      gridClumns: [
+      gridClumnsOne: [
         // gridデータカラム
         {
           id: 1,
           width: 30,
           header: '受給者証切れ',
-          binding: 'expired',
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
         },
         {
           id: 2,
           width: 100,
           header: '受給者番号',
-          binding: 'userNumber',
+          binding: 'grid-' + num++,
         },
         {
           id: 3,
           width: 120,
           header: '利用者名',
-          binding: 'userName',
+          binding: 'grid-' + num++,
         },
         {
           id: 4,
           width: 100,
           header: '契約日',
-          binding: 'contactDate',
+          binding: 'grid-' + num++,
         },
+      ],
+      gridClumnsTwo: [
         {
           id: 5,
-          width: 40,
-          header: '予定月',
-          binding: 'planDate',
+          header: 'ﾓﾆﾀﾘﾝｸﾞ',
+          group: [
+            {
+              width: 50,
+              header: '予定月',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+            },
+            {
+              width: 50,
+              header: '終期月',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+            },
+          ],
         },
+      ],
+      gridClumnsThree: [
         {
           id: 6,
-          width: 40,
-          header: '終期月',
-          binding: 'finishDate',
+          width: 30,
+          header: '様式',
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical bLeft bTop',
+          summary: true,
         },
         {
           id: 7,
-          width: 30,
-          header: '様式',
-          binding: 'type',
+          width: 80,
+          header: '計画作成日',
+          binding: 'grid-' + num++,
+          headerClass: ' bTop bRight',
+          summary: true,
         },
         {
           id: 8,
-          width: 90,
-          header: '計画作成日',
-          binding: 'makeDate',
-        },
-        {
-          id: 9,
-          width: 90,
-          header: 'モニタリング実施日',
-          binding: 'monitorDate',
+          width: 80,
+          header: 'モニタリング\n実施日',
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-lineHeight bTop bRight',
+          summary: true,
         },
       ],
-      girdClumnsEdit: [
+      gridClumnsFour: [
         {
-          top: '基本報酬',
-          middle: '計画',
-          bottom: 'Ⅰ',
-          kbn: 1,
+          id: 9,
+          header: '基本報酬',
+          group: [
+            {
+              id: 1,
+              header: '計画',
+              group: [
+                {
+                  id: 1,
+                  width: 30,
+                  header: 'Ⅰ',
+                  binding: 'grid-' + num++,
+                  summary: true,
+                },
+                {
+                  id: 2,
+                  width: 30,
+                  header: 'Ⅱ',
+                  binding: 'grid-' + num++,
+                  summary: true,
+                },
+              ],
+            },
+            {
+              id: 2,
+              header: 'ﾓﾆﾀﾘﾝｸﾞ',
+              group: [
+                {
+                  id: 1,
+                  width: 30,
+                  header: 'Ⅰ',
+                  binding: 'grid-' + num++,
+                  summary: true,
+                },
+                {
+                  id: 2,
+                  width: 30,
+                  header: 'Ⅱ',
+                  binding: 'grid-' + num++,
+                  summary: true,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      gridClumnsFive: [
+        {
+          id: 10,
+          header: '居宅重複減',
+          group: [
+            {
+              header: 'Ⅰ',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+              width: 30,
+              summary: true,
+            },
+            {
+              header: 'Ⅱ',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+              width: 30,
+              summary: true,
+            },
+            {
+              header: '予防',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+              width: 30,
+              summary: true,
+            },
+          ],
+        },
+      ],
+      gridClumnsKasan: [
+        {
+          id: 11,
+          header: '得地加算',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
         {
-          top: '基本報酬',
-          middle: '計画',
-          bottom: 'Ⅱ',
-          kbn: 1,
+          id: 12,
+          header: '初回加算',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
         {
-          top: '基本報酬',
-          middle: 'ﾓﾆﾀﾘﾝｸﾞ',
-          bottom: 'Ⅰ',
-          kbn: 1,
+          id: 13,
+          header: '初回(訪問)',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
         {
-          top: '基本報酬',
-          middle: 'ﾓﾆﾀﾘﾝｸﾞ',
-          bottom: 'Ⅱ',
-          kbn: 1,
+          id: 14,
+          header: '退院・退所',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
         {
-          top: '居宅重複減',
-          middle: 'Ⅰ',
-          bottom: 'Ⅰ',
-          kbn: 2,
+          id: 15,
+          header: '医療・保育',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
         {
-          top: '居宅重複減',
-          middle: 'Ⅱ',
-          bottom: 'Ⅱ',
-          kbn: 2,
+          id: 16,
+          header: '担当者会議',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
+        },
+      ],
+      gridClumnsKasanNyuin: [
+        {
+          id: 17,
+          header: '入院時情',
+          group: [
+            {
+              id: 1,
+              width: 30,
+              header: 'Ⅰ',
+              binding: 'grid-' + num++,
+              summary: true,
+            },
+            {
+              id: 2,
+              width: 30,
+              header: 'Ⅱ',
+              binding: 'grid-' + num++,
+              summary: true,
+            },
+          ],
+        },
+      ],
+      gridClumnsKasanKyotaku: [
+        {
+          id: 18,
+          header: '居宅介護',
+          group: [
+            {
+              id: 1,
+              width: 30,
+              header: 'Ⅰ',
+              binding: 'grid-' + num++,
+              summary: true,
+            },
+            {
+              id: 2,
+              width: 30,
+              header: 'Ⅱ',
+              binding: 'grid-' + num++,
+              summary: true,
+            },
+          ],
+        },
+      ],
+      gridClumnsKasan2: [
+        {
+          id: 19,
+          header: 'モニタリン',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
+        },
+      ],
+      gridClumnsKasanSyutyu: [
+        {
+          id: 20,
+          header: '集中支援加',
+          group: [
+            {
+              id: 1,
+              width: 30,
+              header: '訪問',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+              summary: true,
+            },
+            {
+              id: 2,
+              width: 30,
+              header: '会議開',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+              summary: true,
+            },
+            {
+              id: 3,
+              width: 30,
+              header: '会議参',
+              binding: 'grid-' + num++,
+              headerClass: 'igx-grid-vertical',
+              summary: true,
+            },
+          ],
+        },
+      ],
+      gridClumnsKasan3: [
+        {
+          id: 21,
+          header: '地域生活支',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
         {
-          top: '居宅重複減',
-          middle: '予防',
-          bottom: '予防',
-          kbn: 2,
-        },
-        {
-          top: '加算項目',
-          middle: '得地加算',
-          bottom: '得地加算',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '初回加算',
-          bottom: '初回加算',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '初回（訪問）',
-          bottom: '初回（訪問）',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '退院・退所',
-          bottom: '退院・退所',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '医療・保育',
-          bottom: '医療・保育',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '担当者会議',
-          bottom: '担当者会議',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '入院時情',
-          bottom: 'Ⅰ',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '入院時情',
-          bottom: 'Ⅱ',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '居宅介護',
-          bottom: '訪会',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '居宅介護',
-          bottom: '情報',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: 'モニタリン',
-          bottom: 'モニタリン',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '集中支援加',
-          bottom: '訪問',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '集中支援加',
-          bottom: '会議開',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '集中支援加',
-          bottom: '会議参',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '地域生活支',
-          bottom: '地域生活支',
-          kbn: 3,
-        },
-        {
-          top: '加算項目',
-          middle: '地域体制強',
-          bottom: '地域体制強',
-          kbn: 3,
+          id: 22,
+          header: '地域体制強',
+          width: 30,
+          binding: 'grid-' + num++,
+          headerClass: 'igx-grid-vertical',
+          summary: true,
         },
       ],
       addItemSelected: 0,
@@ -453,103 +619,67 @@ export default {
       ],
     };
   },
+  computed: {},
   mounted() {
-    this.data = [
-      {
-        expired: '',
-        userNumber: '000001',
-      },
-      {
-        expired: '',
-        userNumber: '0000002',
-      },
-    ];
-
-    var grid1 = document.getElementById('grid1');
-
-    this._bind = () => {
-      grid1.data = this.data;
-      grid1.rowClasses = this.rowClasses;
-    };
-
-    this._bind();
+    window.addEventListener('resize', this.calculateWindowHeight);
+    this.calculateWindowHeight();
   },
-  rowClasses() {
-    return 'activeRows';
-  },
-  // beforeRouteLeave(to, from, next) {
-  //   const answer = window.confirm(
-  //     '編集中のものは保存されませんが、よろしいですか？'
-  //   );
-  //   if (answer) {
-  //     next();
-  //   } else {
-  //     next(false);
-  //   }
-  // },
+
   watch: {},
   methods: {
+    calculateWindowHeight() {
+      if (document.getElementById('grid1') != null) {
+        document.getElementById('grid1').style.height =
+          window.innerHeight - 220 + 'px';
+      }
+    },
     /*******************************
      * ヘッダメニューのサービス初回選択 更新ボタン
      */
     parentServiceSelect(serviceArgument) {
-      this.teikyoCode = serviceArgument.teikyoCode;
-      this.year = serviceArgument['teikyo_year'];
-      this.month = serviceArgument['teikyo_month'];
-      let m = dayjs(this.year + '-' + this.month + '-01');
-      this.lastdate = m.daysInMonth();
-      this.viewData = [];
-      let _self = this;
-      let params = {
-        teikyoCode: this.teikyoCode,
-        tym: this.year + this.month,
-        Getkbn: 1,
-        Entpriid: 1,
-        Hokbn: 1,
-        Svcsyucode: 1,
-        Riid: 1,
-      };
-      let viewData = [];
-      getConnect('/IcrnNyusho', params, 'HENDO').then((result) => {
-        console.log(result);
-        result.riyo_inf.map(function (val) {
-          viewData.push({
-            expired: '',
-            userNumber: val.jyukyuno,
-            userName: val.names,
-            kana: val.kana,
+      if (document.getElementById('grid1')) {
+        this.teikyoCode = serviceArgument.teikyoCode;
+        this.year = serviceArgument['teikyo_year'];
+        this.month = serviceArgument['teikyo_month'];
+        let m = dayjs(this.year + '-' + this.month + '-01');
+        this.lastdate = m.daysInMonth();
+
+        let params = {
+          teikyoCode: this.teikyoCode,
+          tym: this.year + this.month,
+          Getkbn: 1,
+          Entpriid: 1,
+          Hokbn: 1,
+          Svcsyucode: 1,
+          Riid: 1,
+        };
+
+        var grid1 = document.getElementById('grid1');
+
+        //var grid_7 = document.getElementById('grid1_grid-7');
+        this._bind = () => {
+          getConnect('/IcrnNyusho', params, 'HENDO').then((result) => {
+            console.log(result);
+            let viewData = [];
+            let riyo_inf = result.riyo_inf;
+            riyo_inf.map(function (value) {
+              viewData.push({
+                'grid-1': value.riid,
+                'grid-2': value.jyukyuno,
+                'grid-3': value.names,
+              });
+            });
+            let row = riyo_inf.length;
+
+            grid1.data = viewData;
+            var grid1_3_2 = document.getElementById('grid1_' + row + '_2');
+            let child = document.createElement('div');
+            child.prepend('合計件数');
+            grid1_3_2.prepend(child);
           });
-        });
-        /*
-        viewData.push({
-          expired: '',
-          userNumber: '11000000158',
-          userName: '東経四郎',
-          kana: 'ｼﾛｳﾄｳｹｲ',
-          contactDate: '2021/03/15',
-          planDate: '',
-          finishDate: '',
-          type: '者',
-          makeDate: '2021/07/16',
-          monitorDate: '',
-          col_9: '〇',
-        });
-        viewData.push({
-          expired: '',
-          userNumber: '11000000142',
-          userName: '東経花子',
-          kana: 'ﾊﾅｺﾄｳｹｲ',
-          contactDate: '2021/12/06',
-          planDate: '',
-          finishDate: '〇',
-          type: '者',
-          makeDate: '2021/07/19',
-          monitorDate: '',
-          col_9: '〇',
-        });
-*/
-        _self.viewData = viewData;
-      });
+        };
+        this._bind();
+      }
 
       if (serviceArgument['search_button']) {
         // ユーザ選択の無効化
@@ -577,13 +707,7 @@ export default {
     onAlphabetical() {
       this.userFilter();
     },
-    userFilter() {
-      let temp = [];
-      temp = this.viewDataAll.concat();
-      let viewData = this.$refs.alp.alphabetFilter(temp, 'kana');
-      this.viewData = new wijmo.CollectionView(viewData);
-      this.createFooterTotal(this.flexGrid);
-    },
+    userFilter() {},
     /***********************:
      *  基本報酬算定を反映
      */
@@ -596,294 +720,13 @@ export default {
     planAdvice() {
       alert('計画相談支援');
     },
-    /************************
-     * データ表示
-     */
-    onInitialized(flexGrid) {
-      this.flexGrid = flexGrid;
-      this.createHeader(flexGrid);
-
-      /*
-      let viewData = [];
-
-      viewData.push({
-        expired: '',
-        userNumber: '11000000158',
-        userName: '東経四郎',
-        kana: 'ｼﾛｳﾄｳｹｲ',
-        contactDate: '2021/03/15',
-        planDate: '',
-        finishDate: '',
-        type: '者',
-        makeDate: '2021/07/16',
-        monitorDate: '',
-        col_9: '〇',
-      });
-      viewData.push({
-        expired: '',
-        userNumber: '11000000142',
-        userName: '東経花子',
-        kana: 'ﾊﾅｺﾄｳｹｲ',
-        contactDate: '2021/12/06',
-        planDate: '',
-        finishDate: '〇',
-        type: '者',
-        makeDate: '2021/07/19',
-        monitorDate: '',
-        col_9: '〇',
-      });
-      viewData.push({
-        expired: '',
-        userNumber: '11000000542',
-        userName: '東経雅子',
-        kana: 'ﾏｻｺﾄｳｹｲ',
-        contactDate: '2021/11/16',
-        planDate: '',
-        finishDate: '〇',
-        type: '者',
-        makeDate: '',
-        monitorDate: '2021/07/19',
-        col_11: '〇',
-      });
-      viewData.push({
-        expired: '',
-        userNumber: '11000000144',
-        userName: '東経洋子',
-        kana: 'ﾖｳｺﾄｳｹｲ',
-        contactDate: '2021/07/15',
-        planDate: '',
-        finishDate: '',
-        type: '者',
-        makeDate: '',
-        monitorDate: '',
-        col_11: '〇',
-      });
-      //this.viewData = viewData;
-      */
-
-      this.viewDataAll = this.viewData;
-      this.viewData = new wijmo.CollectionView(this.viewData);
-      let _self = this;
-      this.viewData.collectionChanged.addHandler(() => {
-        _self.createFooterTotal(flexGrid);
-      });
-      flexGrid.frozenColumns = this.frozenPosition;
-
-      this.createFooter(flexGrid);
-      this.createFooterTotal(flexGrid);
-
-      //フィルタ表示切替
-      flexGrid.addEventListener(flexGrid.hostElement, 'mouseover', () => {
-        this.filtered.showFilterIcons = true;
-      });
-      flexGrid.addEventListener(flexGrid.hostElement, 'mouseleave', () => {
-        this.filtered.showFilterIcons = false;
-      });
-      // グリッドを押下
-      flexGrid.hostElement.addEventListener('click', function (e) {
-        let ht = flexGrid.hitTest(e);
-        if (ht.cellType == wjGrid.CellType.Cell) {
-          let col = 'col_' + ht.col;
-          let pos = ht.col - _self.frozenPosition; // 基本報酬以降のcol番号を変数化
-
-          if (ht.col >= _self.frozenPosition) {
-            // 基本報酬と居宅重複減に〇をつける
-            // 基本報酬と居宅重複減が対象
-            if (
-              _self.girdClumnsEdit[pos].kbn == 1 ||
-              _self.girdClumnsEdit[pos].kbn == 2
-            ) {
-              if (flexGrid.rows[ht._row].dataItem[col] == '〇') {
-                flexGrid.rows[ht._row].dataItem[col] = '';
-              } else {
-                flexGrid.rows[ht._row].dataItem[col] = '〇';
-              }
-            }
-            // 加算項目が対象
-            if (_self.girdClumnsEdit[pos].kbn == 3) {
-              flexGrid.rows[ht._row].dataItem[col] = _self.addItemSelected
-                ? _self.addItemSelected
-                : '';
-            }
-          }
-        }
-        _self.createFooterTotal(flexGrid);
-        flexGrid.refresh();
-      });
-    },
-
-    /**************
-     * ヘッダ情報の作成
-     */
-    createHeader(flexGrid) {
-      var panel = flexGrid.columnHeaders;
-      panel.rows.insert(1, new wjGrid.Row());
-      panel.rows.insert(2, new wjGrid.Row());
-      // ヘッダカラム指定
-      let i = 0;
-      let col = '';
-      this.gridClumns.forEach(function (value) {
-        if (i == 4 || i == 5) {
-          panel.setCellData(0, i, 'ﾓﾆﾀﾘﾝｸﾞ');
-          panel.setCellData(1, i, value.header);
-          panel.setCellData(2, i, value.header);
-        } else {
-          panel.setCellData(0, i, value.header);
-          panel.setCellData(1, i, value.header);
-          panel.setCellData(2, i, value.header);
-        }
-        col = flexGrid.columns[i];
-        col.allowMerging = true;
-        i++;
-      });
-      flexGrid.columnHeaders.rows[0].allowMerging = true;
-      flexGrid.columnHeaders.rows[1].allowMerging = true;
-      flexGrid.columnHeaders.rows[2].allowMerging = true;
-      let c = this.frozenPosition;
-      this.girdClumnsEdit.forEach(function (value) {
-        flexGrid.columns.insert(c, new wjGrid.Column());
-        panel.setCellData(0, c, value.top);
-        panel.setCellData(1, c, value.middle);
-        panel.setCellData(2, c, value.bottom);
-
-        col = flexGrid.columns[c];
-        col.allowMerging = true;
-        col.multiLine = true;
-        col.wordWrap = true;
-        col.width = 32;
-        col.binding = 'col_' + c;
-        c++;
-      });
-      flexGrid.columnHeaders.rows[0].height = 40;
-      flexGrid.columnHeaders.rows[1].height = 20;
-      flexGrid.columnHeaders.rows[2].height = 100;
-    },
-    /******************
-     * フッタ情報の作成
-     */
-    createFooter(flexGrid) {
-      var panel = flexGrid.columnFooters;
-      panel.rows.insert(0, new wjGrid.Row());
-      panel.setCellData(0, 2, '合計件数');
-    },
-    createFooterTotal(flexGrid) {
-      var panel = flexGrid.columnFooters;
-      let makeDateTotal = 0;
-      let monitorDateTotal = 0;
-      let temp = this.viewData._view;
-      for (let i = 0; i < temp.length; i++) {
-        makeDateTotal += temp[i].makeDate ? 1 : 0;
-        monitorDateTotal += temp[i].monitorDate ? 1 : 0;
-      }
-
-      let tempEdit = [];
-      let c = this.frozenPosition;
-      for (let j = 0; j < this.girdClumnsEdit.length; j++) {
-        let cnt = 0;
-        let column = 'col_' + c;
-        for (let i = 0; i < temp.length; i++) {
-          if (temp[i][column]) {
-            cnt++;
-          }
-        }
-        tempEdit[column] = cnt ? cnt : '';
-        c++;
-      }
-      panel.setCellData(0, 7, makeDateTotal);
-      panel.setCellData(0, 8, monitorDateTotal);
-      c = this.frozenPosition;
-      for (let j = 0; j < this.girdClumnsEdit.length; j++) {
-        let column = 'col_' + c;
-        panel.setCellData(0, c, tempEdit[column]);
-        c++;
-      }
-    },
-
-    /************************
-     * 表示フォーマット
-     */
-    onFormatItem(flexGrid, e) {
-      if (e.panel.cellType == wjGrid.CellType.ColumnHeader) {
-        if (e.col == 0 || e.col == 6) {
-          wijmo.addClass(e.cell, 'verticalCustom');
-        }
-        if (e.row == 1 && (e.col == 4 || e.col == 5)) {
-          wijmo.addClass(e.cell, 'verticalCustom');
-        }
-        if (e.row == 1 && e.col >= 9) {
-          let k = e.col - 8;
-          let tmp = this.girdClumnsEdit[k];
-          let middle = tmp ? tmp.middle : '';
-          let bottom = tmp ? tmp.bottom : '';
-          // 2行目と3行目が同じ場合に縦書きのclassを付与
-          if (middle == bottom) {
-            wijmo.addClass(e.cell, 'verticalCustom');
-          }
-        }
-        // フィルターカラムの非表示設定
-        if (e.col == 0 || e.col >= 7) {
-          var Nonefilter = this.filtered.getColumnFilter(e.col);
-          Nonefilter.filterType = 'None';
-        }
-        if (e.row == 0) {
-          if (e.col == 6) {
-            wijmo.addClass(e.cell, 'headBorderTopLeft');
-          }
-          if (e.col == 7) {
-            wijmo.addClass(e.cell, 'headBorderTopMiddle');
-          }
-          if (e.col == 8) {
-            wijmo.addClass(e.cell, 'headBorderTopRight');
-          }
-        }
-      }
-      if (e.panel.cellType == wjGrid.CellType.Cell) {
-        if (e.col == 2) {
-          e.cell.style.textAlign = 'left';
-        }
-        if (e.col >= 9) {
-          e.cell.style.textAlign = 'center';
-        }
-        if (e.col <= 5) {
-          e.cell.style.backgroundColor = sysConst.COLOR.lightYellow;
-        }
-        if (e.col == 6) {
-          wijmo.addClass(e.cell, 'BodyBorderLeft');
-        }
-        if (e.col == 7) {
-          wijmo.addClass(e.cell, 'BodyBorderRight');
-        }
-        if (e.col == 8) {
-          wijmo.addClass(e.cell, 'BodyBorderRight');
-        }
-      }
-      if (e.panel.cellType == wjGrid.CellType.ColumnFooter) {
-        e.cell.style.backgroundColor = sysConst.COLOR.lightYellow;
-        if (e.col <= 4) {
-          e.cell.style.borderRight = '0px';
-        } else if (e.col <= 8) {
-          e.cell.style.textAlign = 'right';
-          e.cell.style.justifyContent = 'right';
-          e.cell.style.alignItems = 'right';
-        }
-        wijmo.addClass(e.cell, 'topDoubleBorder');
-        if (e.col == 6) {
-          wijmo.addClass(e.cell, 'borderBottomLeft');
-        }
-        if (e.col == 7) {
-          wijmo.addClass(e.cell, 'borderBottomMiddle');
-        }
-        if (e.col == 8) {
-          wijmo.addClass(e.cell, 'borderBottomRight');
-        }
-      }
-    },
   },
 };
 </script>
 
 <style lang="scss">
 @import '@/assets/scss/common.scss';
+@import '~igniteui-webcomponents-grids/grids/themes/light/bootstrap.css';
 div#RiyoJyokyo {
   color: $font_color;
   font-size: 12px;
@@ -915,67 +758,215 @@ div#RiyoJyokyo {
       height: 21px;
     }
   }
+}
 
-  #flexViewGrid {
-    .verticalCustom {
-      writing-mode: vertical-rl;
+igx-grid-header {
+  height: 160px;
+}
+igx-display-container {
+  igx-grid-cell {
+    min-height: 20px !important;
+  }
+}
+
+%borderTopBlue {
+  border-top: 2px solid $view_Title_background_Main;
+}
+%borderBottomBlue {
+  border-bottom: 2px solid $view_Title_background_Main;
+}
+%borderLeftBlue {
+  border-left: 2px solid $view_Title_background_Main;
+}
+%borderRightBlue {
+  border-right: 2px solid $view_Title_background_Main;
+}
+
+#grid1 {
+  .bTop {
+    @extend %borderTopBlue;
+  }
+  .bBottom {
+    @extend %borderBottomBlue;
+  }
+  .bLeft {
+    @extend %borderLeftBlue;
+  }
+  .bRight {
+    @extend %borderRightBlue;
+  }
+  .igx-grid__td {
+    &:nth-child(7) {
+      @extend %borderLeftBlue;
     }
-    .topDoubleBorder {
-      border-top: 3px double $grid_Border_Color;
+    &:nth-child(8) {
+      @extend %borderRightBlue;
     }
-    .wj-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-weight: normal;
+    &:nth-child(9) {
+      @extend %borderRightBlue;
     }
-    .headBorderTopLeft {
-      border-top: 2px solid $view_Title_background_Main;
-      border-left: 2px solid $view_Title_background_Main;
-    }
-    .headBorderTopMiddle {
-      border-top: 2px solid $view_Title_background_Main;
-      border-right: 2px solid $view_Title_background_Main;
-    }
-    .headBorderTopRight {
-      border-top: 2px solid $view_Title_background_Main;
-      border-right: 2px solid $view_Title_background_Main;
-    }
-    .BodyBorderLeft {
-      border-left: 2px solid $view_Title_background_Main;
-    }
-    .BodyBorderRight {
-      border-right: 2px solid $view_Title_background_Main;
-    }
-    .borderBottomLeft {
-      border-left: 2px solid $view_Title_background_Main;
-      border-bottom: 2px solid $view_Title_background_Main;
-    }
-    .borderBottomMiddle {
-      border-right: 2px solid $view_Title_background_Main;
-      border-bottom: 2px solid $view_Title_background_Main;
-    }
-    .borderBottomRight {
-      border-right: 2px solid $view_Title_background_Main;
-      border-bottom: 2px solid $view_Title_background_Main;
+  }
+  .igx-grid__tr {
+    &:last-child {
+      .igx-grid__td {
+        &:nth-child(9),
+        &:nth-child(8),
+        &:nth-child(7) {
+          @extend %borderBottomBlue;
+        }
+      }
     }
   }
 }
-#grid1_expired {
-  span {
-    &.igx-grid-th__title {
-      -ms-writing-mode: tb-rl;
-      writing-mode: vertical-rl;
-      align-items: flex-start;
-      text-align: left;
-      width: 100%;
-      overflow: visible;
-    }
-  }
-}
+.igx-grid-thead__title,
 .igx-grid-th {
   align-items: center !important;
   font-weight: normal;
+  padding: 0px;
+  background-color: $view_Title_background;
+}
+.igx-grid-vertical {
+  height: 100px !important;
+  .igx-grid-th__title {
+    -ms-writing-mode: tb-rl;
+    writing-mode: vertical-rl;
+    align-items: flex-start;
+    text-align: left;
+    overflow: visible;
+  }
+}
+.igx-grid__td {
+  border-inline-end: var(--header-border-width) var(--header-border-style)
+    var(--header-border-color);
+  padding: 4px;
+  &:nth-child(-n + 6) {
+    background-color: $view_Hosoku_background;
+  }
+}
+.igx-grid-thead__title {
+  height: 30px;
+}
+.igx-grid-th {
+  padding: 2px;
+  align-items: center;
+  .igx-grid-th__title {
+    font-weight: normal;
+    text-align: center;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  &.igx-grid-lineHeight {
+    .igx-grid-th__title {
+      line-height: 1.5;
+    }
+  }
+}
+
+%minTitle {
+  .igx-grid-th__title {
+    min-width: 5ch;
+  }
+}
+%minWidth {
+  min-width: 30px !important;
+  flex-basis: 30px !important;
+}
+
+@for $i from 13 through 21 {
+  #grid1_-1_1_#{$i} {
+    @extend %minWidth;
+    @extend %minTitle;
+  }
+}
+@for $i from 26 through 26 {
+  #grid1_-1_1_#{$i} {
+    @extend %minWidth;
+    @extend %minTitle;
+  }
+}
+@for $i from 29 through 31 {
+  #grid1_-1_1_#{$i} {
+    @extend %minWidth;
+    @extend %minTitle;
+  }
+}
+
+#grid1_-1_0_6,
+#grid1_-1_0_0 {
+  @extend %minWidth;
+  @extend %minTitle;
+}
+.igx-grid-th--number {
+  justify-content: space-between;
+}
+@for $i from 9 through 26 {
+  #grid1_-1_2_#{$i} {
+    @extend %minWidth;
+  }
+}
+@for $i from 27 through 29 {
+  #grid1_-1_2_#{$i} {
+    @extend %minWidth;
+    @extend %minTitle;
+  }
+}
+
+span {
+  &.igx-grid-th__title {
+    text-align: center;
+    font-weight: normal;
+  }
+}
+
+div {
+  font-weight: normal;
+  &:first-child {
+    justify-content: space-around;
+  }
+}
+.igx-grid__td--fw,
+.igx-grid-th--fw {
+  border-right: 1px solid var(--header-border-color);
+}
+.igx-grid__tbody-content {
+  height: auto !important;
+}
+
+.igx-grid__tfoot {
+  .igx-grid-summary-cell {
+    border: 1px solid red;
+  }
+  .igx-grid__summaries {
+    background-color: $view_Hosoku_background;
+  }
+
+  height: 20px !important;
+  .igx-grid-summary {
+    padding: 0 !important;
+    &:last-child {
+      border-right: 1px solid var(--header-border-color);
+    }
+  }
+  .igx-grid-summary__item {
+    border-left: 1px solid var(--header-border-color);
+
+    height: 20px !important;
+    display: block;
+    text-align: right;
+    padding: 1px;
+
+    &:nth-child(-n + 3) {
+      display: none;
+    }
+    &:nth-child(5) {
+      display: none;
+    }
+  }
+  .igx-grid-summary__result {
+    font-weight: normal;
+  }
+  .igx-grid-summary__label {
+    display: none;
+  }
 }
 </style>
