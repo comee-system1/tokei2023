@@ -1,0 +1,55 @@
+.verticalText {
+    writing-mode: vertical-rl;
+    width: 25px;
+
+    &.widthMiddle {
+        width: 40px;
+    }
+}
+
+.wordBreak {
+    word-wrap: break-word;
+    white-space: break-spaces;
+}
+
+.mergeArea {
+    position: absolute;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+
+    .submerge {
+        display: flex;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+
+        line-height: 20px;
+        height: 20px;
+        margin-top: 1px;
+
+        div {
+            border-right: 1px solid #ccc;
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+    }
+}
+
+div {
+    .textJustify {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.min {
+            span {
+                margin-top: 30px;
+            }
+        }
+    }
+}

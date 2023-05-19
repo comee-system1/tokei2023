@@ -65,15 +65,15 @@
           </v-btn-toggle>
         </v-col>
       </v-row>
+
       <v-row no-gutters>
-        <hot-table
-          :data="data"
-          :rowHeaders="false"
+        <grid-table
+          :viewGridData="viewGridData"
+          :colMergeHeaders="colMergeHeaders"
           :colHeaders="colHeaders"
-          :columns="columns"
-          fillHandle="true"
-          :settings="settings"
-        ></hot-table>
+          :colLists="colLists"
+          :headerHeight=160
+        ></grid-table>
       </v-row>
       <v-row no-gutters class="mt-1 justify-end ma-3">
         <v-btn small>登録</v-btn>
@@ -88,19 +88,17 @@ import 'dayjs/locale/ja';
 import HeaderServices from '@/components/HeaderServices.vue';
 import AlphabetButton from '@/components/AlphabetButton.vue';
 import { getConnect } from '../../connect/getConnect';
-import { HotTable } from '@handsontable/vue';
-import 'handsontable/dist/handsontable.full.css';
 
+import  GridTable  from '@/components/GridTable.vue';
 export default {
   props: {},
   components: {
     HeaderServices,
     AlphabetButton,
-    HotTable,
+    GridTable
   },
   data() {
     return {
-      frozenPosition: 9,
       flexGrid: [],
       filtered: [], // フィルターデータ
       serviceViewData: [],
@@ -131,56 +129,80 @@ export default {
         { id: 3, text: '3' },
       ],
 
-      data: [
-        ['', false, 'S0001', 'りんご', 100, '青森産'],
-        ['', false, 'S0002', 'みかん', 80, '静岡産'],
-        ['*', false, 'S0003', 'メロン', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S0004', 'メロン1', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S0005', 'メロン2', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S0006', 'メロン3', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S0007', 'メロン4', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S0008', 'メロン5', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S0009', 'メロン6', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S00010', 'メロン7', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S00011', 'メロン8', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S00012', 'メロン9', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S00013', 'メロン10', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S00014', 'メロン11', 1000, '袋井クラウンメロン'],
-        ['*', false, 'S00015', 'メロン12', 1000, '袋井クラウンメロン'],
-      ],
-      colHeaders: ['編集', '選択', '商品CD', '商品名', '単価', '備考'],
-      columns: [
-        { readOnly: true, type: 'text' },
-        { type: 'checkbox' },
-        { type: 'text', width: 80 },
-        { type: 'text', width: 200, className: 'htLeft htMiddle' },
+      colHeaders: [
+        {title:'受給者証切れ',class:"verticalText"},
+        {title:'受給者番号'},
+        {title:'利用者名'},
+        {title:'契約日'},
+        {title:'予定月',class:"verticalText widthMiddle"},
+        {title:'終期月',class:"verticalText widthMiddle"},
+        {title:'様式',class:"verticalText"},
+        {title:'計画作成日'},
+        {title:'モニタリング\n実施日',class:"wordBreak"},
+        {title:'Ⅰ'},
+        {title:'Ⅱ'},
+        {title:'Ⅰ'},
+        {title:'Ⅱ'},
+        {title:'Ⅰ'},
+        {title:'Ⅱ'},
+        {title:'予防',class:"verticalText"},
+        ],
+      colMergeHeaders:[
         {
-          type: 'numeric',
-          numericFormat: { pattern: '0,00', culture: 'ja-JP' },
+          startPos:4,
+          endPos:5,
+          text:'ﾓﾆﾀﾘﾝｸﾞ'
         },
-        { type: 'text', width: 300, className: 'htLeft htMiddle' },
+        {
+          startPos:9,
+          endPos:12,
+          text:'基本報酬',
+          sub:[
+            {
+              startPos:9,
+              endPos:10,
+              text:'計画'
+            },
+            {
+              startPos:11,
+              endPos:12,
+              text:'ﾓﾆﾀﾘﾝｸﾞ'
+            }
+          ]
+        },
+        {
+          startPos:13,
+          endPos:15,
+          text:'居宅重複減'
+        },
       ],
-      settings: {
-        width: 500,
-        height: 300,
-        contextMenu: true,
-        manualColumnFreeze: true,
-        fixedRowsTop: 1,
-        fixedColumnsLeft: 1,
-        fixedRowsBottom: 1,
-        manualColumnMove: true,
-        manualColumnResize: true,
-        manualRowResize: true,
-        manualRowMove: true,
-        dropdownMenu: true,
-        filters: true,
-        columnSorting: true,
-        comments: true,
-      },
-      // enterMoves: { row: 0, col: 1 },
-      // outsideClickDeselects: true,
-      // manualColumnResize: true,
-      // fillHandle: false,
+        colLists:[
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 100 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 100 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 100 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 40 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 40 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 100 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 100 },
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+
+
+
+        ],
+      viewGridData: [
+        ['', "f",false, 'S0001','aaa','aaa','社','','','1','2','3','4','11','12','13'],
+        ['', "a",false, 'S0002','fff','fff','','','','1','2','3','4','11','12','13'],
+      ],
+
+      
     };
   },
   computed: {},
@@ -322,215 +344,6 @@ div#RiyoJyokyo {
       height: 21px;
     }
   }
+
 }
 
-igx-grid-header {
-  height: 160px;
-}
-igx-display-container {
-  igx-grid-cell {
-    min-height: 20px !important;
-  }
-}
-
-%borderTopBlue {
-  border-top: 2px solid $view_Title_background_Main;
-}
-%borderBottomBlue {
-  border-bottom: 2px solid $view_Title_background_Main;
-}
-%borderLeftBlue {
-  border-left: 2px solid $view_Title_background_Main;
-}
-%borderRightBlue {
-  border-right: 2px solid $view_Title_background_Main;
-}
-
-#grid1 {
-  .bTop {
-    @extend %borderTopBlue;
-  }
-  .bBottom {
-    @extend %borderBottomBlue;
-  }
-  .bLeft {
-    @extend %borderLeftBlue;
-  }
-  .bRight {
-    @extend %borderRightBlue;
-  }
-  .igx-grid__td {
-    &:nth-child(7) {
-      @extend %borderLeftBlue;
-    }
-    &:nth-child(8) {
-      @extend %borderRightBlue;
-    }
-    &:nth-child(9) {
-      @extend %borderRightBlue;
-    }
-  }
-  .igx-grid__tr {
-    &:last-child {
-      .igx-grid__td {
-        &:nth-child(9),
-        &:nth-child(8),
-        &:nth-child(7) {
-          @extend %borderBottomBlue;
-        }
-      }
-    }
-  }
-}
-.igx-grid-thead__title,
-.igx-grid-th {
-  align-items: center !important;
-  font-weight: normal;
-  padding: 0px;
-  background-color: $view_Title_background;
-}
-.igx-grid-vertical {
-  height: 100px !important;
-  .igx-grid-th__title {
-    -ms-writing-mode: tb-rl;
-    writing-mode: vertical-rl;
-    align-items: flex-start;
-    text-align: left;
-    overflow: visible;
-  }
-}
-.igx-grid__td {
-  border-inline-end: var(--header-border-width) var(--header-border-style)
-    var(--header-border-color);
-  padding: 4px;
-  &:nth-child(-n + 6) {
-    background-color: $view_Hosoku_background;
-  }
-}
-.igx-grid-thead__title {
-  height: 30px;
-}
-.igx-grid-th {
-  padding: 2px;
-  align-items: center;
-  .igx-grid-th__title {
-    font-weight: normal;
-    text-align: center;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  &.igx-grid-lineHeight {
-    .igx-grid-th__title {
-      line-height: 1.5;
-    }
-  }
-}
-
-%minTitle {
-  .igx-grid-th__title {
-    min-width: 5ch;
-  }
-}
-%minWidth {
-  min-width: 30px !important;
-  flex-basis: 30px !important;
-}
-
-@for $i from 13 through 21 {
-  #grid1_-1_1_#{$i} {
-    @extend %minWidth;
-    @extend %minTitle;
-  }
-}
-@for $i from 26 through 26 {
-  #grid1_-1_1_#{$i} {
-    @extend %minWidth;
-    @extend %minTitle;
-  }
-}
-@for $i from 29 through 31 {
-  #grid1_-1_1_#{$i} {
-    @extend %minWidth;
-    @extend %minTitle;
-  }
-}
-
-#grid1_-1_0_6,
-#grid1_-1_0_0 {
-  @extend %minWidth;
-  @extend %minTitle;
-}
-.igx-grid-th--number {
-  justify-content: space-between;
-}
-@for $i from 9 through 26 {
-  #grid1_-1_2_#{$i} {
-    @extend %minWidth;
-  }
-}
-@for $i from 27 through 29 {
-  #grid1_-1_2_#{$i} {
-    @extend %minWidth;
-    @extend %minTitle;
-  }
-}
-
-span {
-  &.igx-grid-th__title {
-    text-align: center;
-    font-weight: normal;
-  }
-}
-
-div {
-  font-weight: normal;
-  &:first-child {
-    justify-content: space-around;
-  }
-}
-.igx-grid__td--fw,
-.igx-grid-th--fw {
-  border-right: 1px solid var(--header-border-color);
-}
-.igx-grid__tbody-content {
-  height: auto !important;
-}
-
-.igx-grid__tfoot {
-  .igx-grid-summary-cell {
-    border: 1px solid red;
-  }
-  .igx-grid__summaries {
-    background-color: $view_Hosoku_background;
-  }
-
-  height: 20px !important;
-  .igx-grid-summary {
-    padding: 0 !important;
-    &:last-child {
-      border-right: 1px solid var(--header-border-color);
-    }
-  }
-  .igx-grid-summary__item {
-    border-left: 1px solid var(--header-border-color);
-
-    height: 20px !important;
-    display: block;
-    text-align: right;
-    padding: 1px;
-
-    &:nth-child(-n + 3) {
-      display: none;
-    }
-    &:nth-child(5) {
-      display: none;
-    }
-  }
-  .igx-grid-summary__result {
-    font-weight: normal;
-  }
-  .igx-grid-summary__label {
-    display: none;
-  }
-}
-</style>
