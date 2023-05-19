@@ -87,8 +87,8 @@ export default {
       ]
       */
       settings: {
-        width: 900,
-        height: 300,
+        width: 1366,
+        height: 600,
         contextMenu: true,
         manualColumnFreeze: true,
         // fixedRowsTop: 1,

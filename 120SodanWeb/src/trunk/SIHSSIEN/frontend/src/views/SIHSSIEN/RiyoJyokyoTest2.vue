@@ -146,6 +146,8 @@ export default {
         {title:'Ⅰ'},
         {title:'Ⅱ'},
         {title:'予防',class:"verticalText"},
+        {title:'得地加算',class:"verticalText"},
+        {title:'初回加算',class:"verticalText"},
         ],
       colMergeHeaders:[
         {
@@ -175,6 +177,7 @@ export default {
           endPos:15,
           text:'居宅重複減'
         },
+
       ],
         colLists:[
         { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
@@ -193,13 +196,21 @@ export default {
         { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
         { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
         { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
+        { readOnly: true, type: 'text', className: 'yellowBack' ,width: 30},
 
 
 
         ],
       viewGridData: [
-        ['', "f",false, 'S0001','aaa','aaa','社','','','1','2','3','4','11','12','13'],
-        ['', "a",false, 'S0002','fff','fff','','','','1','2','3','4','11','12','13'],
+        ['', "f",false, 'S0001','aaa','aaa','社','','','1','2','3','4','11','12','13'
+        ,''
+        ,''
+        ],
+        ['', "a",false, 'S0002','fff','fff','','','','1','2','3','4','11','12','13'
+        ,''
+        ,''
+        ],
       ],
 
       
